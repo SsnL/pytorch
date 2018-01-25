@@ -38,28 +38,28 @@ COMMON_GPU_TRANSFORMS = {
 TYPE_TRANSFORMS = {
     'Float': {
         'THTensor*': 'THFloatTensor*',
-        'real': 'float',
-        'accreal': 'double',
+        'ntype': 'float',
+        'accntype': 'double',
     },
     'Double': {
         'THTensor*': 'THDoubleTensor*',
-        'real': 'double',
-        'accreal': 'double',
+        'ntype': 'double',
+        'accntype': 'double',
     },
     'CudaHalf': {
         'THCTensor*': 'THCudaHalfTensor*',
-        'real': 'half',
-        'accreal': 'float',
+        'ntype': 'half',
+        'accntype': 'float',
     },
     'Cuda': {
         'THCTensor*': 'THCudaTensor*',
-        'real': 'float',
-        'accreal': 'float',
+        'ntype': 'float',
+        'accntype': 'float',
     },
     'CudaDouble': {
         'THCTensor*': 'THCudaDoubleTensor*',
-        'real': 'double',
-        'accreal': 'double',
+        'ntype': 'double',
+        'accntype': 'double',
     },
 }
 for t, transforms in TYPE_TRANSFORMS.items():
