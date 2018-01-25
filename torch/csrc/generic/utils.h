@@ -2,7 +2,7 @@
 #define TH_GENERIC_FILE "generic/utils.h"
 #else
 
-#if defined(THD_GENERIC_FILE) || defined(TH_REAL_IS_HALF)
+#if defined(THD_GENERIC_FILE) || defined(TH_NTYPE_IS_HALF)
 #define GENERATE_SPARSE 0
 #else
 #define GENERATE_SPARSE 1
@@ -22,13 +22,13 @@ typedef class THPPointer<THSTensor>      THSTensorPtr;
 typedef class THPPointer<THSPTensor>     THSPTensorPtr;
 #endif
 
-#if (!defined(THC_GENERIC_FILE) || defined(THC_REAL_IS_HALF)) && \
+#if (!defined(THC_GENERIC_FILE) || defined(THC_NTYPE_IS_HALF)) && \
     (!defined(THD_GENERIC_FILE))
 template<>
-struct THPUtils_typeTraits<real> {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE) || \
-    defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE) || \
-    defined(THC_REAL_IS_HALF)
+struct THPUtils_typeTraits<ntype> {
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE) || \
+    defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE) || \
+    defined(THC_NTYPE_IS_HALF)
   static constexpr char *python_type_str = "float";
 #else
   static constexpr char *python_type_str = "int";

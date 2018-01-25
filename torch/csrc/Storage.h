@@ -1,10 +1,10 @@
 #ifndef THP_STORAGE_INC
 #define THP_STORAGE_INC
 
-#define THPStorage TH_CONCAT_3(THP,Real,Storage)
-#define THPStorageStr TH_CONCAT_STRING_3(torch.,Real,Storage)
-#define THPStorageClass TH_CONCAT_3(THP,Real,StorageClass)
-#define THPStorage_(NAME) TH_CONCAT_4(THP,Real,Storage_,NAME)
+#define THPStorage TH_CONCAT_3(THP,Ntype,Storage)
+#define THPStorageStr TH_CONCAT_STRING_3(torch.,Ntype,Storage)
+#define THPStorageClass TH_CONCAT_3(THP,Ntype,StorageClass)
+#define THPStorage_(NAME) TH_CONCAT_4(THP,Ntype,Storage_,NAME)
 
 #define THPDoubleStorage_Check(obj) \
     PyObject_IsInstance(obj, THPDoubleStorageClass)
@@ -33,8 +33,8 @@
 #define THPByteStorage_CData(obj)    (obj)->cdata
 
 #ifdef _THP_CORE
-#define THPStorageType TH_CONCAT_3(THP,Real,StorageType)
-#define THPStorageBaseStr TH_CONCAT_STRING_2(Real,StorageBase)
+#define THPStorageType TH_CONCAT_3(THP,Ntype,StorageType)
+#define THPStorageBaseStr TH_CONCAT_STRING_2(Ntype,StorageBase)
 #endif
 
 #include "generic/Storage.h"

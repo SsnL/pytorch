@@ -3,12 +3,12 @@
 
 #include "THDP.h"
 
-#define THDPUtils_(NAME) TH_CONCAT_4(THDP,Real,Utils_,NAME)
+#define THDPUtils_(NAME) TH_CONCAT_4(THDP,Ntype,Utils_,NAME)
 
-#define THDStoragePtr TH_CONCAT_3(THD,Real,StoragePtr)
-#define THDTensorPtr  TH_CONCAT_3(THD,Real,TensorPtr)
-#define THDPStoragePtr TH_CONCAT_3(THDP,Real,StoragePtr)
-#define THDPTensorPtr  TH_CONCAT_3(THDP,Real,TensorPtr)
+#define THDStoragePtr TH_CONCAT_3(THD,Ntype,StoragePtr)
+#define THDTensorPtr  TH_CONCAT_3(THD,Ntype,TensorPtr)
+#define THDPStoragePtr TH_CONCAT_3(THDP,Ntype,StoragePtr)
+#define THDPTensorPtr  TH_CONCAT_3(THDP,Ntype,TensorPtr)
 
 #include "override_macros.h"
 

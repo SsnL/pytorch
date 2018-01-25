@@ -1,10 +1,10 @@
 #ifndef THP_TENSOR_INC
 #define THP_TENSOR_INC
 
-#define THPTensor                   TH_CONCAT_3(THP,Real,Tensor)
-#define THPTensorStr                TH_CONCAT_STRING_3(torch.,Real,Tensor)
-#define THPTensorClass              TH_CONCAT_3(THP,Real,TensorClass)
-#define THPTensor_(NAME)            TH_CONCAT_4(THP,Real,Tensor_,NAME)
+#define THPTensor                   TH_CONCAT_3(THP,Ntype,Tensor)
+#define THPTensorStr                TH_CONCAT_STRING_3(torch.,Ntype,Tensor)
+#define THPTensorClass              TH_CONCAT_3(THP,Ntype,TensorClass)
+#define THPTensor_(NAME)            TH_CONCAT_4(THP,Ntype,Tensor_,NAME)
 
 #define THPDoubleTensor_Check(obj)  PyObject_IsInstance(obj, THPDoubleTensorClass)
 #define THPFloatTensor_Check(obj)   PyObject_IsInstance(obj, THPFloatTensorClass)
@@ -25,18 +25,18 @@
 #define THPByteTensor_CData(obj)    (obj)->cdata
 
 #ifdef _THP_CORE
-#define THPTensorType               TH_CONCAT_3(THP,Real,TensorType)
-#define THPTensorBaseStr            TH_CONCAT_STRING_2(Real,TensorBase)
-#define THPTensorStateless          TH_CONCAT_2(Real,TensorStateless)
-#define THPTensorStatelessType      TH_CONCAT_2(Real,TensorStatelessType)
-#define THPTensor_stateless_(NAME)  TH_CONCAT_4(THP,Real,Tensor_stateless_,NAME)
+#define THPTensorType               TH_CONCAT_3(THP,Ntype,TensorType)
+#define THPTensorBaseStr            TH_CONCAT_STRING_2(Ntype,TensorBase)
+#define THPTensorStateless          TH_CONCAT_2(Ntype,TensorStateless)
+#define THPTensorStatelessType      TH_CONCAT_2(Ntype,TensorStatelessType)
+#define THPTensor_stateless_(NAME)  TH_CONCAT_4(THP,Ntype,Tensor_stateless_,NAME)
 #endif
 
 // Sparse Tensors
-#define THSPTensor                   TH_CONCAT_3(THSP,Real,Tensor)
-#define THSPTensorStr                TH_CONCAT_STRING_3(torch.Sparse,Real,Tensor)
-#define THSPTensorClass              TH_CONCAT_3(THSP,Real,TensorClass)
-#define THSPTensor_(NAME)            TH_CONCAT_4(THSP,Real,Tensor_,NAME)
+#define THSPTensor                   TH_CONCAT_3(THSP,Ntype,Tensor)
+#define THSPTensorStr                TH_CONCAT_STRING_3(torch.Sparse,Ntype,Tensor)
+#define THSPTensorClass              TH_CONCAT_3(THSP,Ntype,TensorClass)
+#define THSPTensor_(NAME)            TH_CONCAT_4(THSP,Ntype,Tensor_,NAME)
 
 #define THSPDoubleTensor_Check(obj)  PyObject_IsInstance(obj, THSPDoubleTensorClass)
 #define THSPFloatTensor_Check(obj)   PyObject_IsInstance(obj, THSPFloatTensorClass)
@@ -55,11 +55,11 @@
 #define THSPByteTensor_CData(obj)    (obj)->cdata
 
 #ifdef _THP_CORE
-#define THSPTensorType               TH_CONCAT_3(THSP,Real,TensorType)
-#define THSPTensorBaseStr            TH_CONCAT_STRING_3(Sparse,Real,TensorBase)
-#define THSPTensorStateless          TH_CONCAT_3(Sparse,Real,TensorStateless)
-#define THSPTensorStatelessType      TH_CONCAT_3(Sparse,Real,TensorStatelessType)
-#define THSPTensor_stateless_(NAME)  TH_CONCAT_4(THSP,Real,Tensor_stateless_,NAME)
+#define THSPTensorType               TH_CONCAT_3(THSP,Ntype,TensorType)
+#define THSPTensorBaseStr            TH_CONCAT_STRING_3(Sparse,Ntype,TensorBase)
+#define THSPTensorStateless          TH_CONCAT_3(Sparse,Ntype,TensorStateless)
+#define THSPTensorStatelessType      TH_CONCAT_3(Sparse,Ntype,TensorStatelessType)
+#define THSPTensor_stateless_(NAME)  TH_CONCAT_4(THSP,Ntype,Tensor_stateless_,NAME)
 #endif
 
 #include "generic/Tensor.h"

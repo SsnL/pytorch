@@ -1,10 +1,10 @@
 #ifndef THDP_TENSOR_INC
 #define THDP_TENSOR_INC
 
-#define THDPTensor TH_CONCAT_3(THDP,Real,Tensor)
-#define THDPTensorStr TH_CONCAT_STRING_3(torch.cuda.,Real,Tensor)
-#define THDPTensorClass TH_CONCAT_3(THDP,Real,TensorClass)
-#define THDPTensor_(NAME) TH_CONCAT_4(THDP,Real,Tensor_,NAME)
+#define THDPTensor TH_CONCAT_3(THDP,Ntype,Tensor)
+#define THDPTensorStr TH_CONCAT_STRING_3(torch.cuda.,Ntype,Tensor)
+#define THDPTensorClass TH_CONCAT_3(THDP,Ntype,TensorClass)
+#define THDPTensor_(NAME) TH_CONCAT_4(THDP,Ntype,Tensor_,NAME)
 
 #define THDPDoubleTensor_Check(obj)  PyObject_IsInstance(obj, THDPDoubleTensorClass)
 #define THDPFloatTensor_Check(obj)   PyObject_IsInstance(obj, THDPFloatTensorClass)
@@ -24,12 +24,12 @@
 #define THDPByteTensor_CData(obj)    (obj)->cdata
 
 #ifdef _THP_CORE
-#define THDPTensorType TH_CONCAT_3(THDP,Real,TensorType)
-#define THDPTensorBaseStr TH_CONCAT_STRING_3(Distributed,Real,TensorBase)
-#define THDPTensor_stateless_(NAME) TH_CONCAT_4(THDP,Real,Tensor_stateless_,NAME)
-#define THDPTensorStatelessType TH_CONCAT_3(THDP,Real,TensorStatelessType)
-#define THDPTensorStateless TH_CONCAT_3(THDP,Real,TensorStateless)
-#define THDPTensorStatelessMethods TH_CONCAT_3(THDP,Real,TensorStatelessMethods)
+#define THDPTensorType TH_CONCAT_3(THDP,Ntype,TensorType)
+#define THDPTensorBaseStr TH_CONCAT_STRING_3(Distributed,Ntype,TensorBase)
+#define THDPTensor_stateless_(NAME) TH_CONCAT_4(THDP,Ntype,Tensor_stateless_,NAME)
+#define THDPTensorStatelessType TH_CONCAT_3(THDP,Ntype,TensorStatelessType)
+#define THDPTensorStateless TH_CONCAT_3(THDP,Ntype,TensorStateless)
+#define THDPTensorStatelessMethods TH_CONCAT_3(THDP,Ntype,TensorStatelessMethods)
 #endif
 
 #include "override_macros.h"

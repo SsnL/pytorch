@@ -9,7 +9,7 @@
         - arg: THBoolTensor* result
           output: True
         - THTensor* self
-        - real value
+        - ntype value
     - cname: ltTensor
       arguments:
         - arg: THBoolTensor* result
@@ -27,7 +27,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real value
+        - ntype value
     - cname: ltTensorT
       arguments:
         - THTensor* self
@@ -47,7 +47,7 @@
         - arg: THBoolTensor* result
           output: True
         - THTensor* tensor
-        - real value
+        - ntype value
     - cname: ltTensor
       arguments:
         - arg: THBoolTensor* result
@@ -60,7 +60,7 @@
         - arg: THTensor* result
           output: True
         - THTensor* tensor
-        - real value
+        - ntype value
     - cname: ltTensorT
       arguments:
         - arg: THTensor* result
@@ -82,7 +82,7 @@
         - arg: THBoolTensor* result
           output: True
         - THTensor* self
-        - real value
+        - ntype value
     - cname: gtTensor
       arguments:
         - arg: THBoolTensor* result
@@ -100,7 +100,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real value
+        - ntype value
     - cname: gtTensorT
       arguments:
         - THTensor* self
@@ -120,7 +120,7 @@
         - arg: THBoolTensor* result
           output: True
         - THTensor* tensor
-        - real value
+        - ntype value
     - cname: gtTensor
       arguments:
         - arg: THBoolTensor* result
@@ -133,7 +133,7 @@
         - arg: THTensor* result
           output: True
         - THTensor* tensor
-        - real value
+        - ntype value
     - cname: gtTensorT
       arguments:
         - arg: THTensor* result
@@ -156,7 +156,7 @@
         - arg: THBoolTensor* result
           output: True
         - THTensor* self
-        - real value
+        - ntype value
     - cname: leTensor
       arguments:
         - arg: THBoolTensor* result
@@ -174,7 +174,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real value
+        - ntype value
     - cname: leTensorT
       arguments:
         - THTensor* self
@@ -194,7 +194,7 @@
         - arg: THBoolTensor* result
           output: True
         - THTensor* tensor
-        - real value
+        - ntype value
     - cname: leTensor
       arguments:
         - arg: THBoolTensor* result
@@ -207,7 +207,7 @@
         - arg: THTensor* result
           output: True
         - THTensor* tensor
-        - real value
+        - ntype value
     - cname: leTensorT
       arguments:
         - arg: THTensor* result
@@ -229,7 +229,7 @@
         - arg: THBoolTensor* result
           output: True
         - THTensor* self
-        - real value
+        - ntype value
     - cname: geTensor
       arguments:
         - arg: THBoolTensor* result
@@ -247,7 +247,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real value
+        - ntype value
     - cname: geTensorT
       arguments:
         - THTensor* self
@@ -267,7 +267,7 @@
         - arg: THBoolTensor* result
           output: True
         - THTensor* tensor
-        - real value
+        - ntype value
     - cname: geTensor
       arguments:
         - arg: THBoolTensor* result
@@ -280,7 +280,7 @@
         - arg: THTensor* result
           output: True
         - THTensor* tensor
-        - real value
+        - ntype value
     - cname: geTensorT
       arguments:
         - arg: THTensor* result
@@ -302,7 +302,7 @@
         - arg: THBoolTensor* result
           output: True
         - THTensor* self
-        - real value
+        - ntype value
     - cname: eqTensor
       arguments:
         - arg: THBoolTensor* result
@@ -320,7 +320,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real value
+        - ntype value
     - cname: eqTensorT
       arguments:
         - THTensor* self
@@ -340,7 +340,7 @@
         - arg: THBoolTensor* result
           output: True
         - THTensor* tensor
-        - real value
+        - ntype value
     - cname: eqTensor
       arguments:
         - arg: THBoolTensor* result
@@ -353,7 +353,7 @@
         - arg: THTensor* result
           output: True
         - THTensor* tensor
-        - real value
+        - ntype value
     - cname: eqTensorT
       arguments:
         - arg: THTensor* result
@@ -375,7 +375,7 @@
         - arg: THBoolTensor* result
           output: True
         - THTensor* self
-        - real value
+        - ntype value
     - cname: neTensor
       arguments:
         - arg: THBoolTensor* result
@@ -393,7 +393,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real value
+        - ntype value
     - cname: neTensorT
       arguments:
         - THTensor* self
@@ -413,7 +413,7 @@
         - arg: THBoolTensor* result
           output: True
         - THTensor* tensor
-        - real value
+        - ntype value
     - cname: neTensor
       arguments:
         - arg: THBoolTensor* result
@@ -426,7 +426,7 @@
         - arg: THTensor* result
           output: True
         - THTensor* tensor
-        - real value
+        - ntype value
     - cname: neTensorT
       arguments:
         - arg: THTensor* result
@@ -443,7 +443,7 @@
     - function
   options:
     - cname: minall
-      return: real
+      return: ntype
       arguments:
         - THTensor* self
     - cname: cmin
@@ -486,7 +486,7 @@
     - function
   options:
     - cname: maxall
-      return: real
+      return: ntype
       arguments:
         - THTensor* self
     - cname: cmax
@@ -632,7 +632,7 @@
   return: argument 0,1
   options:
     - cname: medianall
-      return: real
+      return: ntype
       arguments:
         - THTensor* self
     - cname: median

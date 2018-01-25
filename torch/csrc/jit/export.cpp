@@ -240,7 +240,7 @@ void validateGraph(const std::shared_ptr<Graph>& graph) {
       auto py_node = static_cast<torch::jit::PythonOp*>(value);
       FAIL_EXPORT("Couldn't export Python operator " + py_node->name())
     IR_ELSE()
-      // Expand is not a real ONNX operator yet, reject it
+      // Expand is not a ntype ONNX operator yet, reject it
       if (it->kind() == kExpand) {
         FAIL_EXPORT("Couldn't export operator expand; this usually means you used a form of broadcasting that ONNX does not currently support");
       }

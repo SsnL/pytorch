@@ -1,10 +1,10 @@
 #ifndef THCP_STORAGE_INC
 #define THCP_STORAGE_INC
 
-#define THCPStorage TH_CONCAT_3(THCP,Real,Storage)
-#define THCPStorageStr TH_CONCAT_STRING_3(torch.cuda.,Real,Storage)
-#define THCPStorageClass TH_CONCAT_3(THCP,Real,StorageClass)
-#define THCPStorage_(NAME) TH_CONCAT_4(THCP,Real,Storage_,NAME)
+#define THCPStorage TH_CONCAT_3(THCP,Ntype,Storage)
+#define THCPStorageStr TH_CONCAT_STRING_3(torch.cuda.,Ntype,Storage)
+#define THCPStorageClass TH_CONCAT_3(THCP,Ntype,StorageClass)
+#define THCPStorage_(NAME) TH_CONCAT_4(THCP,Ntype,Storage_,NAME)
 
 #define THCPDoubleStorage_Check(obj) \
     PyObject_IsInstance(obj, THCPDoubleStorageClass)
@@ -32,8 +32,8 @@
 #define THCPByteStorage_CData(obj)    (obj)->cdata
 
 #ifdef _THP_CORE
-#define THCPStorageType TH_CONCAT_3(THCP,Real,StorageType)
-#define THCPStorageBaseStr TH_CONCAT_STRING_3(Cuda,Real,StorageBase)
+#define THCPStorageType TH_CONCAT_3(THCP,Ntype,StorageType)
+#define THCPStorageBaseStr TH_CONCAT_STRING_3(Cuda,Ntype,StorageBase)
 #endif
 
 #include "override_macros.h"

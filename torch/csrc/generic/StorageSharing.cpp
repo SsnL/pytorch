@@ -48,7 +48,7 @@ static PyObject * THPStorage_(sharedIncref)(THPStorage *self)
 static PyObject * THPStorage_(newTHView)(THStorage *base, ptrdiff_t offset, size_t size)
 {
   void *data = (char*)base->data + offset;
-  THStoragePtr view(THStorage_(newWithData)(LIBRARY_STATE (real*)data, size));
+  THStoragePtr view(THStorage_(newWithData)(LIBRARY_STATE (ntype*)data, size));
   view->flag = TH_STORAGE_REFCOUNTED | TH_STORAGE_VIEW;
   view->view = base;
   THStorage_(retain)(LIBRARY_STATE base);
@@ -254,7 +254,7 @@ static PyObject * THPStorage_(shareCuda)(THPStorage *self)
 
     _handle = PyBytes_FromStringAndSize((char *)&handle, CUDA_IPC_HANDLE_SIZE);
     _offset = PyLong_FromSsize_t((Py_ssize_t)offset);
-    size = PyLong_FromSize_t(base_size / sizeof(real));
+    size = PyLong_FromSize_t(base_size / sizeof(ntype));
   }
   if (!tuple || !device || !_handle || !size || !_offset || !view_size) {
     return NULL;
@@ -304,7 +304,7 @@ static PyObject * THPStorage_(newSharedCuda)(PyObject *_unused, PyObject *args)
   THCudaCheck(cudaIpcOpenMemHandle(&devPtr, handle, cudaIpcMemLazyEnablePeerAccess));
 
   THStoragePtr base(THStorage_(newWithDataAndAllocator)(
-      LIBRARY_STATE (real*)devPtr, storage_size, &THCIpcAllocator, (void*)device));
+      LIBRARY_STATE (ntype*)devPtr, storage_size, &THCIpcAllocator, (void*)device));
   base->flag = TH_STORAGE_REFCOUNTED | TH_STORAGE_FREEMEM;
 
   if (offset != 0 || view_size != storage_size) {

@@ -77,7 +77,7 @@ static PyObject * THPStorage_(fill_)(THPStorage *self, PyObject *number_arg)
 {
   HANDLE_TH_ERRORS
   THPUtils_assert(THPUtils_(checkReal)(number_arg), "fill_ expects %s, "
-      "but got %s", THPUtils_typeTraits<real>::python_type_str,
+      "but got %s", THPUtils_typeTraits<ntype>::python_type_str,
       THPUtils_typename(number_arg));
   THStorage_(fill)(LIBRARY_STATE self->cdata, THPUtils_(unpackReal)(number_arg));
   Py_INCREF(self);
@@ -95,7 +95,7 @@ static PyObject * THPStorage_(fromBuffer)(PyObject *_unused, PyObject *args, PyO
   Py_buffer buffer;
   static char *kwlist[] = {"buffer", "byte_order", "count", "offset", NULL};
   const char* argtypes;
-#if defined(TH_REAL_IS_BYTE) || defined(TH_REAL_IS_CHAR)
+#if defined(TH_NTYPE_IS_BYTE) || defined(TH_NTYPE_IS_CHAR)
   argtypes = "O|snn";
 #else
   argtypes = "Os|nn";
@@ -106,7 +106,7 @@ static PyObject * THPStorage_(fromBuffer)(PyObject *_unused, PyObject *args, PyO
     return NULL;
   }
 
-#if !(defined(TH_REAL_IS_BYTE) || defined(TH_REAL_IS_CHAR))
+#if !(defined(TH_NTYPE_IS_BYTE) || defined(TH_NTYPE_IS_CHAR))
   THPByteOrder byte_order;
   if (strcmp(byte_order_str, "native") == 0) {
     byte_order = THP_nativeByteOrder();
@@ -134,16 +134,16 @@ static PyObject * THPStorage_(fromBuffer)(PyObject *_unused, PyObject *args, PyO
   }
 
   if (count < 0) {
-    if ((buffer.len - offset) % sizeof(real) != 0) {
+    if ((buffer.len - offset) % sizeof(ntype) != 0) {
       PyErr_Format(PyExc_ValueError, "buffer size (%" PRId64 ") must be a multiple "
-          "of element size (%" PRId64 ")", (int64_t)buffer.len, (int64_t)sizeof(real));
+          "of element size (%" PRId64 ")", (int64_t)buffer.len, (int64_t)sizeof(ntype));
       PyBuffer_Release(&buffer);
       return NULL;
     }
-    count = (buffer.len - offset) / sizeof(real);
+    count = (buffer.len - offset) / sizeof(ntype);
   }
 
-  if (offset + (count * (Py_ssize_t)sizeof(real)) > buffer.len) {
+  if (offset + (count * (Py_ssize_t)sizeof(ntype)) > buffer.len) {
     PyErr_Format(PyExc_ValueError, "buffer has only %" PRId64 " elements after offset "
         "%" PRId64 ", but specified a size of %" PRId64, (int64_t)(buffer.len - offset),
         (int64_t)offset, (int64_t)count);
@@ -154,20 +154,20 @@ static PyObject * THPStorage_(fromBuffer)(PyObject *_unused, PyObject *args, PyO
   uint8_t* src = (uint8_t*) buffer.buf;
   THStorage* storage = THStorage_(newWithSize)(count);
 
-#if defined(TH_REAL_IS_BYTE) || defined(TH_REAL_IS_CHAR)
+#if defined(TH_NTYPE_IS_BYTE) || defined(TH_NTYPE_IS_CHAR)
   memcpy(storage->data, src + offset, count);
-#elif defined(TH_REAL_IS_SHORT)
+#elif defined(TH_NTYPE_IS_SHORT)
   THP_decodeInt16Buffer(storage->data, src + offset, byte_order, count);
-#elif defined(TH_REAL_IS_INT)
+#elif defined(TH_NTYPE_IS_INT)
   THP_decodeInt32Buffer(storage->data, src + offset, byte_order, count);
-#elif defined(TH_REAL_IS_LONG)
+#elif defined(TH_NTYPE_IS_LONG)
   // TODO: remove the cast
   THP_decodeInt64Buffer((int64_t*) storage->data, src + offset, byte_order, count);
-#elif defined(TH_REAL_IS_HALF)
+#elif defined(TH_NTYPE_IS_HALF)
   THP_decodeHalfBuffer(storage->data, src + offset, byte_order, count);
-#elif defined(TH_REAL_IS_FLOAT)
+#elif defined(TH_NTYPE_IS_FLOAT)
   THP_decodeFloatBuffer(storage->data, src + offset, byte_order, count);
-#elif defined(TH_REAL_IS_DOUBLE)
+#elif defined(TH_NTYPE_IS_DOUBLE)
   THP_decodeDoubleBuffer(storage->data, src + offset, byte_order, count);
 #else
 #error "Unknown type"

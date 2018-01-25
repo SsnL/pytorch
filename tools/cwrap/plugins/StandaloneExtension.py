@@ -96,11 +96,11 @@ PyObject * $name(PyObject *_unused, PyObject *args)
         'long': 'int',
         'int64_t': 'int',
         'int': 'int',
-        'real': 'float',
+        'ntype': 'float',
         'half': 'float',
         'double': 'float',
         'float': 'float',
-        'accreal': 'float',
+        'accntype': 'float',
         'bool': 'bool',
         'void*': 'int',
     }

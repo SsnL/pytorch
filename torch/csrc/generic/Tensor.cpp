@@ -19,7 +19,7 @@
 #define COPY_FROM_ARRAY_CPU(ELTYPE, ARRAY, STORAGE, SIZE, CONVERSION)   \
 { \
   ELTYPE *arrdata = (ELTYPE*)PyArray_DATA(ARRAY);                       \
-  real *data = STORAGE->data;                                           \
+  ntype *data = STORAGE->data;                                           \
   for (size_t i=0; i<SIZE; i++) {                                       \
     data[i] = CONVERSION(arrdata[i]);                                   \
   }                                                                     \
@@ -31,7 +31,7 @@
   memcpy(STORAGE->data, arrdata, SIZE * 2);                 \
 }
 
-#ifdef THC_REAL_IS_HALF
+#ifdef THC_NTYPE_IS_HALF
 #define COPY_FROM_ARRAY_CUDA(ELTYPE, ARRAY, STORAGE, SIZE, CONVERSION)  \
 { \
   ELTYPE *arrdata = (ELTYPE*)PyArray_DATA(ARRAY);                       \
@@ -62,7 +62,7 @@
   THCStorage_(copyCPU)(LIBRARY_STATE STORAGE, cpu_storage);             \
   THHostStorage_(free)(cpu_storage);                                    \
 }
-#endif  // THC_REAL_IS_HALF
+#endif  // THC_NTYPE_IS_HALF
 
 #define COPY_FROM_HALF_ARRAY_CUDA_HALF(ARRAY, STORAGE, SIZE)            \
 { \
@@ -76,23 +76,23 @@
 
 #define IDENTITY(X) (X)
 
-// Fill in the conversions that we know at compile time (as determined by TH[C]_REAL_IS_HALF).
+// Fill in the conversions that we know at compile time (as determined by TH[C]_NTYPE_IS_HALF).
 // We need to keep a COPY_FROM_HALF_ARRAY variant since we know the input type only at runtime.
 #ifdef THC_GENERIC_FILE
 #define COPY_FROM_ARRAY(ELTYPE, ARRAY, STORAGE, SIZE)   COPY_FROM_ARRAY_CUDA(ELTYPE, ARRAY, STORAGE, SIZE, IDENTITY)
-#ifdef THC_REAL_IS_HALF
+#ifdef THC_NTYPE_IS_HALF
 #define COPY_FROM_HALF_ARRAY                            COPY_FROM_HALF_ARRAY_CUDA_HALF
 #else
 #define COPY_FROM_HALF_ARRAY(ARRAY, STORAGE, SIZE)      COPY_FROM_ARRAY_CUDA(THHalf, ARRAY, STORAGE, SIZE, TH_half2float)
-#endif  // THC_REAL_IS_HALF
+#endif  // THC_NTYPE_IS_HALF
 #else  // THC_GENERIC_FILE
-#ifdef TH_REAL_IS_HALF
+#ifdef TH_NTYPE_IS_HALF
 #define COPY_FROM_ARRAY(ELTYPE, ARRAY, STORAGE, SIZE)   COPY_FROM_ARRAY_CPU(ELTYPE, ARRAY, STORAGE, SIZE, TH_float2half)
 #define COPY_FROM_HALF_ARRAY                            COPY_FROM_HALF_ARRAY_CPU_HALF
 #else
 #define COPY_FROM_ARRAY(ELTYPE, ARRAY, STORAGE, SIZE)   COPY_FROM_ARRAY_CPU(ELTYPE, ARRAY, STORAGE, SIZE, IDENTITY)
 #define COPY_FROM_HALF_ARRAY(ARRAY, STORAGE, SIZE)      COPY_FROM_ARRAY_CPU(THHalf, ARRAY, STORAGE, SIZE, TH_half2float)
-#endif  // TH_REAL_IS_HALF
+#endif  // TH_NTYPE_IS_HALF
 #endif  // THC_GENERIC_FILE
 
 #endif  // WITH_NUMPY
@@ -308,15 +308,15 @@ static PyObject * THPTensor_(pynew)(PyTypeObject *type, PyObject *args, PyObject
 
     // half tensors don't have CPU counterparts so we have to buffer them as
     // floats while loading
-#ifndef THC_REAL_IS_HALF
-#define load_real real
-#define UNPACK_REAL(item) THPUtils_(unpackReal)(item)
+#ifndef THC_NTYPE_IS_HALF
+#define load_real ntype
+#define UNPACK_NTYPE(item) THPUtils_(unpackReal)(item)
 #else
 #define load_real float
-#define UNPACK_REAL(item) THPFloatUtils_unpackReal(item)
+#define UNPACK_NTYPE(item) THPFloatUtils_unpackReal(item)
 #endif
 #if !defined(THC_GENERIC_FILE) && !defined(THD_GENERIC_FILE)
-    real *data = tensor->storage->data;
+    ntype *data = tensor->storage->data;
 #else
     size_t numel = THTensor_(numel)(LIBRARY_STATE tensor);
     std::unique_ptr<load_real[]> data_guard(new load_real[numel]);
@@ -333,20 +333,20 @@ static PyObject * THPTensor_(pynew)(PyTypeObject *type, PyObject *args, PyObject
           // We've checked the length earlier, so it must have been an error
           if (!item)
             return NULL;
-          *data++ = UNPACK_REAL(item);
+          *data++ = UNPACK_NTYPE(item);
         }
       } catch(std::runtime_error &e) {
         std::string index = THPTensor_(indicesToString)(indices, ndims-1);
         THPUtils_setError("tried to construct a tensor from a %s%s sequence, "
             "but found an item of type %s at index %s",
             (ndims > 1 ? "nested " : ""),
-            THPUtils_typeTraits<real>::python_type_str,
+            THPUtils_typeTraits<ntype>::python_type_str,
             THPUtils_typename(item.get()),
             index.c_str());
         return NULL;
       }
 #ifdef THC_GENERIC_FILE
-#ifdef THC_REAL_IS_HALF
+#ifdef THC_NTYPE_IS_HALF
       THFloatStorage *cpu_storage = THFloatStorage_newWithData(data_guard.get(), numel);
       cpu_storage->flag &= ~TH_STORAGE_FREEMEM;
       THCudaHalfStorage_copyFloat(LIBRARY_STATE tensor->storage, cpu_storage);
@@ -358,7 +358,7 @@ static PyObject * THPTensor_(pynew)(PyTypeObject *type, PyObject *args, PyObject
       THHostStorage_(free)(cpu_storage);
 #endif
 #endif
-#undef UNPACK_REAL
+#undef UNPACK_NTYPE
 #undef load_real
 
       // Update the counters
@@ -528,7 +528,7 @@ static bool THPTensor_(_indexOnce)(PyObject *index, int &indexed_dim,
   return true;
 }
 
-#ifndef TH_REAL_IS_HALF
+#ifndef TH_NTYPE_IS_HALF
 
 static bool THPTensor_(_checkSingleSequenceTriggersAdvancedIndexing)(PyObject *arg) {
   if (PySequence_Check(arg) && !PyTuple_Check(arg)) {
@@ -1175,7 +1175,7 @@ static bool THPTensor_(_advancedIndexSet)(PyObject *index, THTensorPtr &dest, Py
 
   if (success) {
     if (THPUtils_(checkReal)(src)) {
-      real v = THPUtils_(unpackReal)(src);
+      ntype v = THPUtils_(unpackReal)(src);
       THTensor_(indexFill)(LIBRARY_STATE flattened, 0, linearIndices, v);
     } else if (THPTensor_(Check)(src)) {
       // Because we are doing an index copy, we need to make sure of two things:
@@ -1196,7 +1196,7 @@ static bool THPTensor_(_advancedIndexSet)(PyObject *index, THTensorPtr &dest, Py
     } else {
       THPUtils_setError("can't assign %s to a " THPTensorStr " using a LongTensor "
           "(only " THPTensorStr " or %s are supported)",
-          THPUtils_typename(src), THPUtils_typeTraits<real>::python_type_str);
+          THPUtils_typename(src), THPUtils_typeTraits<ntype>::python_type_str);
       success = false;
     }
   }
@@ -1295,7 +1295,7 @@ static PyObject* THPTensor_(advancedIndexSelect)(THPTensor *self, PyObject *args
   END_HANDLE_TH_ERRORS
 }
 
-#endif // TH_REAL_IS_HALF
+#endif // TH_NTYPE_IS_HALF
 
 // Handles indexing into a Tensor given a tuple, ellipses, sequence, etc. index
 static bool THPTensor_(_index)(THPTensor *self, PyObject *index,
@@ -1388,7 +1388,7 @@ static PyObject * THPTensor_(getValue)(THPTensor *self, PyObject *index)
 {
   HANDLE_TH_ERRORS
 
-#ifndef TH_REAL_IS_HALF
+#ifndef TH_NTYPE_IS_HALF
 #if defined(THC_GENERIC_FILE)
   THCPByteTensor *mask = THCPByteTensor_Check(index) ? (THCPByteTensor*)index : NULL;
   THCPAutoGPU __gpu_guard(NULL, (PyObject*)self);
@@ -1431,7 +1431,7 @@ static PyObject * THPTensor_(getValue)(THPTensor *self, PyObject *index)
   int64_t storage_offset;
 
   // Check and see if the indexing object triggers advanced indexing semantics
-#ifndef TH_REAL_IS_HALF
+#ifndef TH_NTYPE_IS_HALF
   if (THPTensor_(_checkAdvancedIndexing)(self, index)) {
     tresult = THTensor_(newWithTensor)(LIBRARY_STATE self->cdata);
     if (!THPTensor_(_advancedIndexGet)(index, tresult)) {
@@ -1440,7 +1440,7 @@ static PyObject * THPTensor_(getValue)(THPTensor *self, PyObject *index)
     // TODO: needed?
     return THPTensor_(New)(tresult.release());
   }
-#endif // TH_REAL_IS_HALF
+#endif // TH_NTYPE_IS_HALF
 
   if (!THPTensor_(_index)(self, index, tresult, sresult, storage_offset))
     return NULL;
@@ -1465,7 +1465,7 @@ static int THPTensor_(setValue)(THPTensor *self, PyObject *index, PyObject *valu
 {
   HANDLE_TH_ERRORS
 
-#ifndef TH_REAL_IS_HALF
+#ifndef TH_NTYPE_IS_HALF
 #if defined(THC_GENERIC_FILE)
   THCPByteTensor *mask = THCPByteTensor_Check(index) ? (THCPByteTensor*)index : NULL;
   THCPAutoGPU __gpu_guard(NULL, (PyObject*)self);
@@ -1476,14 +1476,14 @@ static int THPTensor_(setValue)(THPTensor *self, PyObject *index, PyObject *valu
 #endif
   if (mask) {
     if (THPUtils_(checkReal)(value)) {
-      real v = THPUtils_(unpackReal)(value);
+      ntype v = THPUtils_(unpackReal)(value);
       THTensor_(maskedFill)(LIBRARY_STATE self->cdata, mask->cdata, v);
     } else if (THPTensor_(Check)(value)) {
       THTensor_(maskedCopy)(LIBRARY_STATE self->cdata, mask->cdata, ((THPTensor*)value)->cdata);
     } else {
       THPUtils_setError("can't assign %s to a " THPTensorStr " using a mask "
           "(only " THPTensorStr " or %s are supported)",
-          THPUtils_typename(value), THPUtils_typeTraits<real>::python_type_str);
+          THPUtils_typename(value), THPUtils_typeTraits<ntype>::python_type_str);
     }
     return 0;
   }
@@ -1506,14 +1506,14 @@ static int THPTensor_(setValue)(THPTensor *self, PyObject *index, PyObject *valu
     }
 
     if (THPUtils_(checkReal)(value)) {
-      real v = THPUtils_(unpackReal)(value);
+      ntype v = THPUtils_(unpackReal)(value);
       THTensor_(indexFill)(LIBRARY_STATE self->cdata, 0, index_t, v);
     } else if (THPTensor_(Check)(value)) {
       THTensor_(indexCopy)(LIBRARY_STATE self->cdata, 0, index_t, ((THPTensor*)value)->cdata);
     } else {
       THPUtils_setError("can't assign %s to a " THPTensorStr " using a LongTensor "
           "(only " THPTensorStr " or %s are supported)",
-          THPUtils_typename(value), THPUtils_typeTraits<real>::python_type_str);
+          THPUtils_typename(value), THPUtils_typeTraits<ntype>::python_type_str);
     }
     return 0;
   }
@@ -1524,7 +1524,7 @@ static int THPTensor_(setValue)(THPTensor *self, PyObject *index, PyObject *valu
   int64_t storage_offset;
 
   // Check and see if the indexing object triggers advanced indexing semantics
-#ifndef TH_REAL_IS_HALF
+#ifndef TH_NTYPE_IS_HALF
   if (THPTensor_(_checkAdvancedIndexing)(self, index)) {
     tresult = THTensor_(newWithTensor)(LIBRARY_STATE self->cdata);
     if (!THPTensor_(_advancedIndexSet)(index, tresult, value)) {
@@ -1533,14 +1533,14 @@ static int THPTensor_(setValue)(THPTensor *self, PyObject *index, PyObject *valu
     return 0;
   }
 
-#endif // TH_REAL_IS_HALF
+#endif // TH_NTYPE_IS_HALF
   if (!THPTensor_(_index)(self, index, tresult, sresult, storage_offset))
     return -1;
   if (sresult) {
     if (!force_tensor) {
       if (!THPUtils_(checkReal)(value)) {
         THPUtils_setError("can't assign a %s to a scalar value of type %s",
-            THPUtils_typename(value), THPUtils_typeTraits<real>::python_type_str);
+            THPUtils_typename(value), THPUtils_typeTraits<ntype>::python_type_str);
         return -1;
       }
       THStorage_(set)(LIBRARY_STATE sresult, storage_offset, THPUtils_(unpackReal)(value));
@@ -1551,7 +1551,7 @@ static int THPTensor_(setValue)(THPTensor *self, PyObject *index, PyObject *valu
   }
   if (tresult) {
     if (THPUtils_(checkReal)(value)) {
-#ifndef TH_REAL_IS_HALF
+#ifndef TH_NTYPE_IS_HALF
       THTensor_(fill)(LIBRARY_STATE tresult.get(), THPUtils_(unpackReal)(value));
 #else
       throw std::runtime_error("torch.HalfTensors don't support scalar assignments");
@@ -1692,7 +1692,7 @@ PyTypeObject THPTensorStatelessType = {
   0,                                     /* tp_weaklist */
 };
 
-#if !defined(TH_REAL_IS_HALF) && !defined(THD_GENERIC_FILE)
+#if !defined(TH_NTYPE_IS_HALF) && !defined(THD_GENERIC_FILE)
 #include "SparseTensor.cpp"
 #endif
 
@@ -1725,7 +1725,7 @@ void THPTensor_(initCopyMethods)()
 #endif
   THPInsertTensorCopyFunction(h, &THCTensor_(copyAsyncCPU), true);
   // add CPU <- GPU copies to base type
-  #define THCpuTensor_(name) TH_CONCAT_4(TH, Real, Tensor_, name)
+  #define THCpuTensor_(name) TH_CONCAT_4(TH, Ntype, Tensor_, name)
   extern THPCopyList THCpuTensor_(copy_functions);
   auto& b = THCpuTensor_(copy_functions);
   THPInsertTensorCopyFunction(b, &THCpuTensor_(copyCudaByte));
@@ -1749,9 +1749,9 @@ void THPTensor_(initCopyMethods)()
   auto& h = THTensor_(copy_functions);
   THPInsertCopyFunction(h, &THDTensor_(copy));
 
-  #define THCpuTensor_(name) TH_CONCAT_4(TH, Real, Tensor_, name)
-  #define THCpuTensor TH_CONCAT_3(TH, Real, Tensor)
-  #define THPCpuTensorType TH_CONCAT_3(THP, Real, TensorType)
+  #define THCpuTensor_(name) TH_CONCAT_4(TH, Ntype, Tensor_, name)
+  #define THCpuTensor TH_CONCAT_3(TH, Ntype, Tensor)
+  #define THPCpuTensorType TH_CONCAT_3(THP, Ntype, TensorType)
   extern THPCopyList THCpuTensor_(copy_functions);
   auto& b = THCpuTensor_(copy_functions);
 
@@ -1766,7 +1766,7 @@ void THPTensor_(initCopyMethods)()
 
 bool THPTensor_(init)(PyObject *module)
 {
-#if !defined(THC_GENERIC_FILE) && !defined(TH_REAL_IS_HALF)
+#if !defined(THC_GENERIC_FILE) && !defined(TH_NTYPE_IS_HALF)
   THVector_(vectorDispatchInit)();
 #endif
   THPTensorType.tp_methods = THPTensor_(methods);
@@ -1784,14 +1784,14 @@ bool THPTensor_(init)(PyObject *module)
 
 bool THPTensor_(postInit)(PyObject *module)
 {
-  THPTensorClass = PyObject_GetAttrString(module,(char*)TH_CONCAT_STRING_2(Real,Tensor));
+  THPTensorClass = PyObject_GetAttrString(module,(char*)TH_CONCAT_STRING_2(Ntype,Tensor));
   if (!THPTensorClass) return false;
 
   bool is_cuda = false;
 #ifdef THC_GENERIC_FILE
   is_cuda = true;
 #endif
-  const char *type_name = TH_CONCAT_STRING_2(Real,);
+  const char *type_name = TH_CONCAT_STRING_2(Ntype,);
   torch::registerPyTypeObject((PyTypeObject*)THPTensorClass, type_name, is_cuda, false);
   return true;
 }

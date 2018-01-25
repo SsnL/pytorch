@@ -116,7 +116,7 @@ static PyObject * THPStorage_(pynew)(PyTypeObject *type, PyObject *args, PyObjec
         "%" PRId64 ", but the viewed storage has only %" PRId64 " element(s) after offset %" PRId64,
         size, numel - offset, offset);
 
-    real *data_ptr = storage_arg->cdata->data + offset;
+    ntype *data_ptr = storage_arg->cdata->data + offset;
     THStoragePtr storage(THStorage_(newWithData)(LIBRARY_STATE data_ptr, size));
     storage->flag = TH_STORAGE_REFCOUNTED | TH_STORAGE_VIEW;
     storage->view = storage_arg->cdata;
@@ -139,7 +139,7 @@ static PyObject * THPStorage_(pynew)(PyTypeObject *type, PyObject *args, PyObjec
     try {
       for (Py_ssize_t i = 0; i < length; i++) {
         item = PySequence_GetItem(first_arg, i);
-        real value = THPUtils_(unpackReal)(item.get());
+        ntype value = THPUtils_(unpackReal)(item.get());
 #if !defined(THC_GENERIC_FILE)
         self->cdata->data[i] = value;
 #else
@@ -152,7 +152,7 @@ static PyObject * THPStorage_(pynew)(PyTypeObject *type, PyObject *args, PyObjec
           "but one of the items was of type %s instead of %s",
           THPUtils_typename(first_arg),
           THPUtils_typename(item.get()),
-          THPUtils_typeTraits<real>::python_type_str);
+          THPUtils_typeTraits<ntype>::python_type_str);
       return NULL;
     }
     return (PyObject*)self.release();
@@ -193,7 +193,7 @@ static PyObject * THPStorage_(get)(THPStorage *self, PyObject *index)
               "size %" PRId64, (int64_t) nindex, (int64_t) self->cdata->size);
       return NULL;
     }
-    real value = THStorage_(get)(LIBRARY_STATE self->cdata, nindex);
+    ntype value = THStorage_(get)(LIBRARY_STATE self->cdata, nindex);
     return THPUtils_(newReal)(value);
   /* Slice index */
   } else if (PySlice_Check(index)) {
@@ -211,7 +211,7 @@ static PyObject * THPStorage_(get)(THPStorage *self, PyObject *index)
       return NULL;
     }
 
-    real *data = THStorage_(data)(LIBRARY_STATE self->cdata);
+    ntype *data = THStorage_(data)(LIBRARY_STATE self->cdata);
     THStoragePtr new_storage(THStorage_(newWithData)(LIBRARY_STATE data + start, slicelength));
     new_storage->flag = TH_STORAGE_REFCOUNTED | TH_STORAGE_VIEW;
     new_storage->view = self->cdata;
@@ -233,12 +233,12 @@ static int THPStorage_(set)(THPStorage *self, PyObject *index, PyObject *value)
   HANDLE_TH_ERRORS
   if (!THPUtils_(checkReal)(value)) {
     THPUtils_setError("can only set storage content with a %s, but got "
-        "%s instead", THPUtils_typeTraits<real>::python_type_str,
+        "%s instead", THPUtils_typeTraits<ntype>::python_type_str,
         THPUtils_typename(value));
     return -1;
   }
 
-  real rvalue = THPUtils_(unpackReal)(value);
+  ntype rvalue = THPUtils_(unpackReal)(value);
   if (THPUtils_checkLong(index)) {
     int64_t nindex = THPUtils_unpackLong(index);
     THStorage_(set)(LIBRARY_STATE self->cdata, nindex, rvalue);
@@ -347,7 +347,7 @@ void THPStorage_(initCopyMethods)()
   THPInsertStorageCopyFunction(h, &THStorage_(copyCudaHalf));
 #endif
   // add CPU <- GPU copies to base type
-  #define THCpuStorage_(name) TH_CONCAT_4(TH, Real, Storage_, name)
+  #define THCpuStorage_(name) TH_CONCAT_4(TH, Ntype, Storage_, name)
   extern THPCopyList THCpuStorage_(copy_functions);
   auto& b = THCpuStorage_(copy_functions);
   THPInsertStorageCopyFunction(b, &THCpuStorage_(copyCudaByte));
@@ -390,14 +390,14 @@ bool THPStorage_(init)(PyObject *module)
 
 void THPStorage_(postInit)(PyObject *module)
 {
-  THPStorageClass = PyObject_GetAttrString(module,(char*)TH_CONCAT_STRING_2(Real,Storage));
+  THPStorageClass = PyObject_GetAttrString(module,(char*)TH_CONCAT_STRING_2(Ntype,Storage));
   if (!THPStorageClass) throw python_error();
 
   bool is_cuda = false;
 #ifdef THC_GENERIC_FILE
   is_cuda = true;
 #endif
-  const char *type_name = TH_CONCAT_STRING_2(Real,);
+  const char *type_name = TH_CONCAT_STRING_2(Ntype,);
   torch::registerStoragePyTypeObject((PyTypeObject*)THPStorageClass, type_name, is_cuda, false);
 }
 

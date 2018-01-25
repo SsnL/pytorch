@@ -908,7 +908,7 @@ static PyObject* initModule() {
 
 #ifdef WITH_CUDA
   // This will only initialise base classes and attach them to library namespace
-  // They won't be ready for real usage until importing cuda module, that will
+  // They won't be ready for ntype usage until importing cuda module, that will
   // complete the process (but it defines Python classes before calling back into
   // C, so these lines have to execute first)..
   ASSERT_TRUE(THCPDoubleStorage_init(module));

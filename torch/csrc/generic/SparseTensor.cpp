@@ -292,13 +292,13 @@ bool THSPTensor_(init)(PyObject *module)
 
 bool THSPTensor_(postInit)(PyObject *module)
 {
-  THSPTensorClass = PyObject_GetAttrString(module, TH_CONCAT_STRING_2(Real,Tensor));
+  THSPTensorClass = PyObject_GetAttrString(module, TH_CONCAT_STRING_2(Ntype,Tensor));
   if (!THSPTensorClass) return false;
   bool is_cuda = false;
 #ifdef THC_GENERIC_FILE
   is_cuda = true;
 #endif
-  const char *type_name = TH_CONCAT_STRING_2(Real,);
+  const char *type_name = TH_CONCAT_STRING_2(Ntype,);
   torch::registerPyTypeObject((PyTypeObject*)THSPTensorClass, type_name, is_cuda, true);
   return true;
 }

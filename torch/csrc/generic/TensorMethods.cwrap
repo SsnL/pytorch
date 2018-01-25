@@ -1,15 +1,15 @@
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE) || \
-    defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE) || \
-    defined(THC_REAL_IS_HALF)
-#define RealStr "float"
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE) || \
+    defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE) || \
+    defined(THC_NTYPE_IS_HALF)
+#define NtypeStr "float"
 #else
-#define RealStr "int"
+#define NtypeStr "int"
 #endif
 
-#ifdef THC_REAL_IS_HALF
-#define AS_REAL(x) THC_float2half(x)
+#ifdef THC_NTYPE_IS_HALF
+#define AS_NTYPE(x) THC_float2half(x)
 #else
-#define AS_REAL(x) x
+#define AS_NTYPE(x) x
 #endif
 
 #ifdef THD_GENERIC_FILE
@@ -25,49 +25,49 @@
 
 #define IS_CUDA true
 
-#if defined(THC_REAL_IS_BYTE)
+#if defined(THC_NTYPE_IS_BYTE)
 #define CUDA_BYTE 1
 #else
 #define CUDA_BYTE 0
 #endif
 
-#if defined(THC_REAL_IS_CHAR)
+#if defined(THC_NTYPE_IS_CHAR)
 #define CUDA_CHAR 1
 #else
 #define CUDA_CHAR 0
 #endif
 
-#if defined(THC_REAL_IS_SHORT)
+#if defined(THC_NTYPE_IS_SHORT)
 #define CUDA_SHORT 1
 #else
 #define CUDA_SHORT 0
 #endif
 
-#if defined(THC_REAL_IS_INT)
+#if defined(THC_NTYPE_IS_INT)
 #define CUDA_INT 1
 #else
 #define CUDA_INT 0
 #endif
 
-#if defined(THC_REAL_IS_LONG)
+#if defined(THC_NTYPE_IS_LONG)
 #define CUDA_LONG 1
 #else
 #define CUDA_LONG 0
 #endif
 
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
 #define CUDA_FLOAT 1
 #else
 #define CUDA_FLOAT 0
 #endif
 
-#if defined(THC_REAL_IS_DOUBLE)
+#if defined(THC_NTYPE_IS_DOUBLE)
 #define CUDA_DOUBLE 1
 #else
 #define CUDA_DOUBLE 0
 #endif
 
-#if defined(THC_REAL_IS_HALF)
+#if defined(THC_NTYPE_IS_HALF)
 #define CUDA_HALF 1
 #else
 #define CUDA_HALF 0
@@ -169,5 +169,5 @@ typedef THLongStorage THStride;
 #undef THBoolTensor
 #undef THPBoolTensor
 #undef THPBoolTensorClass
-#undef RealStr
-#undef AS_REAL
+#undef NtypeStr
+#undef AS_NTYPE

@@ -42,8 +42,8 @@ class THPPlugin(CWrapPlugin):
         'bool': Template('($arg == Py_True ? true : false)'),
         'float': Template('THPFloatUtils_unpackReal($arg)'),
         'double': Template('THPDoubleUtils_unpackReal($arg)'),
-        'real': Template('THPUtils_(unpackReal)($arg)'),
-        'accreal': Template('THPUtils_(unpackAccreal)($arg)'),
+        'ntype': Template('THPUtils_(unpackReal)($arg)'),
+        'accntype': Template('THPUtils_(unpackAccreal)($arg)'),
     }
 
     TYPE_CHECK = {
@@ -81,8 +81,8 @@ class THPPlugin(CWrapPlugin):
         'bool': Template('PyBool_Check($arg)'),
         'float': Template('THPFloatUtils_checkReal($arg)'),
         'double': Template('THPDoubleUtils_checkReal($arg)'),
-        'real': Template('THPUtils_(checkReal)($arg)'),
-        'accreal': Template('THPUtils_(checkAccreal)($arg)'),
+        'ntype': Template('THPUtils_(checkReal)($arg)'),
+        'accntype': Template('THPUtils_(checkAccreal)($arg)'),
     }
 
     SIZE_VARARG_CHECK = Template('THPUtils_tryUnpackLongVarArgs(args, $idx, __size)')
@@ -99,9 +99,9 @@ class THPPlugin(CWrapPlugin):
         'long': Template('return PyInt_FromLong($result);'),
         'int64_t': Template('return PyInt_FromLong($result);'),
         'int': Template('return PyLong_FromLong($result);'),
-        'accreal': Template('return THPUtils_(newAccreal)($result);'),
+        'accntype': Template('return THPUtils_(newAccreal)($result);'),
         'self': Template('Py_INCREF(self);\nreturn (PyObject*)self;'),
-        'real': Template('return THPUtils_(newReal)($result);'),
+        'ntype': Template('return THPUtils_(newReal)($result);'),
     }
 
     TENSOR_METHODS_DECLARATION = Template("""
@@ -189,9 +189,9 @@ ${cpu}
         'long': 'int',
         'int64_t': 'int',
         'int': 'int',
-        'real': '" RealStr "',
+        'ntype': '" NtypeStr "',
         'double': 'float',
-        'accreal': '" RealStr "',
+        'accntype': '" NtypeStr "',
         'bool': 'bool',
         'const char*': 'bool',  # Can come only from bool option.
     }
@@ -358,7 +358,7 @@ ${cpu}
         def backends_types_to_defined_if_string(declaration):
             # A declaration has two fields: 'backend', which stores a list of
             # backends (currently 'cpu' and 'cuda') the declaration applies
-            # to, and 'types', which stores a list of real types the
+            # to, and 'types', which stores a list of ntype types the
             # declaration applies to. In PyTorch, when a function is only
             # supported by a subset of types, we wrap it in macro definition
             # checks.
@@ -373,17 +373,17 @@ ${cpu}
             backends = declaration['backends']
             all_backends = ['CPU', 'CUDA']
 
-            def get_defined_string(backend, real):
+            def get_defined_string(backend, ntype):
                 if backend == 'CUDA':
-                    if real == 'all':
+                    if ntype == 'all':
                         return "IS_CUDA"
                     else:
-                        return 'CUDA_{0}'.format(real.upper())
+                        return 'CUDA_{0}'.format(ntype.upper())
                 else:
-                    if real == 'all':
+                    if ntype == 'all':
                         return "!IS_CUDA"
                     else:
-                        return 'defined(TH_REAL_IS_{0})'.format(real.upper())
+                        return 'defined(TH_NTYPE_IS_{0})'.format(ntype.upper())
 
             def expand_composite_type(p, t):
                 if t == 'floating_point':
@@ -442,7 +442,7 @@ ${cpu}
                     declaration['defined_if'] = dfstr
 
             if not declaration.get('cpu_half', False):
-                defined_if = '!defined(TH_REAL_IS_HALF)'
+                defined_if = '!defined(TH_NTYPE_IS_HALF)'
                 if 'defined_if' in declaration:
                     defined_if += ' && (' + declaration['defined_if'] + ')'
                 declaration['defined_if'] = defined_if
@@ -537,7 +537,7 @@ ${cpu}
             sparse=('' if not sparse else 'S'),
         )
         if sparse:
-            generated = '#if !defined(TH_REAL_IS_HALF) && !IS_DISTRIBUTED\n' + generated + '\n#endif\n\n'
+            generated = '#if !defined(TH_NTYPE_IS_HALF) && !IS_DISTRIBUTED\n' + generated + '\n#endif\n\n'
         return generated
 
     def process_full_file(self, code):

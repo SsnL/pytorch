@@ -1,4 +1,4 @@
-#if IS_CUDA || !defined(TH_REAL_IS_HALF)
+#if IS_CUDA || !defined(TH_NTYPE_IS_HALF)
 PyObject * THSPTensor_(size)(PyObject *self, PyObject *args, PyObject *kwargs)
 {
   HANDLE_TH_ERRORS
@@ -230,9 +230,9 @@ PyObject * THSPTensor_(new)(THPTensor *self, PyObject *args, PyObject *kwargs)
   arguments:
     - arg: THTensor* result
       output: True
-    - CONSTANT AS_REAL(0)
+    - CONSTANT AS_NTYPE(0)
     - argument 0
-    - CONSTANT AS_REAL(1)
+    - CONSTANT AS_NTYPE(1)
     - THSTensor* mat1
     - THTensor* mat2
 ]]
@@ -247,9 +247,9 @@ PyObject * THSPTensor_(new)(THPTensor *self, PyObject *args, PyObject *kwargs)
   arguments:
     - arg: THTensor* result
       output: True
-    - CONSTANT AS_REAL(0)
+    - CONSTANT AS_NTYPE(0)
     - argument 0
-    - CONSTANT AS_REAL(1)
+    - CONSTANT AS_NTYPE(1)
     - THSTensor* mat1
     - THTensor* mat2
 ]]
@@ -264,7 +264,7 @@ PyObject * THSPTensor_(new)(THPTensor *self, PyObject *args, PyObject *kwargs)
   arguments:
     - arg: THSTensor* result
       output: True
-    - CONSTANT AS_REAL(1)
+    - CONSTANT AS_NTYPE(1)
     - THSTensor* mat1
     - THTensor* mat2
 ]]
@@ -279,9 +279,9 @@ PyObject * THSPTensor_(new)(THPTensor *self, PyObject *args, PyObject *kwargs)
   arguments:
     - arg: THSTensor* result
       output: True
-    - CONSTANT AS_REAL(0)
+    - CONSTANT AS_NTYPE(0)
     - argument 0
-    - CONSTANT AS_REAL(1)
+    - CONSTANT AS_NTYPE(1)
     - THSTensor* mat1
     - THTensor* mat2
 ]]
@@ -296,11 +296,11 @@ PyObject * THSPTensor_(new)(THPTensor *self, PyObject *args, PyObject *kwargs)
   arguments:
     - arg: THSTensor* result
       output: True
-    - arg: real beta
-      default: AS_REAL(1)
+    - arg: ntype beta
+      default: AS_NTYPE(1)
     - THSTensor* self
-    - arg: real alpha
-      default: AS_REAL(1)
+    - arg: ntype alpha
+      default: AS_NTYPE(1)
     - THSTensor* mat1
     - THTensor* mat2
 ]]
@@ -317,8 +317,8 @@ PyObject * THSPTensor_(new)(THPTensor *self, PyObject *args, PyObject *kwargs)
     - arg: THTensor* result
       output: True
     - THTensor* mat1
-    - arg: real value
-      default: AS_REAL(1)
+    - arg: ntype value
+      default: AS_NTYPE(1)
     - THSTensor* mat2
 ]]
 
@@ -370,8 +370,8 @@ PyObject * THSPTensor_(new)(THPTensor *self, PyObject *args, PyObject *kwargs)
     - arg: THSTensor* result
       output: True
     - THSTensor* self
-    - arg: real value
-      default: AS_REAL(1)
+    - arg: ntype value
+      default: AS_NTYPE(1)
     - THSTensor* other
 ]]
 
@@ -383,8 +383,8 @@ PyObject * THSPTensor_(new)(THPTensor *self, PyObject *args, PyObject *kwargs)
   arguments:
     - THSTensor* self
     - THSTensor* self
-    - arg: real value
-      default: AS_REAL(1)
+    - arg: ntype value
+      default: AS_NTYPE(1)
     - THSTensor* other
 ]]
 
@@ -400,8 +400,8 @@ PyObject * THSPTensor_(new)(THPTensor *self, PyObject *args, PyObject *kwargs)
     - arg: THSTensor* result
       output: True
     - THSTensor* self
-    - arg: real value
-      default: AS_REAL(1)
+    - arg: ntype value
+      default: AS_NTYPE(1)
     - THSTensor* other
 ]]
 
@@ -413,8 +413,8 @@ PyObject * THSPTensor_(new)(THPTensor *self, PyObject *args, PyObject *kwargs)
   arguments:
     - THSTensor* self
     - THSTensor* self
-    - arg: real value
-      default: AS_REAL(1)
+    - arg: ntype value
+      default: AS_NTYPE(1)
     - THSTensor* other
 ]]
 
@@ -431,7 +431,7 @@ PyObject * THSPTensor_(new)(THPTensor *self, PyObject *args, PyObject *kwargs)
         - arg: THSTensor* result
           output: True
         - THSTensor* self
-        - real value
+        - ntype value
     - cname: cmul
       arguments:
         - arg: THSTensor* result
@@ -449,7 +449,7 @@ PyObject * THSPTensor_(new)(THPTensor *self, PyObject *args, PyObject *kwargs)
       arguments:
         - THSTensor* self
         - THSTensor* self
-        - real value
+        - ntype value
     - cname: cmul
       arguments:
         - THSTensor* self
@@ -469,7 +469,7 @@ PyObject * THSPTensor_(new)(THPTensor *self, PyObject *args, PyObject *kwargs)
     - arg: THSTensor* result
       output: True
     - THSTensor* self
-    - real value
+    - ntype value
 ]]
 
 [[
@@ -480,7 +480,7 @@ PyObject * THSPTensor_(new)(THPTensor *self, PyObject *args, PyObject *kwargs)
   arguments:
     - THSTensor* self
     - THSTensor* self
-    - real value
+    - ntype value
 ]]
 
 [[
@@ -501,7 +501,7 @@ PyObject * THSPTensor_(new)(THPTensor *self, PyObject *args, PyObject *kwargs)
     - arg: THSTensor* result
       output: True
     - THSTensor* self
-    - real value
+    - ntype value
 ]]
 
 [[

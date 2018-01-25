@@ -13,7 +13,7 @@
 #include <THC/THC.h>
 #endif
 
-#define THPUtils_(NAME) TH_CONCAT_4(THP,Real,Utils_,NAME)
+#define THPUtils_(NAME) TH_CONCAT_4(THP,Ntype,Utils_,NAME)
 
 #define THPUtils_typename(obj) (Py_TYPE(obj)->tp_name)
 
@@ -31,7 +31,7 @@
     (PyFloat_Check(object) ? PyFloat_AsDouble(object) :                        \
     PyLong_Check(object) ? PyLong_AsLongLong(object) :                         \
     PyInt_Check(object) ? PyInt_AsLong(object) :                               \
-    (throw std::runtime_error("Could not parse real"), 0))
+    (throw std::runtime_error("Could not parse ntype"), 0))
 
 #define THPUtils_checkReal_INT(object)                                         \
     (PyLong_Check(object) || PyInt_Check(object))
@@ -39,7 +39,7 @@
 #define THPUtils_unpackReal_INT(object)                                        \
     (PyLong_Check(object) ? PyLong_AsLongLong(object) :                        \
     PyInt_Check(object) ? PyInt_AsLong(object) :                               \
-    (throw std::runtime_error("Could not parse real"), 0))
+    (throw std::runtime_error("Could not parse ntype"), 0))
 #else /* PY_MAJOR_VERSION == 2 */
 #define THPUtils_checkReal_FLOAT(object)                                       \
     (PyFloat_Check(object) || PyLong_Check(object))
@@ -47,14 +47,14 @@
 #define THPUtils_unpackReal_FLOAT(object)                                      \
     (PyFloat_Check(object) ? PyFloat_AsDouble(object) :                        \
     PyLong_Check(object) ? PyLong_AsLongLong(object) :                         \
-    (throw std::runtime_error("Could not parse real"), 0))
+    (throw std::runtime_error("Could not parse ntype"), 0))
 
 #define THPUtils_checkReal_INT(object)                                         \
     PyLong_Check(object)
 
 #define THPUtils_unpackReal_INT(object)                                        \
     (PyLong_Check(object) ? PyLong_AsLongLong(object) :                        \
-    (throw std::runtime_error("Could not parse real"), 0))
+    (throw std::runtime_error("Could not parse ntype"), 0))
 #endif
 
 #define THPUtils_newReal_FLOAT(value) PyFloat_FromDouble(value)
@@ -143,12 +143,12 @@ void THPUtils_addPyMethodDefs(std::vector<PyMethodDef>& vector, PyMethodDef* met
 
 int THPUtils_getCallable(PyObject *arg, PyObject **result);
 
-#define THStoragePtr TH_CONCAT_3(TH,Real,StoragePtr)
-#define THTensorPtr  TH_CONCAT_3(TH,Real,TensorPtr)
-#define THPStoragePtr TH_CONCAT_3(THP,Real,StoragePtr)
-#define THPTensorPtr  TH_CONCAT_3(THP,Real,TensorPtr)
-#define THSTensorPtr  TH_CONCAT_3(THS,Real,TensorPtr)
-#define THSPTensorPtr  TH_CONCAT_3(THSP,Real,TensorPtr)
+#define THStoragePtr TH_CONCAT_3(TH,Ntype,StoragePtr)
+#define THTensorPtr  TH_CONCAT_3(TH,Ntype,TensorPtr)
+#define THPStoragePtr TH_CONCAT_3(THP,Ntype,StoragePtr)
+#define THPTensorPtr  TH_CONCAT_3(THP,Ntype,TensorPtr)
+#define THSTensorPtr  TH_CONCAT_3(THS,Ntype,TensorPtr)
+#define THSPTensorPtr  TH_CONCAT_3(THSP,Ntype,TensorPtr)
 
 typedef THPPointer<THPGenerator> THPGeneratorPtr;
 

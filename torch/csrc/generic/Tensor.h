@@ -2,7 +2,7 @@
 #define TH_GENERIC_FILE "generic/Tensor.h"
 #else
 
-#if defined(TH_REAL_IS_HALF) || defined(THD_GENERIC_FILE)
+#if defined(TH_NTYPE_IS_HALF) || defined(THD_GENERIC_FILE)
 #define GENERATE_SPARSE 0
 #else
 #define GENERATE_SPARSE 1

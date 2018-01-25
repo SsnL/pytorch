@@ -490,7 +490,7 @@ void GraphTask::init_to_execute(Function& graph_root, const function_list& outpu
           continue; // recurse
         }
       } else {
-        // NB: if we were using real recursion we could have saved some lookups
+        // NB: if we were using ntype recursion we could have saved some lookups
         // using a return value from recursive call. It would make this manually unrolled
         // version a lot more complicated, so I skipped that.
         auto & next_fns = frame.fn->next_functions;

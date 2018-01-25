@@ -20,7 +20,7 @@ from string import Template
 #        dims:tensor0.dim0,tensor1.dim1,tensor2.dim2
 # [types] if the tensors should be of different types than THTensor, specify as X where
 #         the actual type to use is THXTensor (i.e. Byte for THByteTensor).  If the type
-#         should be THTensor, use 'Real'
+#         should be THTensor, use 'Ntype'
 
 # For out of place:
 # Two args: expand the two args together
@@ -242,9 +242,9 @@ class Broadcast(CWrapPlugin):
                                          "that specify explicit dimensions")
                     types = p[len("types:"):].split(",")
                     assert(len(types) == (2 if op_c else 1))
-                    type_op_b = None if types[0] == "Real" else types[0]
+                    type_op_b = None if types[0] == "Ntype" else types[0]
                     if op_c:
-                        type_op_c = None if types[1] == "Real" else types[1]
+                        type_op_c = None if types[1] == "Ntype" else types[1]
 
             op_b_mapping = {
                 "op_a": op_a,

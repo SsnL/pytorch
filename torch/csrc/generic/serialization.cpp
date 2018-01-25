@@ -7,22 +7,22 @@
 
 void THPStorage_(writeFileRaw)(THStorage *self, int fd)
 {
-  real *data;
+  ntype *data;
   int64_t size = self->size;
 #ifndef THC_GENERIC_FILE
   data = self->data;
 #else
-  std::unique_ptr<char[]> cpu_data(new char[size * sizeof(real)]);
-  data = (real*)cpu_data.get();
-  THCudaCheck(cudaMemcpy(data, self->data, size * sizeof(real), cudaMemcpyDeviceToHost));
+  std::unique_ptr<char[]> cpu_data(new char[size * sizeof(ntype)]);
+  data = (ntype*)cpu_data.get();
+  THCudaCheck(cudaMemcpy(data, self->data, size * sizeof(ntype), cudaMemcpyDeviceToHost));
 #endif
   ssize_t result = write(fd, &size, sizeof(int64_t));
   if (result != sizeof(int64_t))
     throw std::system_error(result, std::system_category());
   // fast track for bytes and little endian
-  if (sizeof(real) == 1 || THP_nativeByteOrder() == THPByteOrder::THP_LITTLE_ENDIAN) {
+  if (sizeof(ntype) == 1 || THP_nativeByteOrder() == THPByteOrder::THP_LITTLE_ENDIAN) {
     char *bytes = (char *) data;
-    int64_t remaining = sizeof(real) * size;
+    int64_t remaining = sizeof(ntype) * size;
     while (remaining > 0) {
       // we write and read in 1GB blocks to avoid bugs on some OSes
       ssize_t result = write(fd, bytes, THMin(remaining, 1073741824));
@@ -35,33 +35,33 @@ void THPStorage_(writeFileRaw)(THStorage *self, int fd)
       throw std::system_error(result, std::system_category());
   } else {
     int64_t buffer_size = std::min(size, (int64_t)5000);
-    std::unique_ptr<uint8_t[]> le_buffer(new uint8_t[buffer_size * sizeof(real)]);
+    std::unique_ptr<uint8_t[]> le_buffer(new uint8_t[buffer_size * sizeof(ntype)]);
     for (int64_t i = 0; i < size; i += buffer_size) {
       size_t to_convert = std::min(size - i, buffer_size);
-      if (sizeof(real) == 2) {
+      if (sizeof(ntype) == 2) {
         THP_encodeInt16Buffer((uint8_t*)le_buffer.get(),
             (const int16_t*)data + i,
             THPByteOrder::THP_LITTLE_ENDIAN,
             to_convert);
-      } else if (sizeof(real) == 4) {
+      } else if (sizeof(ntype) == 4) {
         THP_encodeInt32Buffer((uint8_t*)le_buffer.get(),
             (const int32_t*)data + i,
             THPByteOrder::THP_LITTLE_ENDIAN,
             to_convert);
-      } else if (sizeof(real) == 8) {
+      } else if (sizeof(ntype) == 8) {
         THP_encodeInt64Buffer((uint8_t*)le_buffer.get(),
             (const int64_t*)data + i,
             THPByteOrder::THP_LITTLE_ENDIAN,
             to_convert);
       }
-      SYSCHECK(write(fd, le_buffer.get(), to_convert * sizeof(real)));
+      SYSCHECK(write(fd, le_buffer.get(), to_convert * sizeof(ntype)));
     }
   }
 }
 
 THStorage * THPStorage_(readFileRaw)(int fd, THStorage *_storage)
 {
-  real *data;
+  ntype *data;
   int64_t size;
   ssize_t result = read(fd, &size, sizeof(int64_t));
   if (result == 0)
@@ -81,14 +81,14 @@ THStorage * THPStorage_(readFileRaw)(int fd, THStorage *_storage)
 #ifndef THC_GENERIC_FILE
   data = storage->data;
 #else
-  std::unique_ptr<char[]> cpu_data(new char[size * sizeof(real)]);
-  data = (real*)cpu_data.get();
+  std::unique_ptr<char[]> cpu_data(new char[size * sizeof(ntype)]);
+  data = (ntype*)cpu_data.get();
 #endif
 
   // fast track for bytes and little endian
-  if (sizeof(real) == 1 || THP_nativeByteOrder() == THPByteOrder::THP_LITTLE_ENDIAN) {
+  if (sizeof(ntype) == 1 || THP_nativeByteOrder() == THPByteOrder::THP_LITTLE_ENDIAN) {
     char *bytes = (char *) data;
-    int64_t remaining = sizeof(real) * storage->size;
+    int64_t remaining = sizeof(ntype) * storage->size;
     while (remaining > 0) {
       // we write and read in 1GB blocks to avoid bugs on some OSes
       ssize_t result = read(fd, bytes, THMin(remaining, 1073741824));
@@ -103,21 +103,21 @@ THStorage * THPStorage_(readFileRaw)(int fd, THStorage *_storage)
       throw std::system_error(result, std::system_category());
   } else {
     int64_t buffer_size = std::min(size, (int64_t)5000);
-    std::unique_ptr<uint8_t[]> le_buffer(new uint8_t[buffer_size * sizeof(real)]);
+    std::unique_ptr<uint8_t[]> le_buffer(new uint8_t[buffer_size * sizeof(ntype)]);
     for (int64_t i = 0; i < size; i += buffer_size) {
       size_t to_convert = std::min(size - i, buffer_size);
-      SYSCHECK(read(fd, le_buffer.get(), sizeof(real) * to_convert));
-      if (sizeof(real) == 2) {
+      SYSCHECK(read(fd, le_buffer.get(), sizeof(ntype) * to_convert));
+      if (sizeof(ntype) == 2) {
         THP_decodeInt16Buffer((int16_t*)data + i,
             le_buffer.get(),
             THPByteOrder::THP_LITTLE_ENDIAN,
             to_convert);
-      } else if (sizeof(real) == 4) {
+      } else if (sizeof(ntype) == 4) {
         THP_decodeInt32Buffer((int32_t*)data + i,
             le_buffer.get(),
             THPByteOrder::THP_LITTLE_ENDIAN,
             to_convert);
-      } else if (sizeof(real) == 8) {
+      } else if (sizeof(ntype) == 8) {
         THP_decodeInt64Buffer((int64_t*)data + i,
             le_buffer.get(),
             THPByteOrder::THP_LITTLE_ENDIAN,
@@ -127,7 +127,7 @@ THStorage * THPStorage_(readFileRaw)(int fd, THStorage *_storage)
   }
 
 #ifdef THC_GENERIC_FILE
-  THCudaCheck(cudaMemcpy(storage->data, data, size * sizeof(real), cudaMemcpyHostToDevice));
+  THCudaCheck(cudaMemcpy(storage->data, data, size * sizeof(ntype), cudaMemcpyHostToDevice));
 #endif
   return storage.release();
 }

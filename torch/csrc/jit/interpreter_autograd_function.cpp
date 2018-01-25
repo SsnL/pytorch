@@ -97,7 +97,7 @@ autograd::variable_list InterpreterAutogradFunction::apply(
     // all stages from 1 to N-1. If a part of stage x graph is
     // reused in stage y (y > x), it is inlined by the tracer,
     // and so we need to copy next_fns because those Variables
-    // aren't real inputs to that stage, so that's the only place
+    // aren't ntype inputs to that stage, so that's the only place
     // where we can get them.
     for (auto copied_idx : stage_details_[stage_ + 1].copied_next_fns) {
       grad_fn->next_functions.push_back(next_functions[copied_idx]);

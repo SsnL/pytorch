@@ -1,7 +1,7 @@
-#if defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_FLOAT)
-#define BUILD_REAL_FMT "d"
+#if defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_FLOAT)
+#define BUILD_NTYPE_FMT "d"
 #else
-#define BUILD_REAL_FMT "L"
+#define BUILD_NTYPE_FMT "L"
 #endif
 
 #if !IS_CUDA && !IS_DISTRIBUTED
@@ -24,9 +24,9 @@ static PyObject * THPTensor_(apply)(THPTensor *self, PyObject *arg)
   }
 
   THTensor *tensor = self->cdata;
-  TH_TENSOR_APPLY(real, tensor,
+  TH_TENSOR_APPLY(ntype, tensor,
                   PyObject *ret =
-                      PyObject_CallFunction(arg, (char*)BUILD_REAL_FMT, *tensor_data);
+                      PyObject_CallFunction(arg, (char*)BUILD_NTYPE_FMT, *tensor_data);
                   if (!ret)
                     return NULL;
                   if (!THPUtils_(checkReal)(ret)) {
@@ -74,9 +74,9 @@ static PyObject * THPTensor_(map)(THPTensor *self, PyObject *args)
     src = src_guard.get();
   }
 
-  TH_TENSOR_APPLY2(real, tensor, real, src,
+  TH_TENSOR_APPLY2(ntype, tensor, ntype, src,
                   PyObject *ret =
-                      PyObject_CallFunction(fn, (char*)(BUILD_REAL_FMT BUILD_REAL_FMT),
+                      PyObject_CallFunction(fn, (char*)(BUILD_NTYPE_FMT BUILD_NTYPE_FMT),
                                             *tensor_data, *src_data);
                   if (!ret)
                     return NULL;
@@ -132,9 +132,9 @@ static PyObject * THPTensor_(map2)(THPTensor *self, PyObject *args)
     src2 = src2_guard.get();
   }
 
-  TH_TENSOR_APPLY3(real, tensor, real, src1, real, src2,
+  TH_TENSOR_APPLY3(ntype, tensor, ntype, src1, ntype, src2,
                   PyObject *ret =
-                      PyObject_CallFunction(fn, (char*)(BUILD_REAL_FMT BUILD_REAL_FMT BUILD_REAL_FMT),
+                      PyObject_CallFunction(fn, (char*)(BUILD_NTYPE_FMT BUILD_NTYPE_FMT BUILD_NTYPE_FMT),
                                             *tensor_data, *src1_data, *src2_data);
                   if (!ret)
                     return NULL;
@@ -155,4 +155,4 @@ static PyObject * THPTensor_(map2)(THPTensor *self, PyObject *args)
 }
 #endif /* !IS_CUDA */
 
-#undef BUILD_REAL_FMT
+#undef BUILD_NTYPE_FMT
