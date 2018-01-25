@@ -3,8 +3,8 @@
 #include <TH/TH.h>
 #include "../../THD.h"
 
-#define THDTensor         TH_CONCAT_3(THD,Real,Tensor)
-#define THDTensor_(NAME)  TH_CONCAT_4(THD,Real,Tensor_,NAME)
+#define THDTensor         TH_CONCAT_3(THD,Ntype,Tensor)
+#define THDTensor_(NAME)  TH_CONCAT_4(THD,Ntype,Tensor_,NAME)
 
 #define THD_DESC_BUFF_LEN 64
 typedef struct {

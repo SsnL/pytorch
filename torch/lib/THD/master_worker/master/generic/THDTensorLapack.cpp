@@ -438,7 +438,7 @@ void THDTensor_(ormqr)(THDTensor *ra, THDTensor *a, THDTensor *tau, THDTensor *c
 }
 
 void THDTensor_(pstrf)(THDTensor *ra, THDIntTensor *rpiv, THDTensor*a,
-                       const char* uplo, real tol) {
+                       const char* uplo, ntype tol) {
   THArgCheck(a->nDimension == 2, 1, "A should be 2 dimensional");
   THArgCheck(a->size[0] == a->size[1], 1, "A should be square");
 

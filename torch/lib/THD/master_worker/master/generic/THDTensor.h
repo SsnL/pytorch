@@ -144,38 +144,38 @@ THD_API void THDTensor_(free)(THDTensor *self);
 THD_API void THDTensor_(freeCopyTo)(THDTensor *self, THDTensor *dst);
 
 /* Slow access methods [check everything] */
-THD_API void THDTensor_(set1d)(THDTensor *tensor, int64_t x0, real value);
-THD_API void THDTensor_(set2d)(THDTensor *tensor, int64_t x0, int64_t x1, real value);
+THD_API void THDTensor_(set1d)(THDTensor *tensor, int64_t x0, ntype value);
+THD_API void THDTensor_(set2d)(THDTensor *tensor, int64_t x0, int64_t x1, ntype value);
 THD_API void THDTensor_(set3d)(THDTensor *tensor, int64_t x0, int64_t x1,
-                               int64_t x2, real value);
+                               int64_t x2, ntype value);
 THD_API void THDTensor_(set4d)(THDTensor *tensor, int64_t x0, int64_t x1,
-                               int64_t x2, int64_t x3, real value);
+                               int64_t x2, int64_t x3, ntype value);
 
-THD_API real THDTensor_(get1d)(const THDTensor *tensor, int64_t x0);
-THD_API real THDTensor_(get2d)(const THDTensor *tensor, int64_t x0, int64_t x1);
-THD_API real THDTensor_(get3d)(const THDTensor *tensor, int64_t x0, int64_t x1, int64_t x2);
-THD_API real THDTensor_(get4d)(const THDTensor *tensor, int64_t x0, int64_t x1,
+THD_API ntype THDTensor_(get1d)(const THDTensor *tensor, int64_t x0);
+THD_API ntype THDTensor_(get2d)(const THDTensor *tensor, int64_t x0, int64_t x1);
+THD_API ntype THDTensor_(get3d)(const THDTensor *tensor, int64_t x0, int64_t x1, int64_t x2);
+THD_API ntype THDTensor_(get4d)(const THDTensor *tensor, int64_t x0, int64_t x1,
                                int64_t x2, int64_t x3);
 
-THD_API accreal THDTensor_(dot)(THDTensor *self, THDTensor *src);
-THD_API real THDTensor_(minall)(THDTensor *self);
-THD_API real THDTensor_(maxall)(THDTensor *self);
-THD_API real THDTensor_(medianall)(THDTensor *self);
-THD_API accreal THDTensor_(sumall)(THDTensor *self);
-THD_API accreal THDTensor_(prodall)(THDTensor *self);
+THD_API accntype THDTensor_(dot)(THDTensor *self, THDTensor *src);
+THD_API ntype THDTensor_(minall)(THDTensor *self);
+THD_API ntype THDTensor_(maxall)(THDTensor *self);
+THD_API ntype THDTensor_(medianall)(THDTensor *self);
+THD_API accntype THDTensor_(sumall)(THDTensor *self);
+THD_API accntype THDTensor_(prodall)(THDTensor *self);
 THD_API void THDTensor_(neg)(THDTensor *self, THDTensor *src);
 THD_API void THDTensor_(cinv)(THDTensor *self, THDTensor *src);
-THD_API void THDTensor_(add)(THDTensor *self, THDTensor *src, real value);
-THD_API void THDTensor_(sub)(THDTensor *self, THDTensor *src, real value);
-THD_API void THDTensor_(mul)(THDTensor *self, THDTensor *src, real value);
-THD_API void THDTensor_(div)(THDTensor *self, THDTensor *src, real value);
-THD_API void THDTensor_(fmod)(THDTensor *self, THDTensor *src, real value);
-THD_API void THDTensor_(remainder)(THDTensor *self, THDTensor *src, real value);
-THD_API void THDTensor_(clamp)(THDTensor *self, THDTensor *src, real min_value,
-                               real max_value);
-THD_API void THDTensor_(cadd)(THDTensor *self, THDTensor *src1, real value,
+THD_API void THDTensor_(add)(THDTensor *self, THDTensor *src, ntype value);
+THD_API void THDTensor_(sub)(THDTensor *self, THDTensor *src, ntype value);
+THD_API void THDTensor_(mul)(THDTensor *self, THDTensor *src, ntype value);
+THD_API void THDTensor_(div)(THDTensor *self, THDTensor *src, ntype value);
+THD_API void THDTensor_(fmod)(THDTensor *self, THDTensor *src, ntype value);
+THD_API void THDTensor_(remainder)(THDTensor *self, THDTensor *src, ntype value);
+THD_API void THDTensor_(clamp)(THDTensor *self, THDTensor *src, ntype min_value,
+                               ntype max_value);
+THD_API void THDTensor_(cadd)(THDTensor *self, THDTensor *src1, ntype value,
                               THDTensor *src2);
-THD_API void THDTensor_(csub)(THDTensor *self, THDTensor *src1, real value,
+THD_API void THDTensor_(csub)(THDTensor *self, THDTensor *src1, ntype value,
                               THDTensor *src2);
 THD_API void THDTensor_(cmul)(THDTensor *self, THDTensor *src1, THDTensor *src2);
 THD_API void THDTensor_(cpow)(THDTensor *self, THDTensor *src1, THDTensor *src2);
@@ -183,33 +183,33 @@ THD_API void THDTensor_(cdiv)(THDTensor *self, THDTensor *src1, THDTensor *src2)
 THD_API void THDTensor_(cfmod)(THDTensor *self, THDTensor *src1, THDTensor *src2);
 THD_API void THDTensor_(cremainder)(THDTensor *self, THDTensor *src1,
                                     THDTensor *src2);
-THD_API void THDTensor_(addcmul)(THDTensor *self, THDTensor *src1, real value,
+THD_API void THDTensor_(addcmul)(THDTensor *self, THDTensor *src1, ntype value,
                                  THDTensor *src2, THDTensor *src3);
-THD_API void THDTensor_(addcdiv)(THDTensor *self, THDTensor *src1, real value,
+THD_API void THDTensor_(addcdiv)(THDTensor *self, THDTensor *src1, ntype value,
                                  THDTensor *src2, THDTensor *src3);
-THD_API void THDTensor_(addmv)(THDTensor *self, real beta, THDTensor *src,
-                               real alpha, THDTensor *mat,  THDTensor *vec);
-THD_API void THDTensor_(addmm)(THDTensor *self, real beta, THDTensor *src,
-                               real alpha, THDTensor *mat1, THDTensor *mat2);
-THD_API void THDTensor_(addr)(THDTensor *self,  real beta, THDTensor *src,
-                              real alpha, THDTensor *vec1, THDTensor *vec2);
-THD_API void THDTensor_(addbmm)(THDTensor *self, real beta, THDTensor *src,
-                                real alpha, THDTensor *batch1, THDTensor *batch2);
-THD_API void THDTensor_(baddbmm)(THDTensor *self, real beta, THDTensor *src,
-                                 real alpha, THDTensor *batch1, THDTensor *batch2);
+THD_API void THDTensor_(addmv)(THDTensor *self, ntype beta, THDTensor *src,
+                               ntype alpha, THDTensor *mat,  THDTensor *vec);
+THD_API void THDTensor_(addmm)(THDTensor *self, ntype beta, THDTensor *src,
+                               ntype alpha, THDTensor *mat1, THDTensor *mat2);
+THD_API void THDTensor_(addr)(THDTensor *self,  ntype beta, THDTensor *src,
+                              ntype alpha, THDTensor *vec1, THDTensor *vec2);
+THD_API void THDTensor_(addbmm)(THDTensor *self, ntype beta, THDTensor *src,
+                                ntype alpha, THDTensor *batch1, THDTensor *batch2);
+THD_API void THDTensor_(baddbmm)(THDTensor *self, ntype beta, THDTensor *src,
+                                 ntype alpha, THDTensor *batch1, THDTensor *batch2);
 THD_API void THDTensor_(match)(THDTensor *self, THDTensor *m1,
-                               THDTensor *m2, real gain);
+                               THDTensor *m2, ntype gain);
 THD_API void THDTensor_(sum)(THDTensor *self, THDTensor *src, int dimension, int keepdim);
 THD_API void THDTensor_(prod)(THDTensor *self, THDTensor *src, int dimension, int keepdim);
 THD_API void THDTensor_(cumsum)(THDTensor *self, THDTensor *src, int dimension);
 THD_API void THDTensor_(cumprod)(THDTensor *self, THDTensor *src, int dimension);
 THD_API void THDTensor_(sign)(THDTensor *self, THDTensor *src);
-THD_API accreal THDTensor_(trace)(THDTensor *self);
+THD_API accntype THDTensor_(trace)(THDTensor *self);
 THD_API void THDTensor_(cross)(THDTensor *self, THDTensor *src1,
                                THDTensor *src2, int dimension);
 THD_API void THDTensor_(cmax)(THDTensor *self, THDTensor *src1, THDTensor *src2);
 THD_API void THDTensor_(cmin)(THDTensor *self, THDTensor *src1, THDTensor *src2);
-THD_API void THDTensor_(cmaxValue)(THDTensor *self, THDTensor *src, real value);
-THD_API void THDTensor_(cminValue)(THDTensor *self, THDTensor *src, real value);
+THD_API void THDTensor_(cmaxValue)(THDTensor *self, THDTensor *src, ntype value);
+THD_API void THDTensor_(cminValue)(THDTensor *self, THDTensor *src, ntype value);
 
 #endif

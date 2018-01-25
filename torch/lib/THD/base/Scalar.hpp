@@ -18,14 +18,14 @@ struct Scalar {
   virtual Scalar* clone() const = 0;
 };
 
-template<typename real>
+template<typename ntype>
 struct ScalarWrapper : Scalar {
   ScalarWrapper() {}
-  ScalarWrapper(real value) : _value(value) {}
+  ScalarWrapper(ntype value) : _value(value) {}
   virtual ~ScalarWrapper() {}
 
   virtual std::size_t elementSize() const override {
-    return sizeof(real);
+    return sizeof(ntype);
   }
 
   virtual void* data() override {
@@ -37,19 +37,19 @@ struct ScalarWrapper : Scalar {
   }
 
   virtual RPCType type() const override {
-    return type_traits<real>::type;
+    return type_traits<ntype>::type;
   }
 
   virtual ScalarWrapper* clone() const override {
     return new ScalarWrapper(value());
   }
 
-  real value() const {
+  ntype value() const {
     return _value;
   }
 
 private:
-  real _value;
+  ntype _value;
 };
 
 using FloatScalar = ScalarWrapper<double>;

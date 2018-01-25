@@ -21,12 +21,12 @@ ptrdiff_t THDStorage_(size)(const THDStorage* storage) {
 }
 
 size_t THDStorage_(elementSize)(void) {
-  return sizeof(real);
+  return sizeof(ntype);
 }
 
 THDStorage* THDStorage_(new)() {
   THDStorage* storage = THDStorage_(_alloc)();
-  RPCType type = type_traits<real>::type;
+  RPCType type = type_traits<ntype>::type;
   masterCommandChannel->sendMessage(
     packMessage(
       Functions::storageNew,
@@ -38,7 +38,7 @@ THDStorage* THDStorage_(new)() {
   return storage;
 }
 
-void THDStorage_(set)(THDStorage* storage, ptrdiff_t offset, real value) {
+void THDStorage_(set)(THDStorage* storage, ptrdiff_t offset, ntype value) {
   masterCommandChannel->sendMessage(
     packMessage(
       Functions::storageSet,
@@ -50,21 +50,21 @@ void THDStorage_(set)(THDStorage* storage, ptrdiff_t offset, real value) {
   );
 }
 
-real THDStorage_(get)(const THDStorage* storage, ptrdiff_t offset) {
+ntype THDStorage_(get)(const THDStorage* storage, ptrdiff_t offset) {
   masterCommandChannel->sendMessage(
     packMessage(
       Functions::storageGet,
       storage,
       offset,
-      type_traits<real>::type
+      type_traits<ntype>::type
     ),
     THDState::s_current_worker
   );
-  return receiveValueFromWorker<real>(storage->node_id);
+  return receiveValueFromWorker<ntype>(storage->node_id);
 }
 
 THDStorage* THDStorage_(newWithSize)(ptrdiff_t size) {
-  RPCType type = type_traits<real>::type;
+  RPCType type = type_traits<ntype>::type;
   THDStorage *storage = THDStorage_(_alloc)();
   storage->size = size;
   masterCommandChannel->sendMessage(
@@ -79,8 +79,8 @@ THDStorage* THDStorage_(newWithSize)(ptrdiff_t size) {
   return storage;
 }
 
-THDStorage* THDStorage_(newWithSize1)(real value) {
-  RPCType type = type_traits<real>::type;
+THDStorage* THDStorage_(newWithSize1)(ntype value) {
+  RPCType type = type_traits<ntype>::type;
   THDStorage *storage = THDStorage_(_alloc)();
   storage->size = 1;
   masterCommandChannel->sendMessage(
@@ -95,8 +95,8 @@ THDStorage* THDStorage_(newWithSize1)(real value) {
   return storage;
 }
 
-THDStorage* THDStorage_(newWithSize2)(real value1, real value2) {
-  RPCType type = type_traits<real>::type;
+THDStorage* THDStorage_(newWithSize2)(ntype value1, ntype value2) {
+  RPCType type = type_traits<ntype>::type;
   THDStorage *storage = THDStorage_(_alloc)();
   storage->size = 2;
   masterCommandChannel->sendMessage(
@@ -112,8 +112,8 @@ THDStorage* THDStorage_(newWithSize2)(real value1, real value2) {
   return storage;
 }
 
-THDStorage* THDStorage_(newWithSize3)(real value1, real value2, real value3) {
-  RPCType type = type_traits<real>::type;
+THDStorage* THDStorage_(newWithSize3)(ntype value1, ntype value2, ntype value3) {
+  RPCType type = type_traits<ntype>::type;
   THDStorage *storage = THDStorage_(_alloc)();
   storage->size = 3;
   masterCommandChannel->sendMessage(
@@ -130,8 +130,8 @@ THDStorage* THDStorage_(newWithSize3)(real value1, real value2, real value3) {
   return storage;
 }
 
-THDStorage* THDStorage_(newWithSize4)(real value1, real value2, real value3, real value4) {
-  RPCType type = type_traits<real>::type;
+THDStorage* THDStorage_(newWithSize4)(ntype value1, ntype value2, ntype value3, ntype value4) {
+  RPCType type = type_traits<ntype>::type;
   THDStorage *storage = THDStorage_(_alloc)();
   storage->size = 4;
   masterCommandChannel->sendMessage(
@@ -203,7 +203,7 @@ void THDStorage_(resize)(THDStorage *storage, ptrdiff_t size) {
   );
 }
 
-void THDStorage_(fill)(THDStorage *storage, real value) {
+void THDStorage_(fill)(THDStorage *storage, ntype value) {
   masterCommandChannel->sendMessage(
     packMessage(
       Functions::storageFill,

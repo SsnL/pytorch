@@ -20,15 +20,15 @@ THD_API ptrdiff_t THDStorage_(size)(const THDStorage*);
 THD_API size_t THDStorage_(elementSize)(void);
 
 /* slow access -- checks everything */
-THD_API void THDStorage_(set)(THDStorage*, ptrdiff_t, real);
-THD_API real THDStorage_(get)(const THDStorage*, ptrdiff_t);
+THD_API void THDStorage_(set)(THDStorage*, ptrdiff_t, ntype);
+THD_API ntype THDStorage_(get)(const THDStorage*, ptrdiff_t);
 
 THD_API THDStorage* THDStorage_(new)(void);
 THD_API THDStorage* THDStorage_(newWithSize)(ptrdiff_t size);
-THD_API THDStorage* THDStorage_(newWithSize1)(real);
-THD_API THDStorage* THDStorage_(newWithSize2)(real, real);
-THD_API THDStorage* THDStorage_(newWithSize3)(real, real, real);
-THD_API THDStorage* THDStorage_(newWithSize4)(real, real, real, real);
+THD_API THDStorage* THDStorage_(newWithSize1)(ntype);
+THD_API THDStorage* THDStorage_(newWithSize2)(ntype, ntype);
+THD_API THDStorage* THDStorage_(newWithSize3)(ntype, ntype, ntype);
+THD_API THDStorage* THDStorage_(newWithSize4)(ntype, ntype, ntype, ntype);
 THD_API THDStorage* THDStorage_(newWithMapping)(const char *filename, ptrdiff_t size, int flags);
 
 /* takes ownership of data */
@@ -47,7 +47,7 @@ THD_API void THDStorage_(swap)(THDStorage *storage1, THDStorage *storage2);
 /* might differ with other API (like CUDA) */
 THD_API void THDStorage_(free)(THDStorage *storage);
 THD_API void THDStorage_(resize)(THDStorage *storage, ptrdiff_t size);
-THD_API void THDStorage_(fill)(THDStorage *storage, real value);
+THD_API void THDStorage_(fill)(THDStorage *storage, ntype value);
 
 #endif
 

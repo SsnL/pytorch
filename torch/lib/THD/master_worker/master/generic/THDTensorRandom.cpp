@@ -43,7 +43,7 @@ void THDTensor_(bernoulli_DoubleTensor)(THDTensor *self, THDGenerator *_generato
   );
 }
 
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
 
 void THDTensor_(uniform)(THDTensor *self, THDGenerator *_generator, double a,
                          double b) {
@@ -124,6 +124,6 @@ void THDTensor_(multinomial)(THDLongTensor *self, THDGenerator *_generator,
   }
 }
 
-#endif // defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#endif // defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
 
 #endif // TH_GENERIC_FILE

@@ -7,9 +7,9 @@ namespace thd { namespace rpc { namespace detail {
 
 constexpr size_t INITIAL_BUFFER_SIZE = 256;
 
-template<typename real,
-         typename = typename std::enable_if<std::is_arithmetic<real>::value>::type>
-inline void _appendScalar(ByteArray& str, real data) {
+template<typename ntype,
+         typename = typename std::enable_if<std::is_arithmetic<ntype>::value>::type>
+inline void _appendScalar(ByteArray& str, ntype data) {
   str.append(reinterpret_cast<char*>(&data), sizeof(data));
 }
 

@@ -23,5 +23,5 @@ THD_API void THDTensor_(orgqr)(THDTensor *ra_, THDTensor *a, THDTensor *tau);
 THD_API void THDTensor_(ormqr)(THDTensor *ra_, THDTensor *a, THDTensor *tau, THDTensor *c,
                                const char *side, const char *trans);
 THD_API void THDTensor_(pstrf)(THDTensor *ra_, THDIntTensor *rpiv_, THDTensor*a,
-                               const char* uplo, real tol);
+                               const char* uplo, ntype tol);
 #endif

@@ -89,7 +89,7 @@ double unpackFloat(RPCMessage& raw_message) {
   else if (type == RPCType::FLOAT)
     return unpackScalar<float>(raw_message);
 
-  throw std::invalid_argument("wrong real type in the raw message");
+  throw std::invalid_argument("wrong ntype type in the raw message");
 }
 
 int64_t unpackInteger(RPCMessage& raw_message) {

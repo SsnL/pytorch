@@ -75,7 +75,7 @@ void THDTensor_(clearFlag)(THDTensor *self, char flag) {
 
 THDTensor *THDTensor_(new)() {
   THDTensor *tensor = THDTensor_(_alloc)();
-  RPCType constructed_type = type_traits<real>::type;
+  RPCType constructed_type = type_traits<ntype>::type;
   masterCommandChannel->sendMessage(
     packMessage(
       Functions::tensorNew,
@@ -97,7 +97,7 @@ THDTensor *THDTensor_(newWithTensor)(THDTensor *self) {
     self->size,
     self->stride
   );
-  RPCType constructed_type = type_traits<real>::type;
+  RPCType constructed_type = type_traits<ntype>::type;
   masterCommandChannel->sendMessage(
     packMessage(
       Functions::tensorNewWithTensor,
@@ -115,7 +115,7 @@ THDTensor *THDTensor_(newWithSize)(THLongStorage *size, THLongStorage *stride) {
   if (size && stride)
     THArgCheck(size->size == stride->size, 4, "inconsistent size");
   THDTensor_(_resize)(tensor, size->size, size->data, stride ? stride->data : nullptr);
-  RPCType constructed_type = type_traits<real>::type;
+  RPCType constructed_type = type_traits<ntype>::type;
   masterCommandChannel->sendMessage(
     packMessage(
       Functions::tensorNewWithSize,
@@ -169,7 +169,7 @@ THDTensor *THDTensor_(newWithStorage)(THDStorage *storage, ptrdiff_t storageOffs
     (size ? size->data : nullptr),
     (stride ? stride->data : nullptr)
   );
-  RPCType constructed_type = type_traits<real>::type;
+  RPCType constructed_type = type_traits<ntype>::type;
   masterCommandChannel->sendMessage(
     packMessage(
       Functions::tensorNewWithStorage,
@@ -385,7 +385,7 @@ void THDTensor_(resize5d)(THDTensor *tensor, int64_t size0, int64_t size1, int64
   THDTensor_(_resize5d)(tensor, size0, size1, size2, size3, size4);
 }
 
-real THDTensor_(get1d)(const THDTensor *tensor, int64_t x0)
+ntype THDTensor_(get1d)(const THDTensor *tensor, int64_t x0)
 {
   // TODO
   THError("get1d not supported!");
@@ -849,61 +849,61 @@ void THDTensor_(free)(THDTensor *tensor) {
   }
 }
 
-accreal THDTensor_(dot)(THDTensor *self, THDTensor *src) {
+accntype THDTensor_(dot)(THDTensor *self, THDTensor *src) {
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorDot, self, src),
     THDState::s_current_worker
   );
 
-  return receiveValueFromWorker<accreal>(THDState::s_current_worker);
+  return receiveValueFromWorker<accntype>(THDState::s_current_worker);
 }
 
-real THDTensor_(minall)(THDTensor *self) {
+ntype THDTensor_(minall)(THDTensor *self) {
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorMinall, self),
     THDState::s_current_worker
   );
 
-  return receiveValueFromWorker<real>(THDState::s_current_worker);
+  return receiveValueFromWorker<ntype>(THDState::s_current_worker);
 }
 
-real THDTensor_(maxall)(THDTensor *self) {
+ntype THDTensor_(maxall)(THDTensor *self) {
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorMaxall, self),
     THDState::s_current_worker
   );
 
-  return receiveValueFromWorker<real>(THDState::s_current_worker);
+  return receiveValueFromWorker<ntype>(THDState::s_current_worker);
 }
 
-real THDTensor_(medianall)(THDTensor *self) {
+ntype THDTensor_(medianall)(THDTensor *self) {
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorMedianall, self),
     THDState::s_current_worker
   );
 
-  return receiveValueFromWorker<real>(THDState::s_current_worker);
+  return receiveValueFromWorker<ntype>(THDState::s_current_worker);
 }
 
-accreal THDTensor_(sumall)(THDTensor *self) {
+accntype THDTensor_(sumall)(THDTensor *self) {
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorSumall, self),
     THDState::s_current_worker
   );
 
-  return receiveValueFromWorker<accreal>(THDState::s_current_worker);
+  return receiveValueFromWorker<accntype>(THDState::s_current_worker);
 }
 
-accreal THDTensor_(prodall)(THDTensor *self) {
+accntype THDTensor_(prodall)(THDTensor *self) {
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorProdall, self),
     THDState::s_current_worker
   );
 
-  return receiveValueFromWorker<accreal>(THDState::s_current_worker);
+  return receiveValueFromWorker<accntype>(THDState::s_current_worker);
 }
 
-void THDTensor_(add)(THDTensor *self, THDTensor *src, real value) {
+void THDTensor_(add)(THDTensor *self, THDTensor *src, ntype value) {
   THDTensor_(resizeAs)(self, src);
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorAdd, self, src, value),
@@ -911,7 +911,7 @@ void THDTensor_(add)(THDTensor *self, THDTensor *src, real value) {
   );
 }
 
-void THDTensor_(sub)(THDTensor *self, THDTensor *src, real value) {
+void THDTensor_(sub)(THDTensor *self, THDTensor *src, ntype value) {
   THDTensor_(resizeAs)(self, src);
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorSub, self, src, value),
@@ -919,7 +919,7 @@ void THDTensor_(sub)(THDTensor *self, THDTensor *src, real value) {
   );
 }
 
-void THDTensor_(mul)(THDTensor *self, THDTensor *src, real value) {
+void THDTensor_(mul)(THDTensor *self, THDTensor *src, ntype value) {
   THDTensor_(resizeAs)(self, src);
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorMul, self, src, value),
@@ -927,7 +927,7 @@ void THDTensor_(mul)(THDTensor *self, THDTensor *src, real value) {
   );
 }
 
-void THDTensor_(div)(THDTensor *self, THDTensor *src, real value) {
+void THDTensor_(div)(THDTensor *self, THDTensor *src, ntype value) {
   THDTensor_(resizeAs)(self, src);
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorDiv, self, src, value),
@@ -935,7 +935,7 @@ void THDTensor_(div)(THDTensor *self, THDTensor *src, real value) {
   );
 }
 
-void THDTensor_(fmod)(THDTensor *self, THDTensor *src, real value) {
+void THDTensor_(fmod)(THDTensor *self, THDTensor *src, ntype value) {
   THDTensor_(resizeAs)(self, src);
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorFmod, self, src, value),
@@ -943,7 +943,7 @@ void THDTensor_(fmod)(THDTensor *self, THDTensor *src, real value) {
   );
 }
 
-void THDTensor_(remainder)(THDTensor *self, THDTensor *src, real value) {
+void THDTensor_(remainder)(THDTensor *self, THDTensor *src, ntype value) {
   THDTensor_(resizeAs)(self, src);
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorRemainder, self, src, value),
@@ -951,7 +951,7 @@ void THDTensor_(remainder)(THDTensor *self, THDTensor *src, real value) {
   );
 }
 
-void THDTensor_(clamp)(THDTensor *self, THDTensor *src, real min_value, real max_value) {
+void THDTensor_(clamp)(THDTensor *self, THDTensor *src, ntype min_value, ntype max_value) {
   THDTensor_(resizeAs)(self, src);
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorClamp, self, src, min_value, max_value),
@@ -959,7 +959,7 @@ void THDTensor_(clamp)(THDTensor *self, THDTensor *src, real min_value, real max
   );
 }
 
-void THDTensor_(cadd)(THDTensor *self, THDTensor *src1, real value, THDTensor *src2) {
+void THDTensor_(cadd)(THDTensor *self, THDTensor *src1, ntype value, THDTensor *src2) {
   THDTensor_(resizeAs)(self, src1);
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorCadd, self, src1, src2, value),
@@ -967,7 +967,7 @@ void THDTensor_(cadd)(THDTensor *self, THDTensor *src1, real value, THDTensor *s
   );
 }
 
-void THDTensor_(csub)(THDTensor *self, THDTensor *src1, real value, THDTensor *src2) {
+void THDTensor_(csub)(THDTensor *self, THDTensor *src1, ntype value, THDTensor *src2) {
   THDTensor_(resizeAs)(self, src1);
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorCsub, self, src1, src2, value),
@@ -1015,7 +1015,7 @@ void THDTensor_(cremainder)(THDTensor *self, THDTensor *src1, THDTensor *src2) {
   );
 }
 
-void THDTensor_(addcmul)(THDTensor *self, THDTensor *src1, real value, THDTensor *src2, THDTensor *src3) {
+void THDTensor_(addcmul)(THDTensor *self, THDTensor *src1, ntype value, THDTensor *src2, THDTensor *src3) {
   if (self != src1) {
     THDTensor_(resizeAs)(self, src1);
   }
@@ -1026,7 +1026,7 @@ void THDTensor_(addcmul)(THDTensor *self, THDTensor *src1, real value, THDTensor
   );
 }
 
-void THDTensor_(addcdiv)(THDTensor *self, THDTensor *src1, real value, THDTensor *src2, THDTensor *src3) {
+void THDTensor_(addcdiv)(THDTensor *self, THDTensor *src1, ntype value, THDTensor *src2, THDTensor *src3) {
   if (self != src1) {
     THDTensor_(resizeAs)(self, src1);
   }
@@ -1037,7 +1037,7 @@ void THDTensor_(addcdiv)(THDTensor *self, THDTensor *src1, real value, THDTensor
   );
 }
 
-void THDTensor_(addmv)(THDTensor *self, real beta, THDTensor *src, real alpha, THDTensor *mat,  THDTensor *vec) {
+void THDTensor_(addmv)(THDTensor *self, ntype beta, THDTensor *src, ntype alpha, THDTensor *mat,  THDTensor *vec) {
   if ((mat->nDimension != 2) || (vec->nDimension != 1))
     THError("matrix and vector expected, got %dD, %dD", mat->nDimension, vec->nDimension);
 
@@ -1066,7 +1066,7 @@ void THDTensor_(addmv)(THDTensor *self, real beta, THDTensor *src, real alpha, T
   );
 }
 
-void THDTensor_(addmm)(THDTensor *self, real beta, THDTensor *src, real alpha, THDTensor *mat1, THDTensor *mat2) {
+void THDTensor_(addmm)(THDTensor *self, ntype beta, THDTensor *src, ntype alpha, THDTensor *mat1, THDTensor *mat2) {
   if ((mat1->nDimension != 2) || (mat2->nDimension != 2))
     THError("matrices expected, got %dD, %dD tensors", mat1->nDimension, mat2->nDimension);
 
@@ -1096,7 +1096,7 @@ void THDTensor_(addmm)(THDTensor *self, real beta, THDTensor *src, real alpha, T
   );
 }
 
-void THDTensor_(addr)(THDTensor *self,  real beta, THDTensor *src, real alpha, THDTensor *vec1, THDTensor *vec2) {
+void THDTensor_(addr)(THDTensor *self,  ntype beta, THDTensor *src, ntype alpha, THDTensor *vec1, THDTensor *vec2) {
   if ((vec1->nDimension != 1) || (vec2->nDimension != 1))
     THError("vector and vector expected, got %dD, %dD tensors", vec1->nDimension, vec2->nDimension);
 
@@ -1120,7 +1120,7 @@ void THDTensor_(addr)(THDTensor *self,  real beta, THDTensor *src, real alpha, T
   );
 }
 
-void THDTensor_(addbmm)(THDTensor *self, real beta, THDTensor *src, real alpha, THDTensor *batch1, THDTensor *batch2) {
+void THDTensor_(addbmm)(THDTensor *self, ntype beta, THDTensor *src, ntype alpha, THDTensor *batch1, THDTensor *batch2) {
   THArgCheck(batch1->nDimension == 3, 1, "expected 3D tensor");
   THArgCheck(batch2->nDimension == 3, 2, "expected 3D tensor");
   THArgCheck(batch1->size[0] == batch2->size[0], 2,
@@ -1143,7 +1143,7 @@ void THDTensor_(addbmm)(THDTensor *self, real beta, THDTensor *src, real alpha, 
   );
 }
 
-void THDTensor_(baddbmm)(THDTensor *self, real beta, THDTensor *src, real alpha, THDTensor *batch1, THDTensor *batch2) {
+void THDTensor_(baddbmm)(THDTensor *self, ntype beta, THDTensor *src, ntype alpha, THDTensor *batch1, THDTensor *batch2) {
   THArgCheck(batch1->nDimension == 3, 1, "expected 3D tensor");
   THArgCheck(batch2->nDimension == 3, 2, "expected 3D tensor");
   THArgCheck(batch1->size[0] == batch2->size[0], 2,
@@ -1167,7 +1167,7 @@ void THDTensor_(baddbmm)(THDTensor *self, real beta, THDTensor *src, real alpha,
   );
 }
 
-void THDTensor_(match)(THDTensor *self, THDTensor *m1, THDTensor *m2, real gain) {
+void THDTensor_(match)(THDTensor *self, THDTensor *m1, THDTensor *m2, ntype gain) {
   THDTensor_(resize2d)(self, m1->size[0], m2->size[0]);
   THArgCheck(m1->size[1] == m2->size[1], 3, "m1 and m2 must have the same inner vector dim");
 
@@ -1246,7 +1246,7 @@ void THDTensor_(sign)(THDTensor *self, THDTensor *src) {
   );
 }
 
-accreal THDTensor_(trace)(THDTensor *self) {
+accntype THDTensor_(trace)(THDTensor *self) {
   THArgCheck(self->nDimension == 2, 1, "expected a matrix");
 
   masterCommandChannel->sendMessage(
@@ -1254,7 +1254,7 @@ accreal THDTensor_(trace)(THDTensor *self) {
     THDState::s_current_worker
   );
 
-  return receiveValueFromWorker<accreal>(THDState::s_current_worker);
+  return receiveValueFromWorker<accntype>(THDState::s_current_worker);
 }
 
 void THDTensor_(cross)(THDTensor *self, THDTensor *src1, THDTensor *src2, int dimension) {
@@ -1314,7 +1314,7 @@ void THDTensor_(cmin)(THDTensor *self, THDTensor *src1, THDTensor *src2) {
   );
 }
 
-void THDTensor_(cmaxValue)(THDTensor *self, THDTensor *src, real value) {
+void THDTensor_(cmaxValue)(THDTensor *self, THDTensor *src, ntype value) {
   THDTensor_(resizeAs)(self, src);
 
   masterCommandChannel->sendMessage(
@@ -1323,7 +1323,7 @@ void THDTensor_(cmaxValue)(THDTensor *self, THDTensor *src, real value) {
   );
 }
 
-void THDTensor_(cminValue)(THDTensor *self, THDTensor *src, real value) {
+void THDTensor_(cminValue)(THDTensor *self, THDTensor *src, ntype value) {
   THDTensor_(resizeAs)(self, src);
 
   masterCommandChannel->sendMessage(

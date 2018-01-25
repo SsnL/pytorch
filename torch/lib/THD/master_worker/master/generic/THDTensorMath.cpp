@@ -44,7 +44,7 @@ void THDTensor_(scatter)(THDTensor *self, int dim, THDLongTensor *index, THDTens
   );
 }
 
-void THDTensor_(scatterFill)(THDTensor *self, int dim, THDLongTensor *index, real val) {
+void THDTensor_(scatterFill)(THDTensor *self, int dim, THDLongTensor *index, ntype val) {
   THArgCheck(dim < self->nDimension, 2, "Index dimension is out of bounds");
   THArgCheck(THDLongTensor_nDimension(index) == self->nDimension, 3,
              "Index tensor must have same dimensions as output tensor");
@@ -159,7 +159,7 @@ void THDTensor_(median)(THDTensor *self, THDLongTensor *indices_, THDTensor *src
 }
 
 
-void THDTensor_(fill)(THDTensor *tensor, real value) {
+void THDTensor_(fill)(THDTensor *tensor, ntype value) {
   masterCommandChannel->sendMessage(
     packMessage(
       Functions::tensorFill,
@@ -174,7 +174,7 @@ void THDTensor_(zero)(THDTensor *r) {
   THDTensor_(fill)(r, 0);
 }
 
-void THDTensor_(maskedFill)(THDTensor *tensor, THDByteTensor *mask, real value) {
+void THDTensor_(maskedFill)(THDTensor *tensor, THDByteTensor *mask, ntype value) {
   masterCommandChannel->sendMessage(
     packMessage(
       Functions::tensorMaskedFill,
@@ -283,7 +283,7 @@ void THDTensor_(indexAdd)(THDTensor *tensor, int dim, THDLongTensor *index, THDT
   );
 }
 
-void THDTensor_(indexFill)(THDTensor *tensor, int dim, THDLongTensor *index, real val) {
+void THDTensor_(indexFill)(THDTensor *tensor, int dim, THDLongTensor *index, ntype val) {
   ptrdiff_t numel = THDLongTensor_nElement(index);
   THArgCheck(index->nDimension == 1, 3, "Index is supposed to be a vector");
   THArgCheck(dim < tensor->nDimension, 4, "Indexing dim %d is out of bounds of tensor",
@@ -353,8 +353,8 @@ void THDTensor_(eye)(THDTensor *r, int64_t n, int64_t m) {
 }
 
 
-void THDTensor_(range)(THDTensor *r_, accreal xmin,
-                              accreal xmax, accreal step) {
+void THDTensor_(range)(THDTensor *r_, accntype xmin,
+                              accntype xmax, accntype step) {
   THArgCheck(step > 0 || step < 0, 3, "step must be a non-null number");
   THArgCheck(((step > 0) && (xmax >= xmin)) || ((step < 0) && (xmax <= xmin)),
               2, "upper bound and larger bound incoherent with step sign");
@@ -525,7 +525,7 @@ int THDTensor_(equal)(THDTensor *ta, THDTensor *tb) {
   return receiveValueFromWorker<int>(ta->storage->node_id);
 }
 
-void THDTensor_(tpow)(THDTensor *r_, real value, THDTensor *t) {
+void THDTensor_(tpow)(THDTensor *r_, ntype value, THDTensor *t) {
   THDTensor_(resizeAs)(r_, t);
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorEqual, r_, t, value),
@@ -534,14 +534,14 @@ void THDTensor_(tpow)(THDTensor *r_, real value, THDTensor *t) {
 }
 
 #define TENSOR_IMPLEMENT_LOGICAL(NAME,UPPNAME)                                \
-  void THDTensor_(NAME##Value)(THDByteTensor *r_, THDTensor* t, real value) { \
+  void THDTensor_(NAME##Value)(THDByteTensor *r_, THDTensor* t, ntype value) { \
     THDByteTensor__resize(r_, t->nDimension, t->size, NULL);                  \
     masterCommandChannel->sendMessage(                                        \
       packMessage(Functions::tensor##UPPNAME##Value, r_, t, value),           \
       THDState::s_current_worker                                              \
     );                                                                        \
   }                                                                           \
-  void THDTensor_(NAME##ValueT)(THDTensor* r_, THDTensor* t, real value)  {   \
+  void THDTensor_(NAME##ValueT)(THDTensor* r_, THDTensor* t, ntype value)  {   \
     THDTensor_(_resize)(r_, t->nDimension, t->size, NULL);                    \
     masterCommandChannel->sendMessage(                                        \
       packMessage(Functions::tensor##UPPNAME##ValueT, r_, t, value),          \
@@ -583,7 +583,7 @@ TENSOR_IMPLEMENT_LOGICAL(ne,Ne)
   }                                                           \
 
 #define TENSOR_IMPLEMENT_POINTWISE_VALUE_FUNCTION(NAME, UPPNAME)              \
-  void THDTensor_(NAME)(THDTensor *r_, THDTensor *t, real value) {            \
+  void THDTensor_(NAME)(THDTensor *r_, THDTensor *t, ntype value) {            \
     THDTensor_(resizeAs)(r_, t);                                              \
     masterCommandChannel->sendMessage(                                        \
       packMessage(Functions::tensor##UPPNAME, r_, t, value),                  \
@@ -592,12 +592,12 @@ TENSOR_IMPLEMENT_LOGICAL(ne,Ne)
   }                                                                           \
 
 
-#if defined(TH_REAL_IS_LONG) || defined(TH_REAL_IS_INT) ||\
-    defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_FLOAT)
+#if defined(TH_NTYPE_IS_LONG) || defined(TH_NTYPE_IS_INT) ||\
+    defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_FLOAT)
 TENSOR_IMPLEMENT_POINTWISE_FUNCTION(abs,Abs)
 #endif
 
-#if defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_FLOAT)
+#if defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_FLOAT)
 TENSOR_IMPLEMENT_POINTWISE_FUNCTION(sigmoid,Sigmoid)
 TENSOR_IMPLEMENT_POINTWISE_FUNCTION(log,Log)
 TENSOR_IMPLEMENT_POINTWISE_FUNCTION(log1p,Log1p)
@@ -636,7 +636,7 @@ void THDTensor_(atan2)(THDTensor *r_, THDTensor *tx, THDTensor *ty) {
   );
 }
 
-void THDTensor_(lerp)(THDTensor *r_, THDTensor *a, THDTensor *b, real weight) {
+void THDTensor_(lerp)(THDTensor *r_, THDTensor *a, THDTensor *b, ntype weight) {
   THArgCheck(THDTensor_(nElement)(a) == THDTensor_(nElement)(b), 2,
              "sizes do not match");
   THDTensor_(resizeAs)(r_, a);
@@ -704,7 +704,7 @@ void THDTensor_(var)(THDTensor *r_, THDTensor *t, int dimension, int biased, int
   }
 }
 
-void THDTensor_(norm)(THDTensor *r_, THDTensor *t, real value, int dimension, int keepdim) {
+void THDTensor_(norm)(THDTensor *r_, THDTensor *t, ntype value, int dimension, int keepdim) {
   THArgCheck(dimension >= 0 && dimension < THDTensor_(nDimension)(t), 3,
              "invalid dimension %d", dimension + TH_INDEX_BASE);
 
@@ -723,17 +723,17 @@ void THDTensor_(norm)(THDTensor *r_, THDTensor *t, real value, int dimension, in
   }
 }
 
-accreal THDTensor_(normall)(THDTensor *tensor, real value) {
+accntype THDTensor_(normall)(THDTensor *tensor, ntype value) {
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorNormall, tensor, value),
     THDState::s_current_worker
   );
 
-  return receiveValueFromWorker<accreal>(THDState::s_current_worker);
+  return receiveValueFromWorker<accntype>(THDState::s_current_worker);
 }
 
-void THDTensor_(renorm)(THDTensor *res, THDTensor *src, real value,
-                        int dimension, real maxnorm) {
+void THDTensor_(renorm)(THDTensor *res, THDTensor *src, ntype value,
+                        int dimension, ntype maxnorm) {
   THArgCheck(dimension >= 0 && dimension < THDTensor_(nDimension)(src), 3,
              "invalid dimension %d", dimension + TH_INDEX_BASE);
   THArgCheck(value > 0, 2, "non-positive-norm not supported");
@@ -749,44 +749,44 @@ void THDTensor_(renorm)(THDTensor *res, THDTensor *src, real value,
   );
 }
 
-accreal THDTensor_(dist)(THDTensor *tensor, THDTensor *src, real value) {
+accntype THDTensor_(dist)(THDTensor *tensor, THDTensor *src, ntype value) {
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorDist, tensor, src, value),
     THDState::s_current_worker
   );
 
-  return receiveValueFromWorker<accreal>(THDState::s_current_worker);
+  return receiveValueFromWorker<accntype>(THDState::s_current_worker);
 }
 
-accreal THDTensor_(meanall)(THDTensor *tensor) {
+accntype THDTensor_(meanall)(THDTensor *tensor) {
   THArgCheck(tensor->nDimension > 0, 1, "empty Tensor");
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorMeanall, tensor),
     THDState::s_current_worker
   );
 
-  return receiveValueFromWorker<accreal>(THDState::s_current_worker);
+  return receiveValueFromWorker<accntype>(THDState::s_current_worker);
 }
 
-accreal THDTensor_(varall)(THDTensor *tensor, int biased) {
+accntype THDTensor_(varall)(THDTensor *tensor, int biased) {
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorVarall, tensor, biased),
     THDState::s_current_worker
   );
 
-  return receiveValueFromWorker<accreal>(THDState::s_current_worker);
+  return receiveValueFromWorker<accntype>(THDState::s_current_worker);
 }
 
-accreal THDTensor_(stdall)(THDTensor *tensor, int biased) {
+accntype THDTensor_(stdall)(THDTensor *tensor, int biased) {
   masterCommandChannel->sendMessage(
     packMessage(Functions::tensorStdall, tensor, biased),
     THDState::s_current_worker
   );
 
-  return receiveValueFromWorker<accreal>(THDState::s_current_worker);
+  return receiveValueFromWorker<accntype>(THDState::s_current_worker);
 }
 
-void THDTensor_(linspace)(THDTensor *r_, real a, real b, int64_t n) {
+void THDTensor_(linspace)(THDTensor *r_, ntype a, ntype b, int64_t n) {
   THArgCheck(n > 1 || (n == 1 && (a == b)), 3, "invalid number of points");
 
   if (THDTensor_(nElement)(r_) != n) {
@@ -799,7 +799,7 @@ void THDTensor_(linspace)(THDTensor *r_, real a, real b, int64_t n) {
   );
 }
 
-void THDTensor_(logspace)(THDTensor *r_, real a, real b, int64_t n) {
+void THDTensor_(logspace)(THDTensor *r_, ntype a, ntype b, int64_t n) {
   THArgCheck(n > 1 || (n == 1 && (a == b)), 3, "invalid number of points");
 
   if (THDTensor_(nElement)(r_) != n) {
@@ -833,7 +833,7 @@ void THDTensor_(randn)(THDTensor *r_, THDGenerator *_generator,
 }
 
 void THDTensor_(histc)(THDTensor *hist, THDTensor *tensor, int64_t nbins,
-                       real minvalue, real maxvalue) {
+                       ntype minvalue, ntype maxvalue) {
   THDTensor_(resize1d)(hist, nbins);
 
   masterCommandChannel->sendMessage(
@@ -843,7 +843,7 @@ void THDTensor_(histc)(THDTensor *hist, THDTensor *tensor, int64_t nbins,
 }
 
 void THDTensor_(bhistc)(THDTensor *hist, THDTensor *tensor, int64_t nbins,
-                        real minvalue, real maxvalue) {
+                        ntype minvalue, ntype maxvalue) {
   THArgCheck(THDTensor_(nDimension)(tensor) < 3, 2,
              "invalid dimension %d, the input must be a 2d tensor",
              THDTensor_(nDimension)(tensor));
@@ -860,9 +860,9 @@ void THDTensor_(bhistc)(THDTensor *hist, THDTensor *tensor, int64_t nbins,
   );
 }
 
-#endif // defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_FLOAT)
+#endif // defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_FLOAT)
 
-#if defined(TH_REAL_IS_BYTE)
+#if defined(TH_NTYPE_IS_BYTE)
 
 int THDTensor_(logicalall)(THDTensor *tensor) {
   THArgCheck(tensor->nDimension > 0, 1, "empty Tensor");
@@ -886,7 +886,7 @@ int THDTensor_(logicalany)(THDTensor *tensor) {
   return receiveValueFromWorker<int>(THDState::s_current_worker);
 }
 
-#endif // defined(TH_REAL_IS_BYTE)
+#endif // defined(TH_NTYPE_IS_BYTE)
 
 THD_API void THDTensor_(clshift)(THDTensor *r_, THDTensor *t, THDTensor *src) {
   THError("clshift not implemented");
@@ -908,23 +908,23 @@ THD_API void THDTensor_(cbitxor)(THDTensor *r_, THDTensor *t, THDTensor *src) {
   THError("cbitxor not implemented");
 }
 
-THD_API void THDTensor_(lshift)(THDTensor *r_, THDTensor *t, real value) {
+THD_API void THDTensor_(lshift)(THDTensor *r_, THDTensor *t, ntype value) {
   THError("lshift not implemented");
 }
 
-THD_API void THDTensor_(rshift)(THDTensor *r_, THDTensor *t, real value) {
+THD_API void THDTensor_(rshift)(THDTensor *r_, THDTensor *t, ntype value) {
   THError("rshift not implemented");
 }
 
-THD_API void THDTensor_(bitand)(THDTensor *r_, THDTensor *t, real value) {
+THD_API void THDTensor_(bitand)(THDTensor *r_, THDTensor *t, ntype value) {
   THError("bitand not implemented");
 }
 
-THD_API void THDTensor_(bitor)(THDTensor *r_, THDTensor *t, real value) {
+THD_API void THDTensor_(bitor)(THDTensor *r_, THDTensor *t, ntype value) {
   THError("bitor not implemented");
 }
 
-THD_API void THDTensor_(bitxor)(THDTensor *r_, THDTensor *t, real value) {
+THD_API void THDTensor_(bitxor)(THDTensor *r_, THDTensor *t, ntype value) {
   THError("bitxor not implemented");
 }
 
