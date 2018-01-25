@@ -218,11 +218,11 @@ static void check_args(CheckedFrom c, IntList args, size_t expected_size, const 
 // the size of output ourselves, so we don't actually need to check
 // output.  However, writing a single function that does everything
 // means we get to reuse it for both forwards and all backwards
-// variants, even when the set of "real" inputs varies.  The magic of
+// variants, even when the set of "ntype" inputs varies.  The magic of
 // relational computing!
 //
 // (There is one downside, which is that it is slightly harder to write
-// error messages which are able to distinguish between real inputs
+// error messages which are able to distinguish between ntype inputs
 // (which the user can change) and computed inputs (which the user can
 // only indirectly affect).  It would be an interesting exercise to
 // come up with a general framework to handle such situations.)

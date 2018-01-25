@@ -133,7 +133,7 @@
   options:
     - arguments:
       - THTensor* self
-      - real value
+      - ntype value
     - zero_dim_tensor_only: True
       arguments:
       - THTensor* self
@@ -168,7 +168,7 @@
       - arg: THTensor* self
         broadcast: mask inplace fallback types:Byte
       - THBoolTensor* mask
-      - real value
+      - ntype value
     - zero_dim_tensor_only: True
       arguments:
       - arg: THTensor* self
@@ -366,7 +366,7 @@
       - arg: long dim
         wrap_dim: self
       - THIndexTensor* index
-      - real value
+      - ntype value
     - zero_dim_tensor_only: True
       arguments:
         - THTensor* self
@@ -404,9 +404,9 @@
   arguments:
     - arg: THTensor* result
       output: True
-    - accreal start
-    - accreal end
-    - arg: accreal step
+    - accntype start
+    - accntype end
+    - arg: accntype step
       default: 1
 ]]
 [[
@@ -422,16 +422,16 @@
       arguments:
         - arg: THTensor* result
           output: True
-        - accreal start
-        - accreal end
-        - arg: accreal step
+        - accntype start
+        - accntype end
+        - arg: accntype step
           default: 1
     - cname: arange
       arguments:
         - arg: THTensor* result
           output: True
         - CONSTANT 0
-        - accreal end
+        - accntype end
         - CONSTANT 1
 ]]
 [[
@@ -451,7 +451,7 @@
         - arg: long dim
           wrap_dim: self
         - THIndexTensor* index
-        - real value
+        - ntype value
 ]]
 [[
   name: scatter_add_
@@ -514,7 +514,7 @@
         - arg: THTensor* result
           output: True
         - THTensor* self
-        - real other
+        - ntype other
     - cname: cbitand
       arguments:
         - arg: THTensor* result
@@ -534,7 +534,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real other
+        - ntype other
     - cname: cbitand
       arguments:
         - THTensor* self
@@ -554,7 +554,7 @@
         - arg: THTensor* result
           output: True
         - THTensor* self
-        - real other
+        - ntype other
     - cname: cbitor
       arguments:
         - arg: THTensor* result
@@ -574,7 +574,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real other
+        - ntype other
     - cname: cbitor
       arguments:
         - THTensor* self
@@ -594,7 +594,7 @@
         - arg: THTensor* result
           output: True
         - THTensor* self
-        - real other
+        - ntype other
     - cname: cbitxor
       arguments:
         - arg: THTensor* result
@@ -614,7 +614,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real other
+        - ntype other
     - cname: cbitxor
       arguments:
         - THTensor* self
@@ -634,7 +634,7 @@
         - arg: THTensor* result
           output: True
         - THTensor* self
-        - real other
+        - ntype other
     - cname: clshift
       arguments:
         - arg: THTensor* result
@@ -654,7 +654,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real other
+        - ntype other
     - cname: clshift
       arguments:
         - THTensor* self
@@ -674,7 +674,7 @@
         - arg: THTensor* result
           output: True
         - THTensor* self
-        - real other
+        - ntype other
     - cname: crshift
       arguments:
         - arg: THTensor* result
@@ -694,7 +694,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real other
+        - ntype other
     - cname: crshift
       arguments:
         - THTensor* self
@@ -714,7 +714,7 @@
         - arg: THBoolTensor* result
           output: True
         - THTensor* self
-        - real other
+        - ntype other
     - cname: ltTensor
       arguments:
         - arg: THBoolTensor* result
@@ -731,7 +731,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real other
+        - ntype other
     - cname: ltTensorT
       arguments:
         - THTensor* self
@@ -751,7 +751,7 @@
         - arg: THBoolTensor* result
           output: True
         - THTensor* self
-        - real other
+        - ntype other
     - cname: gtTensor
       arguments:
         - arg: THBoolTensor* result
@@ -768,7 +768,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real other
+        - ntype other
     - cname: gtTensorT
       arguments:
         - THTensor* self
@@ -788,7 +788,7 @@
         - arg: THBoolTensor* result
           output: True
         - THTensor* self
-        - real other
+        - ntype other
     - cname: leTensor
       arguments:
         - arg: THBoolTensor* result
@@ -805,7 +805,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real other
+        - ntype other
     - cname: leTensorT
       arguments:
         - THTensor* self
@@ -825,7 +825,7 @@
         - arg: THBoolTensor* result
           output: True
         - THTensor* self
-        - real other
+        - ntype other
     - cname: geTensor
       arguments:
         - arg: THBoolTensor* result
@@ -842,7 +842,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real other
+        - ntype other
     - cname: geTensorT
       arguments:
         - THTensor* self
@@ -862,7 +862,7 @@
         - arg: THBoolTensor* result
           output: True
         - THTensor* self
-        - real other
+        - ntype other
     - cname: eqTensor
       arguments:
         - arg: THBoolTensor* result
@@ -879,7 +879,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real other
+        - ntype other
     - cname: eqTensorT
       arguments:
         - THTensor* self
@@ -899,7 +899,7 @@
         - arg: THBoolTensor* result
           output: True
         - THTensor* self
-        - real other
+        - ntype other
     - cname: neTensor
       arguments:
         - arg: THBoolTensor* result
@@ -916,7 +916,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real other
+        - ntype other
     - cname: neTensorT
       arguments:
         - THTensor* self
@@ -931,7 +931,7 @@
     - function
   options:
     - cname: minall
-      return: real
+      return: ntype
       arguments:
         - THTensor* self
     - cname: cmin
@@ -963,7 +963,7 @@
     - function
   options:
     - cname: maxall
-      return: real
+      return: ntype
       arguments:
         - THTensor* self
     - cname: cmax
@@ -1037,7 +1037,7 @@
   return: argument 0,1
   options:
     - cname: medianall
-      return: real
+      return: ntype
       arguments:
         - THTensor* self
     - cname: median
@@ -1100,7 +1100,7 @@
     - CPU
     - CUDA
   cname: logicalall
-  return: real
+  return: ntype
   arguments:
     - THTensor* self
 ]]
@@ -1112,7 +1112,7 @@
     - CPU
     - CUDA
   cname: logicalany
-  return: real
+  return: ntype
   arguments:
     - THTensor* self
 ]]
@@ -1930,7 +1930,7 @@
     - function
   options:
     - cname: meanall
-      return: accreal
+      return: accntype
       arguments:
         - THTensor* self
     - cname: mean
@@ -1957,7 +1957,7 @@
     - function
   options:
     - cname: varall
-      return: accreal
+      return: accntype
       arguments:
         - THTensor* self
         - arg: bool unbiased
@@ -1992,7 +1992,7 @@
     - function
   options:
     - cname: stdall
-      return: accreal
+      return: accntype
       arguments:
         - THTensor* self
         - arg: bool unbiased
@@ -2027,10 +2027,10 @@
     - function
   options:
     - cname: normall
-      return: accreal
+      return: accntype
       arguments:
         - THTensor* self
-        - arg: real p
+        - arg: ntype p
           default: AS_NTYPE(2)
     - cname: norm
       return: argument 0
@@ -2039,7 +2039,7 @@
         - arg: THTensor* result
           output: True
         - THTensor* self
-        - arg: real p
+        - arg: ntype p
           python_default_init: AS_NTYPE(2)
         - arg: long dim
           wrap_dim: self
@@ -2061,10 +2061,10 @@
     - arg: THTensor* result
       output: True
     - THTensor* self
-    - real p
+    - ntype p
     - arg: long dim
       wrap_dim: self
-    - real maxnorm
+    - ntype maxnorm
 ]]
 [[
   name: renorm_
@@ -2078,10 +2078,10 @@
   arguments:
     - THTensor* self
     - THTensor* self
-    - real p
+    - ntype p
     - arg: long dim
       wrap_dim: self
-    - real maxnorm
+    - ntype maxnorm
 ]]
 [[
   name: dist
@@ -2095,12 +2095,12 @@
     - function
   options:
     - cname: dist
-      return: accreal
+      return: accntype
       arguments:
         - arg: THTensor* self
           broadcast: other fallback
         - THTensor* other
-        - arg: real p
+        - arg: ntype p
           default: AS_NTYPE(2)
 ]]
 [[
@@ -2212,7 +2212,7 @@
         - arg: THTensor* result
           output: True
         - THTensor* self
-        - real exponent
+        - ntype exponent
     - cname: cpow
       arguments:
         - arg: THTensor* result
@@ -2224,7 +2224,7 @@
       arguments:
         - arg: THTensor* result
           output: True
-        - real base
+        - ntype base
         - THTensor* self
 ]]
 [[
@@ -2241,7 +2241,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real exponent
+        - ntype exponent
     - cname: cpow
       arguments:
         - THTensor* self
@@ -2267,7 +2267,7 @@
     - arg: THTensor* self
       broadcast: end fallback
     - THTensor* end
-    - real weight
+    - ntype weight
 ]]
 [[
   name: lerp_
@@ -2283,7 +2283,7 @@
     - arg: THTensor* self
       broadcast: end fallback inplace
     - THTensor* end
-    - real weight
+    - ntype weight
 ]]
 [[
   name: linspace
@@ -2298,8 +2298,8 @@
   arguments:
     - arg: THTensor* result
       output: True
-    - real start
-    - real end
+    - ntype start
+    - ntype end
     - arg: long steps
       default: 100
 ]]
@@ -2316,8 +2316,8 @@
   arguments:
     - arg: THTensor* result
       output: True
-    - real start
-    - real end
+    - ntype start
+    - ntype end
     - arg: long steps
       default: 100
 ]]
@@ -2338,9 +2338,9 @@
     - THTensor* self
     - arg: long bins
       default: 100
-    - arg: real min
+    - arg: ntype min
       default: 0
-    - arg: real max
+    - arg: ntype max
       default: 0
 ]]
 [[
@@ -2358,7 +2358,7 @@
     - function
   options:
     - cname: sumall
-      return: accreal
+      return: accntype
       arguments:
         - THTensor* self
     - cname: sum
@@ -2380,7 +2380,7 @@
     - function
   options:
     - cname: prodall
-      return: accreal
+      return: accntype
       arguments:
         - THTensor* self
     - cname: prod
@@ -2445,7 +2445,7 @@
   variants:
     - method
     - function
-  return: accreal
+  return: accntype
   arguments:
     - THTensor* self
 ]]
@@ -2461,8 +2461,8 @@
         - arg: THTensor* result
           output: True
         - THTensor* self
-        - real other
-        - arg: real alpha
+        - ntype other
+        - arg: ntype alpha
           default: AS_NTYPE(1)
           kwarg_only: True
     - cname: cadd
@@ -2472,7 +2472,7 @@
           output: True
         - arg: THTensor* self
           broadcast: other fallback
-        - arg: real alpha
+        - arg: ntype alpha
           default: AS_NTYPE(1)
           kwarg_only: True
         - THTensor* other
@@ -2483,7 +2483,7 @@
         - arg: THTensor* result
           output: True
         - THTensor* self
-        - arg: real alpha
+        - arg: ntype alpha
           default: AS_NTYPE(1)
           kwarg_only: True
         - THSTensor* other
@@ -2496,8 +2496,8 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real other
-        - arg: real alpha
+        - ntype other
+        - arg: ntype alpha
           default: AS_NTYPE(1)
           kwarg_only: True
     - cname: cadd
@@ -2506,7 +2506,7 @@
         - THTensor* self
         - arg: THTensor* self
           broadcast: other inplace fallback
-        - arg: real alpha
+        - arg: ntype alpha
           default: AS_NTYPE(1)
           kwarg_only: True
         - THTensor* other
@@ -2516,7 +2516,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - arg: real alpha
+        - arg: ntype alpha
           default: AS_NTYPE(1)
           kwarg_only: True
         - THSTensor* other
@@ -2533,8 +2533,8 @@
         - arg: THTensor* result
           output: True
         - THTensor* self
-        - real other
-        - arg: real alpha
+        - ntype other
+        - arg: ntype alpha
           default: AS_NTYPE(1)
           kwarg_only: True
     - cname: csub
@@ -2544,7 +2544,7 @@
           output: True
         - arg: THTensor* self
           broadcast: other fallback
-        - arg: real alpha
+        - arg: ntype alpha
           default: AS_NTYPE(1)
           kwarg_only: True
         - THTensor* other
@@ -2557,8 +2557,8 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real other
-        - arg: real alpha
+        - ntype other
+        - arg: ntype alpha
           default: AS_NTYPE(1)
           kwarg_only: True
     - cname: csub
@@ -2567,7 +2567,7 @@
         - THTensor* self
         - arg: THTensor* self
           broadcast: other inplace fallback
-        - arg: real alpha
+        - arg: ntype alpha
           default: AS_NTYPE(1)
           kwarg_only: True
         - THTensor* other
@@ -2584,7 +2584,7 @@
         - arg: THTensor* result
           output: True
         - THTensor* self
-        - real other
+        - ntype other
     - cname: cmul
       aten_sparse: True
       arguments:
@@ -2602,7 +2602,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real other
+        - ntype other
     - cname: cmul
       aten_sparse: True
       arguments:
@@ -2624,7 +2624,7 @@
         - arg: THTensor* result
           output: True
         - THTensor* self
-        - real other
+        - ntype other
     - cname: cdiv
       arguments:
         - arg: THTensor* result
@@ -2642,7 +2642,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real other
+        - ntype other
     - cname: cdiv
       arguments:
         - THTensor* self
@@ -2662,7 +2662,7 @@
         - arg: THTensor* result
           output: True
         - THTensor* self
-        - real other
+        - ntype other
     - cname: cfmod
       arguments:
         - arg: THTensor* result
@@ -2679,7 +2679,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real other
+        - ntype other
     - cname: cfmod
       arguments:
         - THTensor* self
@@ -2699,7 +2699,7 @@
         - arg: THTensor* result
           output: True
         - THTensor* self
-        - real other
+        - ntype other
     - cname: cremainder
       arguments:
         - arg: THTensor* result
@@ -2716,7 +2716,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - real other
+        - ntype other
     - cname: cremainder
       arguments:
         - THTensor* self
@@ -2735,8 +2735,8 @@
     - arg: THTensor* result
       output: True
     - THTensor* self
-    - real min
-    - real max
+    - ntype min
+    - ntype max
 ]]
 [[
   name: clamp_
@@ -2748,8 +2748,8 @@
   arguments:
     - THTensor* self
     - THTensor* self
-    - real min
-    - real max
+    - ntype min
+    - ntype max
 ]]
 [[
   name: clamp_min
@@ -2762,7 +2762,7 @@
     - arg: THTensor* result
       output: True
     - THTensor* self
-    - real min
+    - ntype min
 ]]
 [[
   name: clamp_min_
@@ -2774,7 +2774,7 @@
   arguments:
     - THTensor* self
     - THTensor* self
-    - real min
+    - ntype min
 ]]
 [[
   name: clamp_max
@@ -2787,7 +2787,7 @@
     - arg: THTensor* result
       output: True
     - THTensor* self
-    - real max
+    - ntype max
 ]]
 [[
   name: clamp_max_
@@ -2799,7 +2799,7 @@
   arguments:
     - THTensor* self
     - THTensor* self
-    - real max
+    - ntype max
 ]]
 [[
   name: dot
@@ -2808,7 +2808,7 @@
   variants:
     - method
     - function
-  return: accreal
+  return: accntype
   arguments:
     - arg: THTensor* self
       assert_ndim: 1
@@ -2913,12 +2913,12 @@
     - arguments:
       - arg: THTensor* result
         output: True
-      - arg: real beta
+      - arg: ntype beta
         default: AS_NTYPE(1)
         kwarg_only: True
       - arg: THTensor* self
         broadcast: mat1,mat2 dims:mat1.dim0,mat2.dim1
-      - arg: real alpha
+      - arg: ntype alpha
         default: AS_NTYPE(1)
         kwarg_only: True
       - THTensor* mat1
@@ -2928,11 +2928,11 @@
       arguments:
         - arg: THTensor* result
           output: True
-        - arg: real beta
+        - arg: ntype beta
           default: AS_NTYPE(1)
           kwarg_only: True
         - THTensor* self
-        - arg: real alpha
+        - arg: ntype alpha
           default: AS_NTYPE(1)
           kwarg_only: True
         - THSTensor* mat1
@@ -2945,11 +2945,11 @@
     - cname: addmm
       arguments:
       - THTensor* self
-      - arg: real beta
+      - arg: ntype beta
         default: AS_NTYPE(1)
         kwarg_only: True
       - THTensor* self
-      - arg: real alpha
+      - arg: ntype alpha
         default: AS_NTYPE(1)
         kwarg_only: True
       - THTensor* mat1
@@ -2958,11 +2958,11 @@
       sparse: yes
       arguments:
         - arg: THTensor* self
-        - arg: real beta
+        - arg: ntype beta
           default: AS_NTYPE(1)
           kwarg_only: True
         - THTensor* self
-        - arg: real alpha
+        - arg: ntype alpha
           default: AS_NTYPE(1)
           kwarg_only: True
         - THSTensor* mat1
@@ -2977,12 +2977,12 @@
   arguments:
     - arg: THTensor* result
       output: True
-    - arg: real beta
+    - arg: ntype beta
       default: AS_NTYPE(1)
       kwarg_only: True
     - arg: THTensor* self
       broadcast: mat,vec dims:mat.dim0
-    - arg: real alpha
+    - arg: ntype alpha
       default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* mat
@@ -2994,11 +2994,11 @@
   return: self
   arguments:
     - THTensor* self
-    - arg: real beta
+    - arg: ntype beta
       default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* self
-    - arg: real alpha
+    - arg: ntype alpha
       default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* mat
@@ -3013,12 +3013,12 @@
   arguments:
     - arg: THTensor* result
       output: True
-    - arg: real beta
+    - arg: ntype beta
       default: AS_NTYPE(1)
       kwarg_only: True
     - arg: THTensor* self
       broadcast: vec1,vec2 dims:vec1.dim0,vec2.dim0
-    - arg: real alpha
+    - arg: ntype alpha
       default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* vec1
@@ -3030,11 +3030,11 @@
   return: self
   arguments:
     - THTensor* self
-    - arg: real beta
+    - arg: ntype beta
       default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* self
-    - arg: real alpha
+    - arg: ntype alpha
       default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* vec1
@@ -3158,12 +3158,12 @@
   arguments:
     - arg: THTensor* result
       output: True
-    - arg: real beta
+    - arg: ntype beta
       default: AS_NTYPE(1)
       kwarg_only: True
     - arg: THTensor* self
       broadcast: batch1,batch2 dims:batch1.dim1,batch2.dim2
-    - arg: real alpha
+    - arg: ntype alpha
       default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* batch1
@@ -3175,11 +3175,11 @@
   return: self
   arguments:
     - THTensor* self
-    - arg: real beta
+    - arg: ntype beta
       default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* self
-    - arg: real alpha
+    - arg: ntype alpha
       default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* batch1
@@ -3194,12 +3194,12 @@
   arguments:
     - arg: THTensor* result
       output: True
-    - arg: real beta
+    - arg: ntype beta
       default: AS_NTYPE(1)
       kwarg_only: True
     - arg: THTensor* self
       broadcast: batch1,batch2 dims:batch1.dim0,batch1.dim1,batch2.dim2
-    - arg: real alpha
+    - arg: ntype alpha
       default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* batch1
@@ -3211,11 +3211,11 @@
   return: argument 0
   arguments:
     - THTensor* self
-    - arg: real beta
+    - arg: ntype beta
       default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* self
-    - arg: real alpha
+    - arg: ntype alpha
       default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* batch1
@@ -3232,7 +3232,7 @@
       output: True
     - arg: THTensor* self
       broadcast: tensor1,tensor2 fallback
-    - arg: real value
+    - arg: ntype value
       default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* tensor1
@@ -3247,7 +3247,7 @@
         - THTensor* self
         - arg: THTensor* self
           broadcast: tensor1,tensor2 inplace fallback
-        - arg: real value
+        - arg: ntype value
           default: AS_NTYPE(1)
           kwarg_only: True
         - THTensor* tensor1
@@ -3257,7 +3257,7 @@
       arguments:
         - THTensor* self
         - THTensor* self
-        - arg: real value
+        - arg: ntype value
           default: AS_NTYPE(1)
           kwarg_only: True
         - THSTensor* tensor1
@@ -3274,7 +3274,7 @@
       output: True
     - arg: THTensor* self
       broadcast: tensor1,tensor2 fallback
-    - arg: real value
+    - arg: ntype value
       default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* tensor1
@@ -3288,7 +3288,7 @@
     - THTensor* self
     - arg: THTensor* self
       broadcast: tensor1,tensor2 inplace fallback
-    - arg: real value
+    - arg: ntype value
       default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* tensor1
@@ -3548,7 +3548,7 @@
       if_true: U
       if_false: L
       default: U
-    - arg: real tol
+    - arg: ntype tol
       default: -1
 ]]
 [[

@@ -152,8 +152,8 @@ TYPE_FORMAL_GENERIC = {
     'THGenerator*': 'Generator *',
     'THSize*': 'IntList',
     'THStride*': 'IntList',
-    'accreal': 'Scalar',
-    'real': 'Scalar',
+    'accntype': 'Scalar',
+    'ntype': 'Scalar',
     'long': 'int64_t',
 }
 
@@ -169,8 +169,8 @@ DYNAMIC_TYPE = {
     'THGenerator*': 'Generator*',
     'THSize*': 'IntList',
     'THStride*': 'IntList',
-    'accreal': 'accreal',
-    'real': 'real',
+    'accntype': 'accntype',
+    'ntype': 'ntype',
     'long': 'int64_t',
 }
 
@@ -182,8 +182,8 @@ TYPE_RETURN = {
     'THSTensor*': 'Tensor',
     'THDenseTensor*': 'Tensor',
     'THDenseIndexTensor*': 'Tensor',
-    'real': 'Tensor',
-    'accreal': 'Tensor',
+    'ntype': 'Tensor',
+    'accntype': 'Tensor',
     'long': 'int64_t',
 }
 
@@ -215,8 +215,8 @@ CHECKED_CAST = {
             'check_generator<${Backend}Generator>(${arg_name}, &context->defaultGenerator(backend()))'),
     'THSize*': CodeTemplate('THLongStorageView::makeFromSize(${arg_name})'),
     'THStride*': CodeTemplate('THLongStorageView::makeFromStride(${arg_name}, ${noelem_to_empty})'),
-    'real': CodeTemplate('${arg_name}.to${ScalarName}()'),
-    'accreal': CodeTemplate('${arg_name}.to${AccScalarName}()'),
+    'ntype': CodeTemplate('${arg_name}.to${ScalarName}()'),
+    'accntype': CodeTemplate('${arg_name}.to${AccScalarName}()'),
     'TensorList': CodeTemplate('tensor_list_checked_cast<${Tensor}, Tensor, '
                                '${THTensor}>(${arg_name},"${arg_name}",${arg_pos})'),
     'IntList': CodeTemplate('check_intlist<${size}>(${arg_name}, "${arg_name}", ${arg_pos}${,default_init})')
@@ -838,9 +838,9 @@ def create_derived(backend_type_env, declarations):
     def is_actual_return_long(ret):
         if ret['type'] == 'long':
             return True
-        if ret['type'] == 'real':
+        if ret['type'] == 'ntype':
             return backend_type_env['ScalarName'] == 'Long'
-        if ret['type'] == 'accreal':
+        if ret['type'] == 'accntype':
             return backend_type_env['AccScalarName'] == 'Long'
         return False
 
@@ -1092,9 +1092,9 @@ def create_derived(backend_type_env, declarations):
                 return_tensor = "return Tensor((${wrapped_tensor})${maybe_scalar},false);"
                 body.append(CodeTemplate(return_tensor).substitute(
                     env, wrapped_tensor=wrapped_tensor, maybe_scalar=maybe_scalar))
-            # return the same underlying Tensor type for both real and accreal; this ensures
+            # return the same underlying Tensor type for both ntype and accreal; this ensures
             # e.g. x.sum(0) and x.sum() return the same type.
-            elif ret['type'] == 'accreal' or ret['type'] == 'real':
+            elif ret['type'] == 'accntype' or ret['type'] == 'ntype':
                 body.append('return scalarTensor({});'.format(call))
             else:
                 # we using int64_t for long in the API, so correct it here...

@@ -36,7 +36,7 @@ def parse_arguments(args, func):
     arguments = []
     python_default_inits = func.get('python_default_init', {})
 
-    # TODO: Use a real parser here; this will get bamboozled
+    # TODO: Use a ntype parser here; this will get bamboozled
     # by signatures that contain things like std::array<bool, 2> (note the space)
     for arg in args.split(', '):
         t, name = [a.strip() for a in arg.rsplit(' ', 1)]

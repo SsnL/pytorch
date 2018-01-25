@@ -129,7 +129,7 @@ if not options.no_cuda:
 
 densities = ['Dense', 'Sparse']
 
-# scalar_name, c_type, accreal, th_scalar_type, is_floating_type
+# scalar_name, c_type, accntype, th_scalar_type, is_floating_type
 scalar_types = [
     ('Byte', 'uint8_t', 'Long', 'uint8_t', False),
     ('Char', 'int8_t', 'Long', 'int8_t', False),
@@ -192,7 +192,7 @@ def format_yaml(data):
 
 
 def generate_storage_type_and_tensor(backend, density, scalar_type, declarations):
-    scalar_name, c_type, accreal, th_scalar_type, is_floating_type = scalar_type
+    scalar_name, c_type, accntype, th_scalar_type, is_floating_type = scalar_type
     env = {}
     density_tag = 'Sparse' if density == 'Sparse' else ''
     th_density_tag = 'S' if density == 'Sparse' else ''
@@ -200,7 +200,7 @@ def generate_storage_type_and_tensor(backend, density, scalar_type, declarations
     env['ScalarName'] = scalar_name
     env['ScalarType'] = c_type
     env['THScalarType'] = th_scalar_type
-    env['AccScalarName'] = accreal
+    env['AccScalarName'] = accntype
     env['isFloatingType'] = is_floating_type
     env['isIntegralType'] = not is_floating_type
     env['Storage'] = "{}{}Storage".format(backend, scalar_name)

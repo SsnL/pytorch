@@ -165,7 +165,7 @@ def discover_zero_dim_tensor_operations(declaration):
 
     for option in declaration['options']:
         for i, arg in enumerate(option['arguments']):
-            if arg['type'] == 'real':
+            if arg['type'] == 'ntype':
                 signature_of_tensor_version = signature(option, i, 'Tensor &')
                 if signature_of_tensor_version in signature_to_option:
                     tensor_version = \
