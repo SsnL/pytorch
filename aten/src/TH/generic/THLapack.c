@@ -41,7 +41,7 @@ TH_EXTERNC void dpstrf_(char *uplo, int *n, double *a, int *lda, int *piv, int *
 void THLapack_(gesv)(int n, int nrhs, real *a, int lda, int *ipiv, real *b, int ldb, int* info)
 {
 #ifdef USE_LAPACK
-#if defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_DOUBLE)
   dgesv_(&n, &nrhs, a, &lda, ipiv, b, &ldb, info);
 #else
   sgesv_(&n, &nrhs, a, &lda, ipiv, b, &ldb, info);
@@ -56,7 +56,7 @@ void THLapack_(gesv)(int n, int nrhs, real *a, int lda, int *ipiv, real *b, int 
 void THLapack_(trtrs)(char uplo, char trans, char diag, int n, int nrhs, real *a, int lda, real *b, int ldb, int* info)
 {
 #ifdef USE_LAPACK
-#if defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_DOUBLE)
   dtrtrs_(&uplo, &trans, &diag, &n, &nrhs, a, &lda, b, &ldb, info);
 #else
   strtrs_(&uplo, &trans, &diag, &n, &nrhs, a, &lda, b, &ldb, info);
@@ -72,7 +72,7 @@ M-by-N matrix A, or its transpose, using a QR or LQ factorization of A */
 void THLapack_(gels)(char trans, int m, int n, int nrhs, real *a, int lda, real *b, int ldb, real *work, int lwork, int *info)
 {
 #ifdef USE_LAPACK
-#if defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_DOUBLE)
   dgels_(&trans, &m, &n, &nrhs, a, &lda, b, &ldb, work, &lwork, info);
 #else
   sgels_(&trans, &m, &n, &nrhs, a, &lda, b, &ldb, work, &lwork, info);
@@ -87,7 +87,7 @@ matrix A */
 void THLapack_(syev)(char jobz, char uplo, int n, real *a, int lda, real *w, real *work, int lwork, int *info)
 {
 #ifdef USE_LAPACK
-#if defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_DOUBLE)
   dsyev_(&jobz, &uplo, &n, a, &lda, w, work, &lwork, info);
 #else
   ssyev_(&jobz, &uplo, &n, a, &lda, w, work, &lwork, info);
@@ -102,7 +102,7 @@ optionally, the left and/or right eigenvectors */
 void THLapack_(geev)(char jobvl, char jobvr, int n, real *a, int lda, real *wr, real *wi, real* vl, int ldvl, real *vr, int ldvr, real *work, int lwork, int *info)
 {
 #ifdef USE_LAPACK
-#if defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_DOUBLE)
   dgeev_(&jobvl, &jobvr, &n, a, &lda, wr, wi, vl, &ldvl, vr, &ldvr, work, &lwork, info);
 #else
   sgeev_(&jobvl, &jobvr, &n, a, &lda, wr, wi, vl, &ldvl, vr, &ldvr, work, &lwork, info);
@@ -117,7 +117,7 @@ optionally computing the left and/or right singular vectors */
 void THLapack_(gesvd)(char jobu, char jobvt, int m, int n, real *a, int lda, real *s, real *u, int ldu, real *vt, int ldvt, real *work, int lwork, int *info)
 {
 #ifdef USE_LAPACK
-#if defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_DOUBLE)
   dgesvd_( &jobu,  &jobvt,  &m,  &n,  a,  &lda,  s,  u,  &ldu,  vt,  &ldvt,  work,  &lwork,  info);
 #else
   sgesvd_( &jobu,  &jobvt,  &m,  &n,  a,  &lda,  s,  u,  &ldu,  vt,  &ldvt,  work,  &lwork,  info);
@@ -131,7 +131,7 @@ void THLapack_(gesvd)(char jobu, char jobvt, int m, int n, real *a, int lda, rea
 void THLapack_(getrf)(int m, int n, real *a, int lda, int *ipiv, int *info)
 {
 #ifdef  USE_LAPACK
-#if defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_DOUBLE)
   dgetrf_(&m, &n, a, &lda, ipiv, info);
 #else
   sgetrf_(&m, &n, a, &lda, ipiv, info);
@@ -144,7 +144,7 @@ void THLapack_(getrf)(int m, int n, real *a, int lda, int *ipiv, int *info)
 void THLapack_(getrs)(char trans, int n, int nrhs, real *a, int lda, int *ipiv, real *b, int ldb, int *info)
 {
 #ifdef  USE_LAPACK
-#if defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_DOUBLE)
   dgetrs_(&trans, &n, &nrhs, a, &lda, ipiv, b, &ldb, info);
 #else
   sgetrs_(&trans, &n, &nrhs, a, &lda, ipiv, b, &ldb, info);
@@ -158,7 +158,7 @@ void THLapack_(getrs)(char trans, int n, int nrhs, real *a, int lda, int *ipiv, 
 void THLapack_(getri)(int n, real *a, int lda, int *ipiv, real *work, int lwork, int* info)
 {
 #ifdef  USE_LAPACK
-#if defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_DOUBLE)
   dgetri_(&n, a, &lda, ipiv, work, &lwork, info);
 #else
   sgetri_(&n, a, &lda, ipiv, work, &lwork, info);
@@ -172,7 +172,7 @@ void THLapack_(getri)(int n, real *a, int lda, int *ipiv, real *work, int lwork,
 void THLapack_(potrf)(char uplo, int n, real *a, int lda, int *info)
 {
 #ifdef  USE_LAPACK
-#if defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_DOUBLE)
   dpotrf_(&uplo, &n, a, &lda, info);
 #else
   spotrf_(&uplo, &n, a, &lda, info);
@@ -186,7 +186,7 @@ void THLapack_(potrf)(char uplo, int n, real *a, int lda, int *info)
 void THLapack_(potrs)(char uplo, int n, int nrhs, real *a, int lda, real *b, int ldb, int *info)
 {
 #ifdef  USE_LAPACK
-#if defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_DOUBLE)
   dpotrs_(&uplo, &n, &nrhs, a, &lda, b, &ldb, info);
 #else
   spotrs_(&uplo, &n, &nrhs, a, &lda, b, &ldb, info);
@@ -200,7 +200,7 @@ void THLapack_(potrs)(char uplo, int n, int nrhs, real *a, int lda, real *b, int
 void THLapack_(potri)(char uplo, int n, real *a, int lda, int *info)
 {
 #ifdef  USE_LAPACK
-#if defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_DOUBLE)
   dpotri_(&uplo, &n, a, &lda, info);
 #else
   spotri_(&uplo, &n, a, &lda, info);
@@ -214,7 +214,7 @@ void THLapack_(potri)(char uplo, int n, real *a, int lda, int *info)
 void THLapack_(pstrf)(char uplo, int n, real *a, int lda, int *piv, int *rank, real tol, real *work, int *info)
 {
 #ifdef  USE_LAPACK
-#if defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_DOUBLE)
   dpstrf_(&uplo, &n, a, &lda, piv, rank, &tol, work, info);
 #else
   spstrf_(&uplo, &n, a, &lda, piv, rank, &tol, work, info);
@@ -228,7 +228,7 @@ void THLapack_(pstrf)(char uplo, int n, real *a, int lda, int *piv, int *rank, r
 void THLapack_(geqrf)(int m, int n, real *a, int lda, real *tau, real *work, int lwork, int *info)
 {
 #ifdef  USE_LAPACK
-#if defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_DOUBLE)
   dgeqrf_(&m, &n, a, &lda, tau, work, &lwork, info);
 #else
   sgeqrf_(&m, &n, a, &lda, tau, work, &lwork, info);
@@ -242,7 +242,7 @@ void THLapack_(geqrf)(int m, int n, real *a, int lda, real *tau, real *work, int
 void THLapack_(orgqr)(int m, int n, int k, real *a, int lda, real *tau, real *work, int lwork, int *info)
 {
 #ifdef  USE_LAPACK
-#if defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_DOUBLE)
   dorgqr_(&m, &n, &k, a, &lda, tau, work, &lwork, info);
 #else
   sorgqr_(&m, &n, &k, a, &lda, tau, work, &lwork, info);
@@ -256,7 +256,7 @@ void THLapack_(orgqr)(int m, int n, int k, real *a, int lda, real *tau, real *wo
 void THLapack_(ormqr)(char side, char trans, int m, int n, int k, real *a, int lda, real *tau, real *c, int ldc, real *work, int lwork, int *info)
 {
 #ifdef  USE_LAPACK
-#if defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_DOUBLE)
   dormqr_(&side, &trans, &m, &n, &k, a, &lda, tau, c, &ldc, work, &lwork, info);
 #else
   sormqr_(&side, &trans, &m, &n, &k, a, &lda, tau, c, &ldc, work, &lwork, info);

@@ -5,19 +5,19 @@
 void THTensor_(random)(THTensor *self, THGenerator *_generator)
 {
 
-#if defined(TH_REAL_IS_BYTE)
+#if defined(TH_NTYPE_IS_BYTE)
   TH_TENSOR_APPLY(real, self, *self_data = (uint8_t)(THRandom_random(_generator) % (UINT8_MAX + 1)););
-#elif defined(TH_REAL_IS_CHAR)
+#elif defined(TH_NTYPE_IS_CHAR)
   TH_TENSOR_APPLY(real, self, *self_data = (int8_t)(THRandom_random(_generator) % (INT8_MAX + 1)););
-#elif defined(TH_REAL_IS_SHORT)
+#elif defined(TH_NTYPE_IS_SHORT)
   TH_TENSOR_APPLY(real, self, *self_data = (int16_t)(THRandom_random(_generator) % (INT16_MAX + 1)););
-#elif defined(TH_REAL_IS_INT)
+#elif defined(TH_NTYPE_IS_INT)
   TH_TENSOR_APPLY(real, self, *self_data = (int32_t)(THRandom_random(_generator) % (INT32_MAX + 1UL)););
-#elif defined(TH_REAL_IS_LONG)
+#elif defined(TH_NTYPE_IS_LONG)
   TH_TENSOR_APPLY(real, self, *self_data = (uint64_t)(THRandom_random64(_generator) % (LONG_MAX + 1ULL)););
-#elif defined(TH_REAL_IS_FLOAT)
+#elif defined(TH_NTYPE_IS_FLOAT)
   TH_TENSOR_APPLY(real, self, *self_data = (float)(THRandom_random(_generator) % ((1ULL << FLT_MANT_DIG) + 1)););
-#elif defined(TH_REAL_IS_DOUBLE)
+#elif defined(TH_NTYPE_IS_DOUBLE)
   TH_TENSOR_APPLY(real, self, *self_data = (double)(THRandom_random64(_generator) % ((1ULL << DBL_MANT_DIG) + 1)););
 #else
 #error "Unknown type"
@@ -28,7 +28,7 @@ void THTensor_(random)(THTensor *self, THGenerator *_generator)
 void THTensor_(clampedRandom)(THTensor *self, THGenerator *_generator, int64_t min, int64_t max) {
   THArgCheck(max > min, 2, "max must be greater than min, but got: min = %lld, max = %lld", min, max);
   uint64_t range = max - min;
-#if defined(TH_REAL_IS_LONG) || defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_LONG) || defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
     if (range >= 1ULL << 32) {
       TH_TENSOR_APPLY(real, self, *self_data = (real)((THRandom_random64(_generator) % range) + min);)
       return;
@@ -62,17 +62,17 @@ void THTensor_(bernoulli_DoubleTensor)(THTensor *self, THGenerator *_generator, 
   TH_TENSOR_APPLY2(real, self, double, p, *self_data = (real)THRandom_bernoulli(_generator, (double)*p_data););
 }
 
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
 
-#if defined(TH_REAL_IS_FLOAT)
+#if defined(TH_NTYPE_IS_FLOAT)
 #define TH_REAL_MIN FLT_MIN
-#elif defined(TH_REAL_IS_DOUBLE)
+#elif defined(TH_NTYPE_IS_DOUBLE)
 #define TH_REAL_MIN DBL_MIN
 #endif
 
 void THTensor_(bernoulli_Tensor)(THTensor *self, THGenerator *_generator, THTensor* p)
 {
-#if defined(TH_REAL_IS_FLOAT)
+#if defined(TH_NTYPE_IS_FLOAT)
   THTensor_(bernoulli_FloatTensor)(self, _generator, p);
 #else
   THTensor_(bernoulli_DoubleTensor)(self, _generator, p);
@@ -81,7 +81,7 @@ void THTensor_(bernoulli_Tensor)(THTensor *self, THGenerator *_generator, THTens
 
 void THTensor_(uniform)(THTensor *self, THGenerator *_generator, double a, double b)
 {
-  #if defined(TH_REAL_IS_FLOAT)
+  #if defined(TH_NTYPE_IS_FLOAT)
   TH_TENSOR_APPLY(real, self, *self_data =
     (real)THRandom_uniformFloat(_generator, (real)a, (real)b););
   #else
@@ -424,7 +424,7 @@ void THTensor_(multinomial)(THLongTensor *self, THGenerator *_generator, THTenso
 }
 #endif
 
-#if defined(TH_REAL_IS_BYTE)
+#if defined(TH_NTYPE_IS_BYTE)
 void THTensor_(getRNGState)(THGenerator *_generator, THTensor *self)
 {
   static const size_t size = sizeof(THGenerator);

@@ -157,7 +157,7 @@ void THVector_(normal_fill_DEFAULT)(real *data,
   THAssert(size >= 16 && "Size must be >= 16 for normal fill");
 
   for (int64_t i = 0; i < size; ++i) {
-#ifdef TH_REAL_IS_FLOAT
+#ifdef TH_NTYPE_IS_FLOAT
     data[i] = THRandom_uniformFloat(generator, 0, 1);
 #else
     data[i] = THRandom_uniform(generator, 0, 1);
@@ -172,7 +172,7 @@ void THVector_(normal_fill_DEFAULT)(real *data,
     // Recompute the last 16 values.
     data = data + size - 16;
     for (int64_t i = 0; i < 16; ++i) {
-#ifdef TH_REAL_IS_FLOAT
+#ifdef TH_NTYPE_IS_FLOAT
       data[i] = THRandom_uniformFloat(generator, 0, 1);
 #else
       data[i] = THRandom_uniform(generator, 0, 1);
@@ -212,19 +212,19 @@ void THVector_(normal_fill_DEFAULT)(real *data,
       y[i] = CFUNC(x[i], c);  \
   } \
 
-#if defined(TH_REAL_IS_LONG)
+#if defined(TH_NTYPE_IS_LONG)
 VECTOR_IMPLEMENT_FUNCTION(abs,labs)
 #endif /* long only part */
 
-#if defined(TH_REAL_IS_SHORT) || defined(TH_REAL_IS_INT)
+#if defined(TH_NTYPE_IS_SHORT) || defined(TH_NTYPE_IS_INT)
 VECTOR_IMPLEMENT_FUNCTION(abs,abs)
 #endif /* int only part */
 
 
 /* floating point only now */
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
 
-#if defined (TH_REAL_IS_FLOAT)
+#if defined (TH_NTYPE_IS_FLOAT)
 #define TH_MATH_NAME(fn) fn##f
 #else
 #define TH_MATH_NAME(fn) fn

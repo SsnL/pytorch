@@ -141,11 +141,11 @@ TH_API void THTensor_(geTensorT)(THTensor *r_, THTensor *ta, THTensor *tb);
 TH_API void THTensor_(neTensorT)(THTensor *r_, THTensor *ta, THTensor *tb);
 TH_API void THTensor_(eqTensorT)(THTensor *r_, THTensor *ta, THTensor *tb);
 
-#if defined(TH_REAL_IS_SHORT) || defined(TH_REAL_IS_INT) || defined(TH_REAL_IS_LONG)
+#if defined(TH_NTYPE_IS_SHORT) || defined(TH_NTYPE_IS_INT) || defined(TH_NTYPE_IS_LONG)
 TH_API void THTensor_(abs)(THTensor *r_, THTensor *t);
 #endif
 
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
 
 TH_API void THTensor_(sigmoid)(THTensor *r_, THTensor *t);
 TH_API void THTensor_(log)(THTensor *r_, THTensor *t);
@@ -202,11 +202,11 @@ TH_API void THTensor_(randn)(THTensor *r_, THGenerator *_generator, THLongStorag
 TH_API void THTensor_(dirichlet_grad)(THTensor *self, THTensor *x, THTensor *alpha, THTensor *total);
 #endif
 
-#if defined(TH_REAL_IS_BYTE)
+#if defined(TH_NTYPE_IS_BYTE)
 
 TH_API int THTensor_(logicalall)(THTensor *self);
 TH_API int THTensor_(logicalany)(THTensor *self);
 
-#endif /* TH_REAL_IS_BYTE */
+#endif /* TH_NTYPE_IS_BYTE */
 
 #endif

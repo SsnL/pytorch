@@ -218,7 +218,7 @@ void THTensor_(nonzero)(THLongTensor *subscript, THTensor *tensor)
   int64_t i = 0;
   int64_t dim;
   int64_t div = 1;
-#ifdef TH_REAL_IS_HALF
+#ifdef TH_NTYPE_IS_HALF
 #define IS_NONZERO(val) ((val.x & 0x7fff) != 0)
 #else
 #define IS_NONZERO(val) ((val)!=0)
@@ -672,7 +672,7 @@ accreal THTensor_(dot)(THTensor *tensor, THTensor *src)
 
 
 #undef th_isnan
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
 #define th_isnan(val) \
 (isnan(val))
 #else
@@ -680,7 +680,7 @@ accreal THTensor_(dot)(THTensor *tensor, THTensor *src)
 #endif
 
 #undef th_isnan_break
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
 #define th_isnan_break(val) \
 if (isnan(val)) break;
 #else
@@ -885,11 +885,11 @@ void THTensor_(div)(THTensor *r_, THTensor *t, real value)
 
 void THTensor_(lshift)(THTensor *r_, THTensor *t, real value)
 {
-#if defined(TH_REAL_IS_FLOAT)
+#if defined(TH_NTYPE_IS_FLOAT)
   return THTensor_(mul)(r_, t, powf(2, value));
-#elif defined(TH_REAL_IS_DOUBLE)
+#elif defined(TH_NTYPE_IS_DOUBLE)
   return THTensor_(mul)(r_, t, pow(2, value));
-#elif defined(TH_REAL_IS_HALF)
+#elif defined(TH_NTYPE_IS_HALF)
   return THError("lshift is not supported for torch.HalfTensor");
 #else
   THTensor_(resizeAs)(r_, t);
@@ -903,7 +903,7 @@ void THTensor_(lshift)(THTensor *r_, THTensor *t, real value)
     int64_t i;
     #pragma omp parallel for if(r_Size > TH_OMP_OVERHEAD_THRESHOLD * 100) private(i)
     for (i=0; i<r_Size; i++) {
-#if defined(TH_REAL_IS_BYTE)
+#if defined(TH_NTYPE_IS_BYTE)
       rp[i] = ((real) tp[i]) << value;
 #else
       rp[i] = ((ureal) tp[i]) << value;
@@ -915,7 +915,7 @@ void THTensor_(lshift)(THTensor *r_, THTensor *t, real value)
     if (inOMP) {
       serial_path = 1;
     } else {
-#if defined(TH_REAL_IS_BYTE)
+#if defined(TH_NTYPE_IS_BYTE)
       TH_TENSOR_APPLY2_OMP(r_Size, r_Contig, tContig, real, r_, real, t, *r__data = (((real) *t_data) << value););
 #else
       TH_TENSOR_APPLY2_OMP(r_Size, r_Contig, tContig, real, r_, real, t, *r__data = (((ureal) *t_data) << value););
@@ -926,7 +926,7 @@ void THTensor_(lshift)(THTensor *r_, THTensor *t, real value)
 #endif
   }
   if (serial_path) {
-#if defined(TH_REAL_IS_BYTE)
+#if defined(TH_NTYPE_IS_BYTE)
     TH_TENSOR_APPLY2(real, r_, real, t, *r__data = (((real) *t_data) << value););
 #else
     TH_TENSOR_APPLY2(real, r_, real, t, *r__data = (((ureal) *t_data) << value););
@@ -937,11 +937,11 @@ void THTensor_(lshift)(THTensor *r_, THTensor *t, real value)
 
 void THTensor_(rshift)(THTensor *r_, THTensor *t, real value)
 {
-#if defined(TH_REAL_IS_FLOAT)
+#if defined(TH_NTYPE_IS_FLOAT)
   return THTensor_(div)(r_, t, powf(2, value));
-#elif defined(TH_REAL_IS_DOUBLE)
+#elif defined(TH_NTYPE_IS_DOUBLE)
   return THTensor_(div)(r_, t, pow(2, value));
-#elif defined(TH_REAL_IS_HALF)
+#elif defined(TH_NTYPE_IS_HALF)
   return THError("rshift is not supported for torch.HalfTensor");
 #else
   THTensor_(resizeAs)(r_, t);
@@ -955,7 +955,7 @@ void THTensor_(rshift)(THTensor *r_, THTensor *t, real value)
     int64_t i;
     #pragma omp parallel for if(r_Size > TH_OMP_OVERHEAD_THRESHOLD * 100) private(i)
     for (i=0; i<r_Size; i++) {
-#if defined(TH_REAL_IS_BYTE)
+#if defined(TH_NTYPE_IS_BYTE)
       rp[i] = ((real) tp[i]) >> value;
 #else
       rp[i] = ((ureal) tp[i]) >> value;
@@ -967,7 +967,7 @@ void THTensor_(rshift)(THTensor *r_, THTensor *t, real value)
     if (inOMP) {
       serial_path = 1;
     } else {
-#if defined(TH_REAL_IS_BYTE)
+#if defined(TH_NTYPE_IS_BYTE)
       TH_TENSOR_APPLY2_OMP(r_Size, r_Contig, tContig, real, r_, real, t, *r__data = (((real) *t_data) >> value););
 #else
       TH_TENSOR_APPLY2_OMP(r_Size, r_Contig, tContig, real, r_, real, t, *r__data = (((ureal) *t_data) >> value););
@@ -978,7 +978,7 @@ void THTensor_(rshift)(THTensor *r_, THTensor *t, real value)
 #endif
   }
   if (serial_path) {
-#if defined(TH_REAL_IS_BYTE)
+#if defined(TH_NTYPE_IS_BYTE)
     TH_TENSOR_APPLY2(real, r_, real, t, *r__data = (((real) *t_data) >> value););
 #else
     TH_TENSOR_APPLY2(real, r_, real, t, *r__data = (((ureal) *t_data) >> value););
@@ -1000,7 +1000,7 @@ void THTensor_(fmod)(THTensor *r_, THTensor *t, real value)
     int64_t i;
     #pragma omp parallel for if(r_Size > TH_OMP_OVERHEAD_THRESHOLD) private(i)
     for (i=0; i<r_Size; i++) {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
       rp[i] = fmod(tp[i], value);
 #else
       rp[i] = tp[i] % value;
@@ -1012,7 +1012,7 @@ void THTensor_(fmod)(THTensor *r_, THTensor *t, real value)
     if (inOMP) {
       serial_path = 1;
     } else {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
       TH_TENSOR_APPLY2_OMP(r_Size, r_Contig, tContig, real, r_, real, t, *r__data = fmod(*t_data, value););
 #else
       TH_TENSOR_APPLY2_OMP(r_Size, r_Contig, tContig, real, r_, real, t, *r__data = (*t_data % value););
@@ -1023,7 +1023,7 @@ void THTensor_(fmod)(THTensor *r_, THTensor *t, real value)
 #endif
   }
   if (serial_path) {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
     TH_TENSOR_APPLY2(real, r_, real, t, *r__data = fmod(*t_data, value););
 #else
     TH_TENSOR_APPLY2(real, r_, real, t, *r__data = (*t_data % value););
@@ -1044,7 +1044,7 @@ void THTensor_(remainder)(THTensor *r_, THTensor *t, real value)
     int64_t i;
     #pragma omp parallel for if(r_Size > TH_OMP_OVERHEAD_THRESHOLD) private(i)
     for (i=0; i<r_Size; i++) {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
       rp[i] = (value == 0)? NAN : tp[i] - value * floor(tp[i] / value);
 #else
       // There is no NAN for integers
@@ -1059,7 +1059,7 @@ void THTensor_(remainder)(THTensor *r_, THTensor *t, real value)
     if (inOMP) {
       serial_path = 1;
     } else {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
       TH_TENSOR_APPLY2_OMP(r_Size, r_Contig, tContig, real, r_, real, t, *r__data = (value == 0)? NAN : *t_data - value * floor(*t_data / value););
 #else
       // There is no NAN for integers
@@ -1072,7 +1072,7 @@ void THTensor_(remainder)(THTensor *r_, THTensor *t, real value)
 #endif
   }
   if (serial_path) {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
     TH_TENSOR_APPLY2(real, r_, real, t, *r__data = (value == 0)? NAN : *t_data - value * floor(*t_data / value););
 #else
     // There is no NAN for integers
@@ -1084,7 +1084,7 @@ void THTensor_(remainder)(THTensor *r_, THTensor *t, real value)
 
 void THTensor_(bitand)(THTensor *r_, THTensor *t, real value)
 {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_HALF)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_HALF)
   return THError("bitand is only supported for integer type tensors");
 #else
   THTensor_(resizeAs)(r_, t);
@@ -1120,7 +1120,7 @@ void THTensor_(bitand)(THTensor *r_, THTensor *t, real value)
 
 void THTensor_(bitor)(THTensor *r_, THTensor *t, real value)
 {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_HALF)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_HALF)
   return THError("bitxor is only supported for integer type tensors");
 #else
   THTensor_(resizeAs)(r_, t);
@@ -1156,7 +1156,7 @@ void THTensor_(bitor)(THTensor *r_, THTensor *t, real value)
 
 void THTensor_(bitxor)(THTensor *r_, THTensor *t, real value)
 {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_HALF)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_HALF)
   return THError("bitxor is only supported for integer type tensors");
 #else
   THTensor_(resizeAs)(r_, t);
@@ -1367,7 +1367,7 @@ void THTensor_(cdiv)(THTensor *r_, THTensor *t, THTensor *src)
 
 void THTensor_(clshift)(THTensor *r_, THTensor *t, THTensor *src)
 {
-#if defined(TH_REAL_IS_HALF)
+#if defined(TH_NTYPE_IS_HALF)
   return THError("clshift is not supported for torch.HalfTensor");
 #endif
   THTensor_(resizeAs)(r_, t);
@@ -1385,11 +1385,11 @@ void THTensor_(clshift)(THTensor *r_, THTensor *t, THTensor *src)
       int64_t i;
       #pragma omp parallel for if(r_Size > TH_OMP_OVERHEAD_THRESHOLD) private(i)
       for (i=0; i<r_Size; i++) {
-#if defined(TH_REAL_IS_FLOAT)
+#if defined(TH_NTYPE_IS_FLOAT)
         rp[i] = tp[i] * powf(2, sp[i]);
-#elif defined(TH_REAL_IS_DOUBLE)
+#elif defined(TH_NTYPE_IS_DOUBLE)
         rp[i] = tp[i] * pow(2, sp[i]);
-#elif defined(TH_REAL_IS_BYTE)
+#elif defined(TH_NTYPE_IS_BYTE)
         rp[i] = ((real) tp[i]) << sp[i];
 #else
         rp[i] = ((ureal) tp[i]) << sp[i];
@@ -1401,11 +1401,11 @@ void THTensor_(clshift)(THTensor *r_, THTensor *t, THTensor *src)
       if (inOMP) {
         serial_path = 1;
       } else {
-#if defined(TH_REAL_IS_FLOAT)
+#if defined(TH_NTYPE_IS_FLOAT)
         TH_TENSOR_APPLY3_OMP(r_Size, r_Contig, tContig, srcContig, real, r_, real, t, real, src, *r__data = *t_data * powf(2, *src_data););
-#elif defined(TH_REAL_IS_DOUBLE)
+#elif defined(TH_NTYPE_IS_DOUBLE)
         TH_TENSOR_APPLY3_OMP(r_Size, r_Contig, tContig, srcContig, real, r_, real, t, real, src, *r__data = *t_data * pow(2, *src_data););
-#elif defined(TH_REAL_IS_BYTE)
+#elif defined(TH_NTYPE_IS_BYTE)
         TH_TENSOR_APPLY3_OMP(r_Size, r_Contig, tContig, srcContig, real, r_, real, t, real, src, *r__data = ((real)*t_data) << *src_data;);
 #else
         TH_TENSOR_APPLY3_OMP(r_Size, r_Contig, tContig, srcContig, real, r_, real, t, real, src, *r__data = ((ureal)*t_data) << *src_data;);
@@ -1419,11 +1419,11 @@ void THTensor_(clshift)(THTensor *r_, THTensor *t, THTensor *src)
     serial_path = 1;
   }
   if (serial_path) {
-#if defined(TH_REAL_IS_FLOAT)
+#if defined(TH_NTYPE_IS_FLOAT)
       TH_TENSOR_APPLY3(real, r_, real, t, real, src, *r__data = *t_data * powf(2, *src_data););
-#elif defined(TH_REAL_IS_DOUBLE)
+#elif defined(TH_NTYPE_IS_DOUBLE)
       TH_TENSOR_APPLY3(real, r_, real, t, real, src, *r__data = *t_data * pow(2, *src_data););
-#elif defined(TH_REAL_IS_BYTE)
+#elif defined(TH_NTYPE_IS_BYTE)
       TH_TENSOR_APPLY3(real, r_, real, t, real, src, *r__data = ((real)*t_data) << *src_data;);
 #else
       TH_TENSOR_APPLY3(real, r_, real, t, real, src, *r__data = ((ureal)*t_data) << *src_data;);
@@ -1433,7 +1433,7 @@ void THTensor_(clshift)(THTensor *r_, THTensor *t, THTensor *src)
 
 void THTensor_(crshift)(THTensor *r_, THTensor *t, THTensor *src)
 {
-#if defined(TH_REAL_IS_HALF)
+#if defined(TH_NTYPE_IS_HALF)
   return THError("crshift is not supported for torch.HalfTensor");
 #endif
   THTensor_(resizeAs)(r_, t);
@@ -1451,11 +1451,11 @@ void THTensor_(crshift)(THTensor *r_, THTensor *t, THTensor *src)
       int64_t i;
       #pragma omp parallel for if(r_Size > TH_OMP_OVERHEAD_THRESHOLD) private(i)
       for (i=0; i<r_Size; i++) {
-#if defined(TH_REAL_IS_FLOAT)
+#if defined(TH_NTYPE_IS_FLOAT)
         rp[i] = tp[i] / powf(2, sp[i]);
-#elif defined(TH_REAL_IS_DOUBLE)
+#elif defined(TH_NTYPE_IS_DOUBLE)
         rp[i] = tp[i] / pow(2, sp[i]);
-#elif defined(TH_REAL_IS_BYTE)
+#elif defined(TH_NTYPE_IS_BYTE)
         rp[i] = ((real) tp[i]) >> sp[i];
 #else
         rp[i] = ((ureal) tp[i]) >> sp[i];
@@ -1467,11 +1467,11 @@ void THTensor_(crshift)(THTensor *r_, THTensor *t, THTensor *src)
       if (inOMP) {
         serial_path = 1;
       } else {
-#if defined(TH_REAL_IS_FLOAT)
+#if defined(TH_NTYPE_IS_FLOAT)
         TH_TENSOR_APPLY3_OMP(r_Size, r_Contig, tContig, srcContig, real, r_, real, t, real, src, *r__data = *t_data / powf(2, *src_data););
-#elif defined(TH_REAL_IS_DOUBLE)
+#elif defined(TH_NTYPE_IS_DOUBLE)
         TH_TENSOR_APPLY3_OMP(r_Size, r_Contig, tContig, srcContig, real, r_, real, t, real, src, *r__data = *t_data / pow(2, *src_data););
-#elif defined(TH_REAL_IS_BYTE)
+#elif defined(TH_NTYPE_IS_BYTE)
         TH_TENSOR_APPLY3_OMP(r_Size, r_Contig, tContig, srcContig, real, r_, real, t, real, src, *r__data = ((real)*t_data) >> *src_data;);
 #else
         TH_TENSOR_APPLY3_OMP(r_Size, r_Contig, tContig, srcContig, real, r_, real, t, real, src, *r__data = ((ureal)*t_data) >> *src_data;);
@@ -1485,11 +1485,11 @@ void THTensor_(crshift)(THTensor *r_, THTensor *t, THTensor *src)
     serial_path = 1;
   }
   if (serial_path) {
-#if defined(TH_REAL_IS_FLOAT)
+#if defined(TH_NTYPE_IS_FLOAT)
       TH_TENSOR_APPLY3(real, r_, real, t, real, src, *r__data = *t_data / powf(2, *src_data););
-#elif defined(TH_REAL_IS_DOUBLE)
+#elif defined(TH_NTYPE_IS_DOUBLE)
       TH_TENSOR_APPLY3(real, r_, real, t, real, src, *r__data = *t_data / pow(2, *src_data););
-#elif defined(TH_REAL_IS_BYTE)
+#elif defined(TH_NTYPE_IS_BYTE)
       TH_TENSOR_APPLY3(real, r_, real, t, real, src, *r__data = ((real)*t_data) >> *src_data;);
 #else
       TH_TENSOR_APPLY3(real, r_, real, t, real, src, *r__data = ((ureal)*t_data) >> *src_data;);
@@ -1514,7 +1514,7 @@ void THTensor_(cfmod)(THTensor *r_, THTensor *t, THTensor *src)
       int64_t i;
       #pragma omp parallel for if(r_Size > TH_OMP_OVERHEAD_THRESHOLD) private(i)
       for (i=0; i<r_Size; i++) {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
         rp[i] = fmod(tp[i], sp[i]);
 #else
         rp[i] = tp[i] % sp[i];
@@ -1526,7 +1526,7 @@ void THTensor_(cfmod)(THTensor *r_, THTensor *t, THTensor *src)
       if (inOMP) {
         serial_path = 1;
       } else {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
         TH_TENSOR_APPLY3_OMP(r_Size, r_Contig, tContig, srcContig,real, r_, real, t, real, src, *r__data = fmod(*t_data, *src_data););
 #else
         TH_TENSOR_APPLY3_OMP(r_Size, r_Contig, tContig, srcContig, real, r_, real, t, real, src, *r__data = (*t_data % *src_data););
@@ -1540,7 +1540,7 @@ void THTensor_(cfmod)(THTensor *r_, THTensor *t, THTensor *src)
     serial_path = 1;
   }
   if (serial_path) {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
     TH_TENSOR_APPLY3(real, r_, real, t, real, src, *r__data = fmod(*t_data, *src_data););
 #else
     TH_TENSOR_APPLY3(real, r_, real, t, real, src, *r__data = (*t_data % *src_data););
@@ -1565,7 +1565,7 @@ void THTensor_(cremainder)(THTensor *r_, THTensor *t, THTensor *src)
       int64_t i;
       #pragma omp parallel for if(r_Size > TH_OMP_OVERHEAD_THRESHOLD) private(i)
       for (i=0; i<r_Size; i++) {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
         rp[i] = (sp[i] == 0)? NAN : tp[i] - sp[i] * floor(tp[i] / sp[i]);
 #else
         // There is no NAN for integers
@@ -1580,7 +1580,7 @@ void THTensor_(cremainder)(THTensor *r_, THTensor *t, THTensor *src)
       if (inOMP) {
         serial_path = 1;
       } else {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
         TH_TENSOR_APPLY3_OMP(r_Size, r_Contig, tContig, srcContig, real, r_, real, t, real, src, *r__data = (*src_data == 0)? NAN : *t_data - *src_data * floor(*t_data / *src_data););
 #else
         TH_TENSOR_APPLY3_OMP(r_Size, r_Contig, tContig, srcContig, real, r_, real, t, real, src, *r__data = *t_data % *src_data;
@@ -1595,7 +1595,7 @@ void THTensor_(cremainder)(THTensor *r_, THTensor *t, THTensor *src)
     serial_path = 1;
   }
   if (serial_path) {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
     TH_TENSOR_APPLY3(real, r_, real, t, real, src, *r__data = (*src_data == 0)? NAN : *t_data - *src_data * floor(*t_data / *src_data););
 #else
     // There is no NAN for integers
@@ -1608,7 +1608,7 @@ void THTensor_(cremainder)(THTensor *r_, THTensor *t, THTensor *src)
 
 void THTensor_(cbitand)(THTensor *r_, THTensor *t, THTensor *src)
 {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_HALF)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_HALF)
   return THError("cbitand is only supported for integer type tensors");
 #else
   THTensor_(resizeAs)(r_, t);
@@ -1651,7 +1651,7 @@ void THTensor_(cbitand)(THTensor *r_, THTensor *t, THTensor *src)
 
 void THTensor_(cbitor)(THTensor *r_, THTensor *t, THTensor *src)
 {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_HALF)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_HALF)
   return THError("cbitor is only supported for integer type tensors");
 #else
   THTensor_(resizeAs)(r_, t);
@@ -1694,7 +1694,7 @@ void THTensor_(cbitor)(THTensor *r_, THTensor *t, THTensor *src)
 
 void THTensor_(cbitxor)(THTensor *r_, THTensor *t, THTensor *src)
 {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_HALF)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_HALF)
   return THError("cbitxor is only supported for integer type tensors");
 #else
   THTensor_(resizeAs)(r_, t);
@@ -2585,7 +2585,7 @@ void THTensor_(sign)(THTensor *r_, THTensor *t)
 {
   THTensor_(resizeAs)(r_, t);
 
-#if defined (TH_REAL_IS_BYTE)
+#if defined (TH_NTYPE_IS_BYTE)
   TH_TENSOR_APPLY2(real, r_, real, t,
     if (*t_data > 0) *r__data = 1;
     else *r__data = 0;);
@@ -2803,7 +2803,7 @@ void THTensor_(range)(THTensor *r_, accreal xmin, accreal xmax, accreal step)
 }
 
 void THTensor_(arange)(THTensor *r_, accreal xmin, accreal xmax, accreal step) {
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
   int m = fmod(xmax - xmin, step) == 0;
 #else
   int m = (xmax - xmin) % step == 0;
@@ -3650,15 +3650,15 @@ TENSOR_IMPLEMENT_LOGICAL(ne,!=)
 
 LAB_IMPLEMENT_BASIC_FUNCTION(neg,-)
 
-#if defined(TH_REAL_IS_LONG)
+#if defined(TH_NTYPE_IS_LONG)
 LAB_IMPLEMENT_BASIC_FUNCTION(abs,labs)
 #endif /* int64_t only part */
 
-#if defined(TH_REAL_IS_SHORT) || defined(TH_REAL_IS_INT)
+#if defined(TH_NTYPE_IS_SHORT) || defined(TH_NTYPE_IS_INT)
 LAB_IMPLEMENT_BASIC_FUNCTION(abs,abs)
 #endif /* int only part */
 
-#if defined(TH_REAL_IS_BYTE)
+#if defined(TH_NTYPE_IS_BYTE)
 
 #define TENSOR_IMPLEMENT_LOGICAL_SUM(NAME, OP, INIT_VALUE) \
   int THTensor_(NAME)(THTensor *tensor) \
@@ -3674,9 +3674,9 @@ TENSOR_IMPLEMENT_LOGICAL_SUM(logicalany, ||, 0)
 #endif /* Byte only part */
 
 /* floating point only now */
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
 
-#if defined (TH_REAL_IS_FLOAT)
+#if defined (TH_NTYPE_IS_FLOAT)
 #define TH_MATH_NAME(fn) fn##f
 #else
 #define TH_MATH_NAME(fn) fn

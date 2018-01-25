@@ -10,7 +10,7 @@ TH_API void THTensor_(bernoulli)(THTensor *self, THGenerator *_generator, double
 TH_API void THTensor_(bernoulli_FloatTensor)(THTensor *self, THGenerator *_generator, THFloatTensor *p);
 TH_API void THTensor_(bernoulli_DoubleTensor)(THTensor *self, THGenerator *_generator, THDoubleTensor *p);
 
-#if defined(TH_REAL_IS_FLOAT) || defined(TH_REAL_IS_DOUBLE)
+#if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
 TH_API void THTensor_(bernoulli_Tensor)(THTensor *self, THGenerator *_generator, THTensor *p);
 TH_API void THTensor_(uniform)(THTensor *self, THGenerator *_generator, double a, double b);
 TH_API void THTensor_(normal)(THTensor *self, THGenerator *_generator, double mean, double stdv);
@@ -26,7 +26,7 @@ TH_API void THTensor_(multinomialAliasSetup)(THTensor *prob_dist, THLongTensor *
 TH_API void THTensor_(multinomialAliasDraw)(THLongTensor *self, THGenerator *_generator, THLongTensor *J, THTensor *q);
 #endif
 
-#if defined(TH_REAL_IS_BYTE)
+#if defined(TH_NTYPE_IS_BYTE)
 TH_API void THTensor_(getRNGState)(THGenerator *_generator, THTensor *self);
 TH_API void THTensor_(setRNGState)(THGenerator *_generator, THTensor *self);
 #endif

@@ -28,7 +28,7 @@ void THTensor_(copyTranspose)(THTensor *tensor, THTensor *src) {
   #define MIN(x, y) (((x) < (y)) ? (x) : (y))
   #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 
-#ifdef TH_REAL_IS_BYTE
+#ifdef TH_NTYPE_IS_BYTE
   const int BLOCK_SZ = 120;
 #else
   const int BLOCK_SZ = 60;
@@ -94,7 +94,7 @@ void THTensor_(copy)(THTensor *tensor, THTensor *src)
     if ( tensorContig && srcContig) {
       real *sp = THTensor_(data)(src);
       real *rp = THTensor_(data)(tensor);
-#ifndef TH_REAL_IS_HALF
+#ifndef TH_NTYPE_IS_HALF
 #ifdef _OPENMP
       #pragma omp parallel if ( (tensorSize > TH_OMP_OVERHEAD_THRESHOLD_COPY) && (!inOMP) )
       {
@@ -129,7 +129,7 @@ void THTensor_(copy)(THTensor *tensor, THTensor *src)
 
 #endif
 
-#ifndef TH_REAL_IS_HALF
+#ifndef TH_NTYPE_IS_HALF
     } else if (THTensor_(copyTransposeValid)(tensor, src)) {
       THTensor_(copyTranspose)(tensor, src);
 #endif
@@ -177,7 +177,7 @@ void THTensor_(copy##TYPENAMESRC)(THTensor *tensor, TH##TYPENAMESRC##Tensor *src
  TH_TENSOR_APPLY2(real, tensor, TYPE_SRC, src, *tensor_data = *src_data;) \
 }
 
-#ifndef TH_REAL_IS_HALF
+#ifndef TH_NTYPE_IS_HALF
 IMPLEMENT_THTensor_COPY(Byte, uint8_t)
 IMPLEMENT_THTensor_COPY(Char, int8_t)
 IMPLEMENT_THTensor_COPY(Short, int16_t)

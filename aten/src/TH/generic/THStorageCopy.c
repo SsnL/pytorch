@@ -50,7 +50,7 @@ void THStorage_(copy##TYPENAMESRC)(THStorage *storage, TH##TYPENAMESRC##Storage 
     storage->data[i] = src->data[i];		\
 }
 
-#ifndef TH_REAL_IS_HALF
+#ifndef TH_NTYPE_IS_HALF
 IMPLEMENT_THStorage_COPY(Byte)
 IMPLEMENT_THStorage_COPY(Char)
 IMPLEMENT_THStorage_COPY(Short)

@@ -20,7 +20,7 @@
   #define blas_int int
 #endif
 
-#ifdef TH_REAL_IS_DOUBLE
+#ifdef TH_NTYPE_IS_DOUBLE
   #define CBLAS_(NAME) cblas_d##NAME
   #define BLAS_(NAME) d##NAME##_
 #else
@@ -28,14 +28,14 @@
   #define BLAS_(NAME) s##NAME##_
 #endif
 
-#if defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_FLOAT)
+#if defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_FLOAT)
 #ifndef USE_CBLAS
 TH_EXTERNC void BLAS_(swap)(const blas_int *n, real *x, const blas_int *incx, real *y, const blas_int *incy);
 TH_EXTERNC void BLAS_(scal)(const blas_int *n, const real *a, real *x, const blas_int *incx);
 TH_EXTERNC void BLAS_(copy)(const blas_int *n, const real *x, const blas_int *incx, real *y, const blas_int *incy);
 TH_EXTERNC void BLAS_(axpy)(const blas_int *n, const real *a, const real *x, const blas_int *incx, real *y, const blas_int *incy);
 
-#if defined(BLAS_F2C) || defined(TH_REAL_IS_DOUBLE)
+#if defined(BLAS_F2C) || defined(TH_NTYPE_IS_DOUBLE)
 TH_EXTERNC double BLAS_(dot)(const blas_int *n, const real *x, const blas_int *incx, const real *y, const blas_int *incy);
 #else
 TH_EXTERNC float BLAS_(dot)(const blas_int *n, const real *x, const blas_int *incx, const real *y, const blas_int *incy);
@@ -116,7 +116,7 @@ static inline void BLAS_(gemm)(const char *transa, const char *transb, const bla
   return CBLAS_(gemm)(CblasColMajor, toCBlasTranspose(*transa), toCBlasTranspose(*transb), *m, *n, *k, *alpha, a, *lda, b, *ldb, *beta, c, *ldc);
 }
 #endif // USE_CBLAS
-#endif // defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_FLOAT)
+#endif // defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_FLOAT)
 
 void THBlas_(swap)(int64_t n, real *x, int64_t incx, real *y, int64_t incy)
 {
@@ -126,7 +126,7 @@ void THBlas_(swap)(int64_t n, real *x, int64_t incx, real *y, int64_t incy)
     incy = 1;
   }
 
-#if defined(USE_BLAS) && (defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_FLOAT))
+#if defined(USE_BLAS) && (defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_FLOAT))
   if ( BLAS_64 || ((n <= INT_MAX) && (incx <= INT_MAX) && (incy <= INT_MAX)) )
   {
     blas_int i_n = (blas_int) n;
@@ -152,7 +152,7 @@ void THBlas_(scal)(int64_t n, real a, real *x, int64_t incx)
   if(n == 1)
     incx = 1;
 
-#if defined(USE_BLAS) && (defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_FLOAT))
+#if defined(USE_BLAS) && (defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_FLOAT))
   if ( BLAS_64 || ((n <= INT_MAX) && (incx <= INT_MAX)) )
   {
     blas_int i_n = (blas_int) n;
@@ -182,7 +182,7 @@ void THBlas_(copy)(int64_t n, real *x, int64_t incx, real *y, int64_t incy)
     incy = 1;
   }
 
-#if defined(USE_BLAS) && (defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_FLOAT))
+#if defined(USE_BLAS) && (defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_FLOAT))
   if ( BLAS_64 || ((n <= INT_MAX) && (incx <= INT_MAX) && (incy <= INT_MAX)) )
   {
     blas_int i_n = (blas_int) n;
@@ -208,7 +208,7 @@ void THBlas_(axpy)(int64_t n, real a, real *x, int64_t incx, real *y, int64_t in
     incy = 1;
   }
 
-#if defined(USE_BLAS) && (defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_FLOAT))
+#if defined(USE_BLAS) && (defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_FLOAT))
   if ( BLAS_64 || ((n <= INT_MAX) && (incx <= INT_MAX) && (incy <= INT_MAX)) )
   {
     blas_int i_n = (blas_int) n;
@@ -234,7 +234,7 @@ real THBlas_(dot)(int64_t n, real *x, int64_t incx, real *y, int64_t incy)
     incy = 1;
   }
 
-#if defined(USE_BLAS) && (defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_FLOAT))
+#if defined(USE_BLAS) && (defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_FLOAT))
   if (BLAS_64 || ((n <= INT_MAX) && (incx <= INT_MAX) && (incy <= INT_MAX)) )
   {
     blas_int i_n = (blas_int) n;
@@ -259,7 +259,7 @@ void THBlas_(gemv)(char trans, int64_t m, int64_t n, real alpha, real *a, int64_
   if(n == 1)
     lda = m;
 
-#if defined(USE_BLAS) && (defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_FLOAT))
+#if defined(USE_BLAS) && (defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_FLOAT))
   if (incx > 0 && incy > 0) {
     if (BLAS_64 ||
         ((m <= INT_MAX) && (n <= INT_MAX) && (lda <= INT_MAX) && (incx <= INT_MAX) && (incy <= INT_MAX)))
@@ -315,7 +315,7 @@ void THBlas_(ger)(int64_t m, int64_t n, real alpha, real *x, int64_t incx, real 
   if(n == 1)
     lda = m;
 
-#if defined(USE_BLAS) && (defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_FLOAT))
+#if defined(USE_BLAS) && (defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_FLOAT))
   if (incx > 0 && incy > 0) {
     if (BLAS_64 ||
         ((m <= INT_MAX) && (n <= INT_MAX) && (incx <= INT_MAX) && (incy <= INT_MAX)))
@@ -376,7 +376,7 @@ void THBlas_(gemm)(char transa, char transb, int64_t m, int64_t n, int64_t k, re
       ldb = k;
   }
 
-#if defined(USE_BLAS) && (defined(TH_REAL_IS_DOUBLE) || defined(TH_REAL_IS_FLOAT))
+#if defined(USE_BLAS) && (defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_FLOAT))
   if (BLAS_64 ||
       ((m <= INT_MAX) && (n <= INT_MAX) && (k <= INT_MAX) &&
        (lda <= INT_MAX) && (ldb <= INT_MAX) && (ldc <= INT_MAX)))
