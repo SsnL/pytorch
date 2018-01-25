@@ -348,7 +348,7 @@ void THNN_(SpatialConvolutionMM_accGradParameters)(
   if (gradBias)
     THArgCheck(THTensor_(isContiguous)(gradBias), 5, "gradBias needs to be contiguous");
 
-  real scale = TH_CONVERT_ACCREAL_TO_REAL(scale_);
+  real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
   gradWeight = THNN_(view_weight_MM2d)(gradWeight);
 
   THNN_(SpatialConvolutionMM_shapeCheck)

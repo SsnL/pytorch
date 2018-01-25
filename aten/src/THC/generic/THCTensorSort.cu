@@ -304,7 +304,7 @@ THC_API void THCTensor_(sort)(THCState* state,
   // and so for the double word types,
   // we get "too many resources requested for launch" in the 2048 case
 #if CUDA_VERSION >= 8000
-#if defined(THC_REAL_IS_DOUBLE) || defined(THC_REAL_IS_LONG)
+#if defined(THC_NTYPE_IS_DOUBLE) || defined(THC_NTYPE_IS_LONG)
   int maxSliceSize = 1024;
 #else
   int maxSliceSize = 2048;

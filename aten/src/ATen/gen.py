@@ -251,13 +251,13 @@ def generate_storage_type_and_tensor(backend, density, scalar_type, declarations
         env['isCUDA'] = 'false'
         env['storage_device'] = 'throw std::runtime_error("CPU storage has no device");'
         env['Generator'] = 'CPUGenerator'
-    env['AS_REAL'] = env['ScalarType']
+    env['AS_NTYPE'] = env['ScalarType']
     if scalar_name == "Half":
         env['SparseTensor'] = 'Tensor'
         if backend == "CUDA":
             env['to_th_type'] = 'HalfFix<__half,Half>'
             env['to_at_type'] = 'HalfFix<Half,__half>'
-            env['AS_REAL'] = 'convert<half,double>'
+            env['AS_NTYPE'] = 'convert<half,double>'
             env['THScalarType'] = 'half'
         else:
             env['to_th_type'] = 'HalfFix<THHalf,Half>'

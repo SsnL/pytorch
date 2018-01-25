@@ -4,8 +4,8 @@
 
 #define real float
 #define accreal double
-#define TH_CONVERT_REAL_TO_ACCREAL(_val) (accreal)(_val)
-#define TH_CONVERT_ACCREAL_TO_REAL(_val) (real)(_val)
+#define TH_CONVERT_NTYPE_TO_ACCNTYPE(_val) (accreal)(_val)
+#define TH_CONVERT_ACCNTYPE_TO_NTYPE(_val) (real)(_val)
 #define Real Float
 #define THInf FLT_MAX
 #define TH_NTYPE_IS_FLOAT
@@ -16,8 +16,8 @@
 #undef Real
 #undef THInf
 #undef TH_NTYPE_IS_FLOAT
-#undef TH_CONVERT_REAL_TO_ACCREAL
-#undef TH_CONVERT_ACCREAL_TO_REAL
+#undef TH_CONVERT_NTYPE_TO_ACCNTYPE
+#undef TH_CONVERT_ACCNTYPE_TO_NTYPE
 
 #ifndef THGenerateManyTypes
 #undef TH_GENERIC_FILE

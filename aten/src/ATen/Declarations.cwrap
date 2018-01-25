@@ -2031,7 +2031,7 @@
       arguments:
         - THTensor* self
         - arg: real p
-          default: AS_REAL(2)
+          default: AS_NTYPE(2)
     - cname: norm
       return: argument 0
       scalar_check: self_->isScalar() || (keepdim == false && self_->dim() == 1)
@@ -2040,7 +2040,7 @@
           output: True
         - THTensor* self
         - arg: real p
-          python_default_init: AS_REAL(2)
+          python_default_init: AS_NTYPE(2)
         - arg: long dim
           wrap_dim: self
         - arg: bool keepdim
@@ -2101,7 +2101,7 @@
           broadcast: other fallback
         - THTensor* other
         - arg: real p
-          default: AS_REAL(2)
+          default: AS_NTYPE(2)
 ]]
 [[
   name: reciprocal
@@ -2463,7 +2463,7 @@
         - THTensor* self
         - real other
         - arg: real alpha
-          default: AS_REAL(1)
+          default: AS_NTYPE(1)
           kwarg_only: True
     - cname: cadd
       aten_sparse: True
@@ -2473,7 +2473,7 @@
         - arg: THTensor* self
           broadcast: other fallback
         - arg: real alpha
-          default: AS_REAL(1)
+          default: AS_NTYPE(1)
           kwarg_only: True
         - THTensor* other
     - sparse: True
@@ -2484,7 +2484,7 @@
           output: True
         - THTensor* self
         - arg: real alpha
-          default: AS_REAL(1)
+          default: AS_NTYPE(1)
           kwarg_only: True
         - THSTensor* other
 ]]
@@ -2498,7 +2498,7 @@
         - THTensor* self
         - real other
         - arg: real alpha
-          default: AS_REAL(1)
+          default: AS_NTYPE(1)
           kwarg_only: True
     - cname: cadd
       aten_sparse: True
@@ -2507,7 +2507,7 @@
         - arg: THTensor* self
           broadcast: other inplace fallback
         - arg: real alpha
-          default: AS_REAL(1)
+          default: AS_NTYPE(1)
           kwarg_only: True
         - THTensor* other
     - sparse: True
@@ -2517,7 +2517,7 @@
         - THTensor* self
         - THTensor* self
         - arg: real alpha
-          default: AS_REAL(1)
+          default: AS_NTYPE(1)
           kwarg_only: True
         - THSTensor* other
 ]]
@@ -2535,7 +2535,7 @@
         - THTensor* self
         - real other
         - arg: real alpha
-          default: AS_REAL(1)
+          default: AS_NTYPE(1)
           kwarg_only: True
     - cname: csub
       aten_sparse: True
@@ -2545,7 +2545,7 @@
         - arg: THTensor* self
           broadcast: other fallback
         - arg: real alpha
-          default: AS_REAL(1)
+          default: AS_NTYPE(1)
           kwarg_only: True
         - THTensor* other
 ]]
@@ -2559,7 +2559,7 @@
         - THTensor* self
         - real other
         - arg: real alpha
-          default: AS_REAL(1)
+          default: AS_NTYPE(1)
           kwarg_only: True
     - cname: csub
       aten_sparse: True
@@ -2568,7 +2568,7 @@
         - arg: THTensor* self
           broadcast: other inplace fallback
         - arg: real alpha
-          default: AS_REAL(1)
+          default: AS_NTYPE(1)
           kwarg_only: True
         - THTensor* other
 ]]
@@ -2914,12 +2914,12 @@
       - arg: THTensor* result
         output: True
       - arg: real beta
-        default: AS_REAL(1)
+        default: AS_NTYPE(1)
         kwarg_only: True
       - arg: THTensor* self
         broadcast: mat1,mat2 dims:mat1.dim0,mat2.dim1
       - arg: real alpha
-        default: AS_REAL(1)
+        default: AS_NTYPE(1)
         kwarg_only: True
       - THTensor* mat1
       - THTensor* mat2
@@ -2929,11 +2929,11 @@
         - arg: THTensor* result
           output: True
         - arg: real beta
-          default: AS_REAL(1)
+          default: AS_NTYPE(1)
           kwarg_only: True
         - THTensor* self
         - arg: real alpha
-          default: AS_REAL(1)
+          default: AS_NTYPE(1)
           kwarg_only: True
         - THSTensor* mat1
         - THTensor* mat2
@@ -2946,11 +2946,11 @@
       arguments:
       - THTensor* self
       - arg: real beta
-        default: AS_REAL(1)
+        default: AS_NTYPE(1)
         kwarg_only: True
       - THTensor* self
       - arg: real alpha
-        default: AS_REAL(1)
+        default: AS_NTYPE(1)
         kwarg_only: True
       - THTensor* mat1
       - THTensor* mat2
@@ -2959,11 +2959,11 @@
       arguments:
         - arg: THTensor* self
         - arg: real beta
-          default: AS_REAL(1)
+          default: AS_NTYPE(1)
           kwarg_only: True
         - THTensor* self
         - arg: real alpha
-          default: AS_REAL(1)
+          default: AS_NTYPE(1)
           kwarg_only: True
         - THSTensor* mat1
         - THTensor* mat2
@@ -2978,12 +2978,12 @@
     - arg: THTensor* result
       output: True
     - arg: real beta
-      default: AS_REAL(1)
+      default: AS_NTYPE(1)
       kwarg_only: True
     - arg: THTensor* self
       broadcast: mat,vec dims:mat.dim0
     - arg: real alpha
-      default: AS_REAL(1)
+      default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* mat
     - THTensor* vec
@@ -2995,11 +2995,11 @@
   arguments:
     - THTensor* self
     - arg: real beta
-      default: AS_REAL(1)
+      default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* self
     - arg: real alpha
-      default: AS_REAL(1)
+      default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* mat
     - THTensor* vec
@@ -3014,12 +3014,12 @@
     - arg: THTensor* result
       output: True
     - arg: real beta
-      default: AS_REAL(1)
+      default: AS_NTYPE(1)
       kwarg_only: True
     - arg: THTensor* self
       broadcast: vec1,vec2 dims:vec1.dim0,vec2.dim0
     - arg: real alpha
-      default: AS_REAL(1)
+      default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* vec1
     - THTensor* vec2
@@ -3031,11 +3031,11 @@
   arguments:
     - THTensor* self
     - arg: real beta
-      default: AS_REAL(1)
+      default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* self
     - arg: real alpha
-      default: AS_REAL(1)
+      default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* vec1
     - THTensor* vec2
@@ -3057,9 +3057,9 @@
       output: True
       resize: [ [self,0], [vec2,0] ]
       resize_scalar: True
-    - CONSTANT AS_REAL(0)
+    - CONSTANT AS_NTYPE(0)
     - argument 0
-    - CONSTANT AS_REAL(1)
+    - CONSTANT AS_NTYPE(1)
     - THTensor* self
     - THTensor* vec2
 ]]
@@ -3081,9 +3081,9 @@
       output: True
       resize: [ [self, 0] ]
       cpu_zero: True
-    - CONSTANT AS_REAL(0)
+    - CONSTANT AS_NTYPE(0)
     - argument 0
-    - CONSTANT AS_REAL(1)
+    - CONSTANT AS_NTYPE(1)
     - THTensor* self
     - THTensor* vec
 ]]
@@ -3107,9 +3107,9 @@
           output: True
           resize: [ [self, 0], [mat2,1] ]
           cpu_zero: True
-        - CONSTANT AS_REAL(0)
+        - CONSTANT AS_NTYPE(0)
         - argument 0
-        - CONSTANT AS_REAL(1)
+        - CONSTANT AS_NTYPE(1)
         - THTensor* self
         - THTensor* mat2
     - cname: spaddmm
@@ -3117,9 +3117,9 @@
       arguments:
         - arg: THTensor* result
           output: True
-        - CONSTANT AS_REAL(0)
+        - CONSTANT AS_NTYPE(0)
         - argument 0
-        - CONSTANT AS_REAL(1)
+        - CONSTANT AS_NTYPE(1)
         - THSTensor* self
         - THTensor* mat2
 ]]
@@ -3143,9 +3143,9 @@
       output: True
       resize: [ [self,0], [self,1], [mat2,2] ]
       cpu_zero: True
-    - CONSTANT AS_REAL(0)
+    - CONSTANT AS_NTYPE(0)
     - argument 0
-    - CONSTANT AS_REAL(1)
+    - CONSTANT AS_NTYPE(1)
     - THTensor* self
     - THTensor* mat2
 ]]
@@ -3159,12 +3159,12 @@
     - arg: THTensor* result
       output: True
     - arg: real beta
-      default: AS_REAL(1)
+      default: AS_NTYPE(1)
       kwarg_only: True
     - arg: THTensor* self
       broadcast: batch1,batch2 dims:batch1.dim1,batch2.dim2
     - arg: real alpha
-      default: AS_REAL(1)
+      default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* batch1
     - THTensor* batch2
@@ -3176,11 +3176,11 @@
   arguments:
     - THTensor* self
     - arg: real beta
-      default: AS_REAL(1)
+      default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* self
     - arg: real alpha
-      default: AS_REAL(1)
+      default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* batch1
     - THTensor* batch2
@@ -3195,12 +3195,12 @@
     - arg: THTensor* result
       output: True
     - arg: real beta
-      default: AS_REAL(1)
+      default: AS_NTYPE(1)
       kwarg_only: True
     - arg: THTensor* self
       broadcast: batch1,batch2 dims:batch1.dim0,batch1.dim1,batch2.dim2
     - arg: real alpha
-      default: AS_REAL(1)
+      default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* batch1
     - THTensor* batch2
@@ -3212,11 +3212,11 @@
   arguments:
     - THTensor* self
     - arg: real beta
-      default: AS_REAL(1)
+      default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* self
     - arg: real alpha
-      default: AS_REAL(1)
+      default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* batch1
     - THTensor* batch2
@@ -3233,7 +3233,7 @@
     - arg: THTensor* self
       broadcast: tensor1,tensor2 fallback
     - arg: real value
-      default: AS_REAL(1)
+      default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* tensor1
     - THTensor* tensor2
@@ -3248,7 +3248,7 @@
         - arg: THTensor* self
           broadcast: tensor1,tensor2 inplace fallback
         - arg: real value
-          default: AS_REAL(1)
+          default: AS_NTYPE(1)
           kwarg_only: True
         - THTensor* tensor1
         - THTensor* tensor2
@@ -3258,7 +3258,7 @@
         - THTensor* self
         - THTensor* self
         - arg: real value
-          default: AS_REAL(1)
+          default: AS_NTYPE(1)
           kwarg_only: True
         - THSTensor* tensor1
         - THSTensor* tensor2
@@ -3275,7 +3275,7 @@
     - arg: THTensor* self
       broadcast: tensor1,tensor2 fallback
     - arg: real value
-      default: AS_REAL(1)
+      default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* tensor1
     - THTensor* tensor2
@@ -3289,7 +3289,7 @@
     - arg: THTensor* self
       broadcast: tensor1,tensor2 inplace fallback
     - arg: real value
-      default: AS_REAL(1)
+      default: AS_NTYPE(1)
       kwarg_only: True
     - THTensor* tensor1
     - THTensor* tensor2

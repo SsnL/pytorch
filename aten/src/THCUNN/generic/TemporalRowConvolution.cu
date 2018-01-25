@@ -130,11 +130,11 @@ void THNN_(TemporalRowConvolution_updateOutput)(
     // Do GEMM (note: this is a bit confusing because gemm asummes
     // column-major matrices)
     if (bias != NULL) {
-#ifdef THC_REAL_IS_FLOAT
+#ifdef THC_NTYPE_IS_FLOAT
       THCudaBlas_Sgemm(
-#elif defined(THC_REAL_IS_HALF)
+#elif defined(THC_NTYPE_IS_HALF)
       THCudaBlas_Hgemm(
-#elif defined(THC_REAL_IS_DOUBLE)
+#elif defined(THC_NTYPE_IS_DOUBLE)
       THCudaBlas_Dgemm(
 #endif
           state, 't', 'n', n_, m_, k_, ScalarConvert<int, real>::to(1),
@@ -388,17 +388,17 @@ void THNN_(TemporalRowConvolution_accGradParameters)(
     if (gradBias != NULL) {
       int64_t m_ = inputFrameSize;
       int64_t k_ = nOutputFrame;
-#if defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE)
-#ifdef THC_REAL_IS_FLOAT
+#if defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE)
+#ifdef THC_NTYPE_IS_FLOAT
       THCudaBlas_Sgemv(
-#elif defined(THC_REAL_IS_DOUBLE)
+#elif defined(THC_NTYPE_IS_DOUBLE)
       THCudaBlas_Dgemv(
 #endif
           state, 't', k_, m_, scale, THCTensor_(data)(state, gradOutput_n), k_,
           THCTensor_(data)(state, ones), 1, ScalarConvert<int, real>::to(1),
           THCTensor_(data)(state, gradBias), 1);
 #endif
-#ifdef THC_REAL_IS_HALF // half not supported due to baddbmm
+#ifdef THC_NTYPE_IS_HALF // half not supported due to baddbmm
       THCudaBlas_Hgemm(state, 't', 'n', m_, 1, k_, scale,
                        THCTensor_(data)(state, gradOutput_n), k_,
                        THCTensor_(data)(state, ones), k_,

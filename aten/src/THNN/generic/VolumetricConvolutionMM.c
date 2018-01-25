@@ -602,7 +602,7 @@ void THNN_(VolumetricConvolutionMM_accGradParameters)(
           int pT, int pW, int pH,
           accreal scale_)
 {
-  real scale = TH_CONVERT_ACCREAL_TO_REAL(scale_);
+  real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
   int nOutputPlane = (int)gradWeight->size[0];
 
   THNN_(VolumetricConvolutionMM_shapeCheck)(

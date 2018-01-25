@@ -2,7 +2,7 @@
 #define THC_GENERIC_FILE "generic/THCTensorMathPointwise.h"
 #else
 
-#if defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE) || defined(THC_REAL_IS_HALF)
+#if defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE) || defined(THC_NTYPE_IS_HALF)
 
 THC_API void THCTensor_(sigmoid)(THCState *state, THCTensor *self, THCTensor *src);
 THC_API void THCTensor_(log)(THCState *state, THCTensor *self, THCTensor *src);

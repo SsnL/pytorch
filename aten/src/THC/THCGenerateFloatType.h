@@ -8,14 +8,14 @@
 #define accreal float
 #define Real Float
 #define CReal Cuda
-#define THC_REAL_IS_FLOAT
+#define THC_NTYPE_IS_FLOAT
 #line 1 THC_GENERIC_FILE
 #include THC_GENERIC_FILE
 #undef real
 #undef accreal
 #undef Real
 #undef CReal
-#undef THC_REAL_IS_FLOAT
+#undef THC_NTYPE_IS_FLOAT
 
 #ifndef THCGenerateAllTypes
 #ifndef THCGenerateFloatTypes

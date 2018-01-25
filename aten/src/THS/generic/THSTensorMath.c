@@ -55,7 +55,7 @@ void THSTensor_(mul)(THSTensor *r_, THSTensor *t, real value) {
 
 /* floating point only, because that is what TH supports */
 /* TODO: add in-place support */
-#if defined(THS_REAL_IS_FLOAT) || defined(THS_REAL_IS_DOUBLE)
+#if defined(THS_NTYPE_IS_FLOAT) || defined(THS_NTYPE_IS_DOUBLE)
 void THSTensor_(pow)(THSTensor *r_, THSTensor *t_, real value) {
   if (value == 0) {
     THError("cannot raise to zeroth power on sparse tensor");

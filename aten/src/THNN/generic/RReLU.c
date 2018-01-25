@@ -13,8 +13,8 @@ void THNN_(RReLU_updateOutput)(
           bool inplace,
           THGenerator *generator)
 {
-  real lower = TH_CONVERT_ACCREAL_TO_REAL(lower_);
-  real upper = TH_CONVERT_ACCREAL_TO_REAL(upper_);
+  real lower = TH_CONVERT_ACCNTYPE_TO_NTYPE(lower_);
+  real upper = TH_CONVERT_ACCNTYPE_TO_NTYPE(upper_);
   if (train)
   {
     // get default random generator
@@ -88,8 +88,8 @@ void THNN_(RReLU_updateGradInput)(
           bool train,
           bool inplace)
 {
-  real lower = TH_CONVERT_ACCREAL_TO_REAL(lower_);
-  real upper = TH_CONVERT_ACCREAL_TO_REAL(upper_);
+  real lower = TH_CONVERT_ACCNTYPE_TO_NTYPE(lower_);
+  real upper = TH_CONVERT_ACCNTYPE_TO_NTYPE(upper_);
   THNN_CHECK_NELEMENT(input, gradOutput);
   if (train && upper - lower > 1E-6)    // e.g. if upper == lower, RReLU behaves like LeakyReLU
   {

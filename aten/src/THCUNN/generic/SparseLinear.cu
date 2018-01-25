@@ -18,11 +18,11 @@ static bool checkSize1D(THCTensor* t, int64_t size0)
 }
 
 static inline void copyCudaFloatingType(THCState *state, THCudaIntTensor *buf, THCTensor *t) {
-  #ifdef THC_REAL_IS_FLOAT
+  #ifdef THC_NTYPE_IS_FLOAT
   THCudaIntTensor_copyCudaFloat(state, buf, t);
-  #elif defined(THC_REAL_IS_DOUBLE)
+  #elif defined(THC_NTYPE_IS_DOUBLE)
   THCudaIntTensor_copyCudaDouble(state, buf, t);
-  #elif defined(THC_REAL_IS_HALF)
+  #elif defined(THC_NTYPE_IS_HALF)
   THCudaIntTensor_copyCudaHalf(state, buf, t);
   #endif
 }
@@ -91,9 +91,9 @@ void THNN_(SparseLinear_updateOutput)(
   cusparseCreateMatDescr(&descr);
   cusparseSetMatType(descr,CUSPARSE_MATRIX_TYPE_GENERAL);
   cusparseSetMatIndexBase(descr,CUSPARSE_INDEX_BASE_ONE);
-  #ifdef THC_REAL_IS_FLOAT
+  #ifdef THC_NTYPE_IS_FLOAT
   cusparseScsrmm(cusparse_handle,
-  #elif defined(THC_REAL_IS_DOUBLE)
+  #elif defined(THC_NTYPE_IS_DOUBLE)
   cusparseDcsrmm(cusparse_handle,
   #endif
       CUSPARSE_OPERATION_NON_TRANSPOSE,
@@ -190,9 +190,9 @@ void THNN_(SparseLinear_accGradParameters)(
   cusparseCreateMatDescr(&descr);
   cusparseSetMatType(descr,CUSPARSE_MATRIX_TYPE_GENERAL);
   cusparseSetMatIndexBase(descr,CUSPARSE_INDEX_BASE_ONE);
-  #ifdef THC_REAL_IS_FLOAT
+  #ifdef THC_NTYPE_IS_FLOAT
   cusparseScsrmm(cusparse_handle,
-  #elif defined(THC_REAL_IS_DOUBLE)
+  #elif defined(THC_NTYPE_IS_DOUBLE)
   cusparseDcsrmm(cusparse_handle,
   #endif
       CUSPARSE_OPERATION_NON_TRANSPOSE,

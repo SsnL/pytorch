@@ -42,7 +42,7 @@ THCTensor_(mean)(THCState *state, THCTensor *self, THCTensor *src, int dim, int 
   THCTensor_(div)(state, self, self, ScalarConvert<int64_t, real>::to(THCTensor_(size)(state, src, dim)));
 }
 
-#if defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE) || defined(THC_REAL_IS_HALF)
+#if defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE) || defined(THC_NTYPE_IS_HALF)
 
 THC_API void
 THCTensor_(renorm)(THCState *state, THCTensor* self, THCTensor* src, real value, int dimension, real maxnorm)

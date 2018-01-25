@@ -2,8 +2,8 @@
 #define THC_GENERIC_FILE "generic/THCTensorMathPointwise.cu"
 #else
 
-#define IMPLEMENT_CUDA_TENSOR_BASIC_FUNC_(NAME, CFUNC, REAL)             \
-  struct Tensor_##NAME##_##REAL##_Op {                                  \
+#define IMPLEMENT_CUDA_TENSOR_BASIC_FUNC_(NAME, CFUNC, NTYPE)           \
+  struct Tensor_##NAME##_##NTYPE##_Op {                                 \
     __device__ __forceinline__ void operator()(real* out, real* in) const { \
       *out = CFUNC(*in);                                                \
     }                                                                   \
@@ -16,13 +16,13 @@
   void THCTensor_(NAME)(THCState* state, THCTensor* self_, THCTensor* src) { \
     THCAssertSameGPU(THCTensor_(checkGPU)(state, 2, self_, src));               \
     if (self_ == src) {                                                 \
-      if (!THC_pointwiseApply1(state, self_, Tensor_##NAME##_##REAL##_Op())) { \
+      if (!THC_pointwiseApply1(state, self_, Tensor_##NAME##_##NTYPE##_Op())) { \
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);                      \
       }                                                                 \
     } else {                                                            \
       THCTensor_(resizeAs)(state, self_, src);                          \
                                                                         \
-      if (!THC_pointwiseApply2(state, self_, src, Tensor_##NAME##_##REAL##_Op())) { \
+      if (!THC_pointwiseApply2(state, self_, src, Tensor_##NAME##_##NTYPE##_Op())) { \
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);                      \
       }                                                                 \
     }                                                                   \
@@ -30,10 +30,10 @@
     THCudaCheck(cudaGetLastError());                                    \
   }
 
-#define IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(NAME, CFUNC, REAL) \
-  IMPLEMENT_CUDA_TENSOR_BASIC_FUNC_(NAME, CFUNC, REAL)
+#define IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(NAME, CFUNC, NTYPE) \
+  IMPLEMENT_CUDA_TENSOR_BASIC_FUNC_(NAME, CFUNC, NTYPE)
 
-#if defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE) || defined(THC_REAL_IS_HALF)
+#if defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE) || defined(THC_NTYPE_IS_HALF)
 
 IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  log, THCNumerics<real>::log,   Real)
 IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(lgamma, THCNumerics<real>::lgamma, Real)
@@ -140,7 +140,7 @@ THCTensor_(cross)(THCState *state, THCTensor *self, THCTensor *x, THCTensor *y, 
   THCTensor_(free)(state, nself);
 }
 
-#if defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE) || defined(THC_REAL_IS_HALF)
+#if defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE) || defined(THC_NTYPE_IS_HALF)
 
 void THCTensor_(atan2)(THCState *state, THCTensor *self_, THCTensor *tx, THCTensor *ty)
 {
@@ -461,7 +461,7 @@ THCTensor_(cdiv)(THCState* state, THCTensor *self_, THCTensor *src1, THCTensor *
 THC_API void
 THCTensor_(clshift)(THCState* state, THCTensor *self_, THCTensor *src1, THCTensor *src2)
 {
-#if defined(THC_REAL_IS_HALF)
+#if defined(THC_NTYPE_IS_HALF)
   return THError("clshift not supported for torch.CudaHalfTensor");
 #else
   THAssert(THCTensor_(checkGPU)(state, 3, self_, src1, src2));
@@ -489,7 +489,7 @@ THCTensor_(clshift)(THCState* state, THCTensor *self_, THCTensor *src1, THCTenso
 THC_API void
 THCTensor_(crshift)(THCState* state, THCTensor *self_, THCTensor *src1, THCTensor *src2)
 {
-#if defined(THC_REAL_IS_HALF)
+#if defined(THC_NTYPE_IS_HALF)
   return THError("crshift not supported for torch.CudaHalfTensor");
 #else
   THAssert(THCTensor_(checkGPU)(state, 3, self_, src1, src2));
@@ -676,7 +676,7 @@ THCTensor_(addcdiv)(THCState *state, THCTensor *self_, THCTensor *t, real value,
 THC_API void
 THCTensor_(cbitand)(THCState* state, THCTensor *self_, THCTensor *src1, THCTensor *src2)
 {
-#if defined(THC_REAL_IS_HALF) || defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE)
+#if defined(THC_NTYPE_IS_HALF) || defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE)
   return THError("cbitand is only supported for integer type tensors");
 #else
   THAssert(THCTensor_(checkGPU)(state, 3, self_, src1, src2));
@@ -704,7 +704,7 @@ THCTensor_(cbitand)(THCState* state, THCTensor *self_, THCTensor *src1, THCTenso
 THC_API void
 THCTensor_(cbitor)(THCState* state, THCTensor *self_, THCTensor *src1, THCTensor *src2)
 {
-#if defined(THC_REAL_IS_HALF) || defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE)
+#if defined(THC_NTYPE_IS_HALF) || defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE)
   return THError("cbitor is only supported for integer type tensors");
 #else
   THAssert(THCTensor_(checkGPU)(state, 3, self_, src1, src2));
@@ -732,7 +732,7 @@ THCTensor_(cbitor)(THCState* state, THCTensor *self_, THCTensor *src1, THCTensor
 THC_API void
 THCTensor_(cbitxor)(THCState* state, THCTensor *self_, THCTensor *src1, THCTensor *src2)
 {
-#if defined(THC_REAL_IS_HALF) || defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE)
+#if defined(THC_NTYPE_IS_HALF) || defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE)
   return THError("cbitor is only supported for integer type tensors");
 #else
   THAssert(THCTensor_(checkGPU)(state, 3, self_, src1, src2));

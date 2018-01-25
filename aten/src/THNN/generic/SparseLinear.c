@@ -176,8 +176,8 @@ void THNN_(SparseLinear_accGradParameters)(
           accreal weightDecay_,
           accreal scale_)
 {
-  real weightDecay = TH_CONVERT_ACCREAL_TO_REAL(weightDecay_);
-  real scale = TH_CONVERT_ACCREAL_TO_REAL(scale_);
+  real weightDecay = TH_CONVERT_ACCNTYPE_TO_NTYPE(weightDecay_);
+  real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
   int64_t h, i, col, hp0, hp1;
   int64_t outDim = THTensor_(size)(weight, 0);
   int64_t inDim = THTensor_(size)(weight, 1);
@@ -256,8 +256,8 @@ void THNN_(SparseLinear_legacyAccGradParameters)(
           accreal weightDecay_,
           accreal scale_)
 {
-  real weightDecay = TH_CONVERT_ACCREAL_TO_REAL(weightDecay_);
-  real scale = TH_CONVERT_ACCREAL_TO_REAL(scale_);
+  real weightDecay = TH_CONVERT_ACCNTYPE_TO_NTYPE(weightDecay_);
+  real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
   int64_t h, i;
   int64_t outDim = THTensor_(size)(weight, 0);
   int64_t inDim = THTensor_(size)(weight, 1);
@@ -322,7 +322,7 @@ void THNN_(SparseLinear_updateParameters)(
           THTensor *lastInput,
           accreal learningRate_)
 {
-  real learningRate = TH_CONVERT_ACCREAL_TO_REAL(learningRate_);
+  real learningRate = TH_CONVERT_ACCNTYPE_TO_NTYPE(learningRate_);
   int64_t h, i;
   int64_t outDim = weight->size[0];
   int64_t inDim = weight->size[1];
@@ -396,7 +396,7 @@ void THNN_(SparseLinear_legacyUpdateParameters)(
           THTensor *lastInput,
           accreal learningRate_)
 {
-  real learningRate = TH_CONVERT_ACCREAL_TO_REAL(learningRate_);
+  real learningRate = TH_CONVERT_ACCNTYPE_TO_NTYPE(learningRate_);
   int64_t h, i;
   int64_t outDim = weight->size[0];
   int64_t inDim = weight->size[1];

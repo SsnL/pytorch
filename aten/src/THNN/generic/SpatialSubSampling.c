@@ -218,7 +218,7 @@ void THNN_(SpatialSubSampling_accGradParameters)(
     int dW, int dH,
     accreal scale_)
 {
-  real scale = TH_CONVERT_ACCREAL_TO_REAL(scale_);
+  real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
   THNN_(SpatialSubSampling_shapeCheck)(input, gradOutput, gradWeight, kW, kH);
 
   int64_t nbatch = 1;

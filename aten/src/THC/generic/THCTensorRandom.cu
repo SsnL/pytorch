@@ -4,7 +4,7 @@
 
 #define NUM_BLOCKS min((int)THCCeilDiv(size, (ptrdiff_t) BLOCK_SIZE), MAX_NUM_BLOCKS)
 
-#if defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE) || defined(THC_REAL_IS_HALF)
+#if defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE) || defined(THC_NTYPE_IS_HALF)
 
 THC_API void THCTensor_(uniform)(THCState* state, THCTensor *self_, double a, double b)
 {
@@ -396,7 +396,7 @@ void THCTensor_(randn)(THCState *state, THCTensor *r_, THLongStorage *size)
 
 #endif
 
-#if defined(THC_REAL_IS_DOUBLE)
+#if defined(THC_NTYPE_IS_DOUBLE)
 GENERATE_KERNEL1(generate_bernoulli, double, double p, double, curand_uniform_double, x <= p)
 #else
 GENERATE_KERNEL1(generate_bernoulli, real, double p, float, curand_uniform, (ScalarConvert<bool, real>::to(x <= p)))
@@ -419,9 +419,9 @@ THC_API void THCTensor_(bernoulli)(THCState* state, THCTensor *self_, double p)
 
 void THCTensor_(bernoulli_Tensor)(THCState *state, THCTensor *self, THCTensor* p)
 {
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   THCTensor_(bernoulli_FloatTensor)(state, self, p);
-#elif defined(THC_REAL_IS_DOUBLE)
+#elif defined(THC_NTYPE_IS_DOUBLE)
   THCTensor_(bernoulli_DoubleTensor)(state, self, p);
 #endif
 }
@@ -452,17 +452,17 @@ THC_API void THCTensor_(NAME)(THCState* state,                                 \
 DEFINE_BERNOULLI_TENSOR(bernoulli_FloatTensor, THCudaTensor, float)
 DEFINE_BERNOULLI_TENSOR(bernoulli_DoubleTensor, THCudaDoubleTensor, double)
 
-#if defined(THC_REAL_IS_DOUBLE)
+#if defined(THC_NTYPE_IS_DOUBLE)
 GENERATE_KERNEL1(generate_geometric, double, double p, double, curand_uniform_double, ceil(log(x) / log(1-p)))
 #else
 GENERATE_KERNEL1(generate_geometric, real, double p, float, curand_uniform, (ScalarConvert<float, real>::to(ceilf(logf(x) / log(1-p)))))
 #endif
 
-#if defined(THC_REAL_IS_LONG) || defined(THC_REAL_IS_DOUBLE) || defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_LONG) || defined(THC_NTYPE_IS_DOUBLE) || defined(THC_NTYPE_IS_FLOAT)
 #define CURAND64(STATE) (((uint64_t)curand(&state[blockIdx.x])) << 32) | (uint64_t)curand(&state[blockIdx.x])
 GENERATE_KERNEL2(generate_random, real, int32_t base, uint32_t range, uint32_t, curand, (real)(x % range + base))
 GENERATE_KERNEL2(generate_random_64, real, int64_t base, uint64_t range, uint64_t, CURAND64, (real)(x % range + base))
-#elif defined(THC_REAL_IS_HALF)
+#elif defined(THC_NTYPE_IS_HALF)
 GENERATE_KERNEL2(generate_random, real, int32_t base, uint32_t range, uint32_t, curand, (ScalarConvert<uint32_t, real>::to(x % range + base)))
 #else
 GENERATE_KERNEL2(generate_random, real, int32_t base, uint32_t range, uint32_t, curand, (real)(x % range + base))
@@ -497,7 +497,7 @@ THC_API void THCTensor_(clampedRandom)(THCState* state, THCTensor *self_, int64_
 
   uint64_t range = max_val - min_val;
 
-#if defined(THC_REAL_IS_LONG) || defined(THC_REAL_IS_DOUBLE) || defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_LONG) || defined(THC_NTYPE_IS_DOUBLE) || defined(THC_NTYPE_IS_FLOAT)
   if (range > 1ULL << 32) {
     generate_random_64<<<NUM_BLOCKS, BLOCK_SIZE, 0, THCState_getCurrentStream(state)>>>(
         gen->gen_states, size, data, min_val, range);
@@ -505,7 +505,7 @@ THC_API void THCTensor_(clampedRandom)(THCState* state, THCTensor *self_, int64_
 #endif
     generate_random<<<NUM_BLOCKS, BLOCK_SIZE, 0, THCState_getCurrentStream(state)>>>(
         gen->gen_states, size, data, min_val, range);
-#if defined(THC_REAL_IS_LONG) || defined(THC_REAL_IS_DOUBLE) || defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_LONG) || defined(THC_NTYPE_IS_DOUBLE) || defined(THC_NTYPE_IS_FLOAT)
   }
 #endif
 
@@ -528,16 +528,16 @@ THC_API void THCTensor_(random)(THCState* state, THCTensor *self_)
   THCTensor *self = THCTensor_(newContiguous)(state, self_);
   real *data = THCTensor_(data)(state, self);
 
-#if defined(THC_REAL_IS_HALF)
+#if defined(THC_NTYPE_IS_HALF)
   generate_random<<<NUM_BLOCKS, BLOCK_SIZE, 0, THCState_getCurrentStream(state)>>>(
       gen->gen_states, size, data, 0UL, (1UL << HLF_MANT_DIG) + 1);
-#elif defined(THC_REAL_IS_FLOAT)
+#elif defined(THC_NTYPE_IS_FLOAT)
   generate_random<<<NUM_BLOCKS, BLOCK_SIZE, 0, THCState_getCurrentStream(state)>>>(
       gen->gen_states, size, data, 0UL, (1UL << FLT_MANT_DIG) + 1);
-#elif defined(THC_REAL_IS_DOUBLE)
+#elif defined(THC_NTYPE_IS_DOUBLE)
   generate_random_64<<<NUM_BLOCKS, BLOCK_SIZE, 0, THCState_getCurrentStream(state)>>>(
       gen->gen_states, size, data, 0ULL, (1ULL << DBL_MANT_DIG) + 1);
-#elif defined(THC_REAL_IS_LONG)
+#elif defined(THC_NTYPE_IS_LONG)
   generate_random_64<<<NUM_BLOCKS, BLOCK_SIZE, 0, THCState_getCurrentStream(state)>>>(
       gen->gen_states, size, data, 0ULL, static_cast<uint64_t>(std::numeric_limits<real>::max()) + 1);
 #else

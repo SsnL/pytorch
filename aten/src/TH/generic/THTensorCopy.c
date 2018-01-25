@@ -197,6 +197,6 @@ IMPLEMENT_THTensor_COPY_TO_HALF(Long, int64_t)
 IMPLEMENT_THTensor_COPY_TO_HALF(Float, float)
 IMPLEMENT_THTensor_COPY_TO_HALF(Double, double)
 
-#endif /* REAL_IS_HALF */
+#endif /* TH_NTYPE_IS_HALF */
 
 #endif

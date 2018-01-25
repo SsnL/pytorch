@@ -13,7 +13,7 @@ void THNN_(MultiMarginCriterion_updateOutput)(
           THTensor *weights,
           accreal margin_)
 {
-  real margin = TH_CONVERT_ACCREAL_TO_REAL(margin_);
+  real margin = TH_CONVERT_ACCNTYPE_TO_NTYPE(margin_);
   real *input_data, *weights_data;
   THIndex_t *target_data;
   int64_t nframe, dim;
@@ -94,7 +94,7 @@ void THNN_(MultiMarginCriterion_updateGradInput)(
           THTensor *weights,
           accreal margin_)
 {
-  real margin = TH_CONVERT_ACCREAL_TO_REAL(margin_);
+  real margin = TH_CONVERT_ACCNTYPE_TO_NTYPE(margin_);
   real *input_data;
   real *gradInput_data;
   THIndex_t *target_data;

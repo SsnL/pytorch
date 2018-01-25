@@ -138,7 +138,7 @@ void THNN_(PReLU_accGradParameters)(
           THTensor *gradWeight,
           accreal scale_)
 {
-  real scale = TH_CONVERT_ACCREAL_TO_REAL(scale_);
+  real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
   THNN_CHECK_NELEMENT(input, gradOutput);
   int64_t nOutputPlane = THTensor_(numel)(weight);
 

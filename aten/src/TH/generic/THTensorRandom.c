@@ -65,9 +65,9 @@ void THTensor_(bernoulli_DoubleTensor)(THTensor *self, THGenerator *_generator, 
 #if defined(TH_NTYPE_IS_FLOAT) || defined(TH_NTYPE_IS_DOUBLE)
 
 #if defined(TH_NTYPE_IS_FLOAT)
-#define TH_REAL_MIN FLT_MIN
+#define TH_NTYPE_MIN FLT_MIN
 #elif defined(TH_NTYPE_IS_DOUBLE)
-#define TH_REAL_MIN DBL_MIN
+#define TH_NTYPE_MIN DBL_MIN
 #endif
 
 void THTensor_(bernoulli_Tensor)(THTensor *self, THGenerator *_generator, THTensor* p)
@@ -133,11 +133,11 @@ void THTensor_(standard_gamma)(THTensor *self, THGenerator *gen, THTensor *alpha
   THTensor_(resizeAs)(self, alpha);
   TH_TENSOR_APPLY2(real, self, real, alpha, {
     const real sample = THRandom_standard_gamma(gen, *alpha_data);
-    *self_data = sample > 0 ? sample : TH_REAL_MIN;
+    *self_data = sample > 0 ? sample : TH_NTYPE_MIN;
   });
 }
 
-#undef TH_REAL_MIN
+#undef TH_NTYPE_MIN
 
 void THTensor_(cauchy)(THTensor *self, THGenerator *_generator, double median, double sigma)
 {

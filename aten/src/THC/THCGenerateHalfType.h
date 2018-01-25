@@ -16,7 +16,7 @@
 #define CReal CudaHalf
 #endif
 
-#define THC_REAL_IS_HALF
+#define THC_NTYPE_IS_HALF
 #line 1 THC_GENERIC_FILE
 #include THC_GENERIC_FILE
 #undef real
@@ -27,7 +27,7 @@
 #undef CReal
 #endif
 
-#undef THC_REAL_IS_HALF
+#undef THC_NTYPE_IS_HALF
 
 #endif // defined(CUDA_HALF_TENSOR) || defined(FORCE_TH_HALF)
 

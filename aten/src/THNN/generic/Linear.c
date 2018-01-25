@@ -91,7 +91,7 @@ void THNN_(Linear_accGradParameters)(
           THTensor *addBuffer,
           accreal scale_)
 {
-  real scale = TH_CONVERT_ACCREAL_TO_REAL(scale_);
+  real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
   int64_t dim = THTensor_(nDimension)(input);
   if (dim == 1) {
     THTensor_(addr)(gradWeight,1,gradWeight,scale,gradOutput,input);

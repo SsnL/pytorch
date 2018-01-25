@@ -10,8 +10,8 @@ void THNN_(ELU_updateOutput)(
           accreal scale,
           bool inplace)
 {
-  real negcoef = TH_CONVERT_ACCREAL_TO_REAL(alpha_ * scale);
-  real poscoef = TH_CONVERT_ACCREAL_TO_REAL(scale);
+  real negcoef = TH_CONVERT_ACCNTYPE_TO_NTYPE(alpha_ * scale);
+  real poscoef = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale);
   if (inplace) {
     TH_TENSOR_APPLY(real, input,
       *input_data = *input_data <= 0 ? (exp(*input_data)-1) * negcoef : *input_data * poscoef;
@@ -33,8 +33,8 @@ void THNN_(ELU_updateGradInput)(
           accreal alpha_,
           accreal scale)
 {
-  real negcoef = TH_CONVERT_ACCREAL_TO_REAL(alpha_ * scale);
-  real poscoef = TH_CONVERT_ACCREAL_TO_REAL(scale);
+  real negcoef = TH_CONVERT_ACCNTYPE_TO_NTYPE(alpha_ * scale);
+  real poscoef = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale);
   THNN_CHECK_NELEMENT(output, gradOutput);
   THTensor_(resizeAs)(gradInput, output);
   TH_TENSOR_APPLY3(real, gradInput, real, gradOutput, real, output,

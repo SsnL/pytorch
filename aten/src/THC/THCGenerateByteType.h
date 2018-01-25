@@ -6,14 +6,14 @@
 #define accreal int64_t
 #define Real Byte
 #define CReal CudaByte
-#define THC_REAL_IS_BYTE
+#define THC_NTYPE_IS_BYTE
 #line 1 THC_GENERIC_FILE
 #include THC_GENERIC_FILE
 #undef real
 #undef accreal
 #undef Real
 #undef CReal
-#undef THC_REAL_IS_BYTE
+#undef THC_NTYPE_IS_BYTE
 
 #ifndef THCGenerateAllTypes
 #undef THC_GENERIC_FILE

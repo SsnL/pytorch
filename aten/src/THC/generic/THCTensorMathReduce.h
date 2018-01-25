@@ -2,7 +2,7 @@
 #define THC_GENERIC_FILE "generic/THCTensorMathReduce.h"
 #else
 
-#if defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE) || defined(THC_REAL_IS_HALF)
+#if defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE) || defined(THC_NTYPE_IS_HALF)
 
 THC_API void THCTensor_(renorm)(THCState *state, THCTensor* self, THCTensor* src, real value, int dimension, real max_norm);
 THC_API void THCTensor_(std)(THCState *state, THCTensor *self, THCTensor *src, int dim, int biased, int keepdim);

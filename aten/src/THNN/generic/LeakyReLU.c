@@ -9,7 +9,7 @@ void THNN_(LeakyReLU_updateOutput)(
           accreal negval_,
           bool inplace)
 {
-  real negval = TH_CONVERT_ACCREAL_TO_REAL(negval_);
+  real negval = TH_CONVERT_ACCNTYPE_TO_NTYPE(negval_);
   if (inplace)
   {
     TH_TENSOR_APPLY(real, input,
@@ -35,7 +35,7 @@ void THNN_(LeakyReLU_updateGradInput)(
           accreal negval_,
           bool inplace)
 {
-  real negval = TH_CONVERT_ACCREAL_TO_REAL(negval_);
+  real negval = TH_CONVERT_ACCNTYPE_TO_NTYPE(negval_);
   THNN_CHECK_NELEMENT(input, gradOutput);
   if (inplace)
   {

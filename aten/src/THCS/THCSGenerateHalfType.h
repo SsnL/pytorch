@@ -10,14 +10,14 @@
 #define accreal float
 #define Real Half
 #define CReal CudaHalf
-#define THCS_REAL_IS_HALF
+#define THCS_NTYPE_IS_HALF
 #line 1 THCS_GENERIC_FILE
 #include THCS_GENERIC_FILE
 #undef real
 #undef accreal
 #undef Real
 #undef CReal
-#undef THCS_REAL_IS_HALF
+#undef THCS_NTYPE_IS_HALF
 
 #endif // CUDA_HALF_TENSOR
 

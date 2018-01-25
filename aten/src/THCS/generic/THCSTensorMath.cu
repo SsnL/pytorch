@@ -55,7 +55,7 @@ void THCTensor_(spaddcdiv)(THCState *state, THCTensor *r_, THCTensor *t, real va
 }
 
 void THCSTensor_(spaddmm)(THCState *state, THCTensor *r_, real beta, THCTensor *t, real alpha, THCSTensor *sparse_, THCTensor *dense) {
-#if defined(THCS_REAL_IS_FLOAT) || defined(THCS_REAL_IS_DOUBLE)
+#if defined(THCS_NTYPE_IS_FLOAT) || defined(THCS_NTYPE_IS_DOUBLE)
   THCAssertSameGPU(THCSTensor_(checkGPU)(state, 1, 4, sparse_, r_, t, dense));
   THCudaIntTensor *csr;
   THCIndexTensor *indices;
@@ -129,9 +129,9 @@ void THCSTensor_(spaddmm)(THCState *state, THCTensor *r_, real beta, THCTensor *
     transpose_dense = 't';
     dense_ = THCTensor_(newContiguous)(state, dense);
   }
-#if defined(THCS_REAL_IS_FLOAT)
+#if defined(THCS_NTYPE_IS_FLOAT)
   THCudaSparse_Scsrmm2(
-#elif defined(THCS_REAL_IS_DOUBLE)
+#elif defined(THCS_NTYPE_IS_DOUBLE)
   THCudaSparse_Dcsrmm2(
 #endif
     state,
@@ -478,7 +478,7 @@ void THCSTensor_(cmul)(THCState *state, THCSTensor *r_, THCSTensor *t_, THCSTens
   THCSTensor_(free)(state, src);
 }
 
-#if defined(THCS_REAL_IS_FLOAT) || defined(THCS_REAL_IS_DOUBLE)
+#if defined(THCS_NTYPE_IS_FLOAT) || defined(THCS_NTYPE_IS_DOUBLE)
 void THCSTensor_(pow)(THCState *state, THCSTensor *r_, THCSTensor *t_, real value) {
   if (value == 0) {
     THError("cannot raise to zeroth power on sparse tensor");

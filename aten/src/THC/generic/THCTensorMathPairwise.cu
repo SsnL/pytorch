@@ -43,7 +43,7 @@ THCTensor_(sub)(THCState *state, THCTensor *self_, THCTensor *src_, real value)
 THC_API void
 THCTensor_(add_scaled)(THCState *state, THCTensor *self_, THCTensor *src_, real value, real alpha)
 {
-#ifdef THC_REAL_IS_HALF
+#ifdef THC_NTYPE_IS_HALF
   auto v = THC_half2float(value) * THC_half2float(alpha);
   THCTensor_(add)(state, self_, src_, THC_float2half(v));
 #else
@@ -54,7 +54,7 @@ THCTensor_(add_scaled)(THCState *state, THCTensor *self_, THCTensor *src_, real 
 THC_API void
 THCTensor_(sub_scaled)(THCState *state, THCTensor *self_, THCTensor *src_, real value, real alpha)
 {
-#ifdef THC_REAL_IS_HALF
+#ifdef THC_NTYPE_IS_HALF
   auto v = THC_half2float(value) * THC_half2float(alpha);
   THCTensor_(sub)(state, self_, src_, THC_float2half(v));
 #else
@@ -105,9 +105,9 @@ THCTensor_(div)(THCState* state, THCTensor *self_, THCTensor *src_, real value)
 THC_API void
 THCTensor_(lshift)(THCState* state, THCTensor *self_, THCTensor *src_, real value)
 {
-#if defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE)
+#if defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE)
   THCTensor_(mul)(state, self_, src_, pow(2, value));
-#elif defined(THC_REAL_IS_HALF)
+#elif defined(THC_NTYPE_IS_HALF)
   return THError("lshift not supported for torch.CudaHalfTensor");
 #else
   if (self_ == src_) {
@@ -129,9 +129,9 @@ THCTensor_(lshift)(THCState* state, THCTensor *self_, THCTensor *src_, real valu
 THC_API void
 THCTensor_(rshift)(THCState* state, THCTensor *self_, THCTensor *src_, real value)
 {
-#if defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE)
+#if defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE)
   THCTensor_(mul)(state, self_, src_, pow(2, value));
-#elif defined(THC_REAL_IS_HALF)
+#elif defined(THC_NTYPE_IS_HALF)
   return THError("rshift not supported for torch.CudaHalfTensor");
 #else
   if (self_ == src_) {
@@ -283,7 +283,7 @@ THC_API int THCTensor_(equal)(THCState *state, THCTensor *self_, THCTensor *src_
 THC_API void
 THCTensor_(bitand)(THCState* state, THCTensor *self_, THCTensor *src_, real value)
 {
-#if defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE) || defined(THC_REAL_IS_HALF)
+#if defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE) || defined(THC_NTYPE_IS_HALF)
   return THError("bitand only supported for integer type tensors");
 #else
   if (self_ == src_) {
@@ -305,7 +305,7 @@ THCTensor_(bitand)(THCState* state, THCTensor *self_, THCTensor *src_, real valu
 THC_API void
 THCTensor_(bitor)(THCState* state, THCTensor *self_, THCTensor *src_, real value)
 {
-#if defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE) || defined(THC_REAL_IS_HALF)
+#if defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE) || defined(THC_NTYPE_IS_HALF)
   return THError("bitor only supported for integer type tensors");
 #else
   if (self_ == src_) {
@@ -327,7 +327,7 @@ THCTensor_(bitor)(THCState* state, THCTensor *self_, THCTensor *src_, real value
 THC_API void
 THCTensor_(bitxor)(THCState* state, THCTensor *self_, THCTensor *src_, real value)
 {
-#if defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE) || defined(THC_REAL_IS_HALF)
+#if defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE) || defined(THC_NTYPE_IS_HALF)
   return THError("bitxor only supported for integer type tensors");
 #else
   if (self_ == src_) {

@@ -314,7 +314,7 @@ void THNN_(VolumetricDilatedConvolution_accGradParameters)(
           int dilationT, int dilationW, int dilationH,
           accreal scale_)
 {
-  real scale = TH_CONVERT_ACCREAL_TO_REAL(scale_);
+  real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
   THNN_(VolumetricDilatedConvolution_shapeCheck)(
         input, gradOutput, gradWeight, gradBias,
         kT, kH, kW, dT, dH, dW, padT, padH, padW,

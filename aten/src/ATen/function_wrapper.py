@@ -249,7 +249,7 @@ ALLOC_WRAP = {
 
 # Replacements for constants when calling into TH
 CONSTANT_REPLACEMENTS = [
-    ('AS_REAL', '${AS_REAL}'),
+    ('AS_NTYPE', '${AS_NTYPE}'),
     ('__storage_size.get\\(\\)',
      'THLongStorageView::makeFromLength(static_cast<int64_t>(storage.size()))'),
     ('__last_dim', 'self.ndimension()-1'),
@@ -257,7 +257,7 @@ CONSTANT_REPLACEMENTS = [
 
 # Replacements for constants in header file function definitions
 HEADER_CONSTANT_REPLACEMENTS = [
-    (r'AS_REAL\((.*)\)', r'\1'),
+    (r'AS_NTYPE\((.*)\)', r'\1'),
     ('__last_dim', '-1'),
 ]
 

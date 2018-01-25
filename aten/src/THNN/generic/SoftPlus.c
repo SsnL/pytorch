@@ -9,8 +9,8 @@ void THNN_(SoftPlus_updateOutput)(
           accreal beta_,
           accreal threshold_)
 {
-  real beta = TH_CONVERT_ACCREAL_TO_REAL(beta_);
-  real threshold = TH_CONVERT_ACCREAL_TO_REAL(threshold_);
+  real beta = TH_CONVERT_ACCNTYPE_TO_NTYPE(beta_);
+  real threshold = TH_CONVERT_ACCNTYPE_TO_NTYPE(threshold_);
   THTensor_(resizeAs)(output, input);
 
   // f(x) = 1/beta * log(1 + exp(beta * x))
@@ -28,8 +28,8 @@ void THNN_(SoftPlus_updateGradInput)(
           accreal beta_,
           accreal threshold_)
 {
-  real beta = TH_CONVERT_ACCREAL_TO_REAL(beta_);
-  real threshold = TH_CONVERT_ACCREAL_TO_REAL(threshold_);
+  real beta = TH_CONVERT_ACCNTYPE_TO_NTYPE(beta_);
+  real threshold = TH_CONVERT_ACCNTYPE_TO_NTYPE(threshold_);
   THNN_CHECK_NELEMENT(input, gradOutput);
   THTensor_(resizeAs)(gradInput, output);
 

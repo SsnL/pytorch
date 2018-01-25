@@ -2,7 +2,7 @@
 #define THC_GENERIC_FILE "generic/THCTensorMathMagma.cu"
 #else
 
-#if defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE)
+#if defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE)
 
 #ifdef USE_MAGMA
 
@@ -79,7 +79,7 @@ THC_API void THCTensor_(gesv)(THCState *state, THCTensor *rb_, THCTensor *ra_, T
   int *ipiv = th_magma_malloc_pinned<int>(n);
 
   int info;
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   magma_sgesv_gpu(n, nrhs, a_data, n, ipiv, b_data, n, &info);
 #else
   magma_dgesv_gpu(n, nrhs, a_data, n, ipiv, b_data, n, &info);
@@ -117,7 +117,7 @@ THC_API void THCTensor_(gels)(THCState *state, THCTensor *rb_, THCTensor *ra_, T
   real wkopt;
 
   int info;
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   magma_sgels_gpu(MagmaNoTrans, m, n, nrhs, a_data, m, b_data, m, &wkopt, -1, &info);
 #else
   magma_dgels_gpu(MagmaNoTrans, m, n, nrhs, a_data, m, b_data, m, &wkopt, -1, &info);
@@ -125,7 +125,7 @@ THC_API void THCTensor_(gels)(THCState *state, THCTensor *rb_, THCTensor *ra_, T
 
   real *hwork = th_magma_malloc_pinned<real>((size_t)wkopt);
 
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   magma_sgels_gpu(MagmaNoTrans, m, n, nrhs, a_data, m, b_data, m, hwork, (int)wkopt, &info);
 #else
   magma_dgels_gpu(MagmaNoTrans, m, n, nrhs, a_data, m, b_data, m, hwork, (int)wkopt, &info);
@@ -164,7 +164,7 @@ THC_API void THCTensor_(syev)(THCState *state, THCTensor *re_, THCTensor *rv_, T
   real lwork;
   int liwork;
 
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   magma_ssyevd_gpu(jobz, uplo, n, input_data, lda, w, wA, n, &lwork, -1, &liwork, -1, &info);
 #else
   magma_dsyevd_gpu(jobz, uplo, n, input_data, lda, w, wA, n, &lwork, -1, &liwork, -1, &info);
@@ -174,7 +174,7 @@ THC_API void THCTensor_(syev)(THCState *state, THCTensor *re_, THCTensor *rv_, T
   int *iwork = th_magma_malloc_pinned<int>(liwork);
 
   // compute eigenvalues and, optionally, eigenvectors
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   magma_ssyevd_gpu(jobz, uplo, n, input_data, lda, w, wA, n, work, (int) lwork, iwork, liwork, &info);
 #else
   magma_dsyevd_gpu(jobz, uplo, n, input_data, lda, w, wA, n, work, (int) lwork, iwork, liwork, &info);
@@ -227,7 +227,7 @@ THC_API void THCTensor_(geev)(THCState *state, THCTensor *re_, THCTensor *rv_, T
   real wkopt;
   int info;
 
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   magma_sgeev(MagmaNoVec, jobvr, n, a_data, n, wr, wi, NULL, 1, vr_data, ldvr, &wkopt, -1, &info);
 #else
   magma_dgeev(MagmaNoVec, jobvr, n, a_data, n, wr, wi, NULL, 1, vr_data, ldvr, &wkopt, -1, &info);
@@ -236,7 +236,7 @@ THC_API void THCTensor_(geev)(THCState *state, THCTensor *re_, THCTensor *rv_, T
   int lwork = (int) wkopt;
   real *work_data = th_magma_malloc_pinned<real>(lwork);
 
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   magma_sgeev(MagmaNoVec, jobvr, n, a_data, n, wr, wi, NULL, 1, vr_data, ldvr, work_data, lwork, &info);
 #else
   magma_dgeev(MagmaNoVec, jobvr, n, a_data, n, wr, wi, NULL, 1, vr_data, ldvr, work_data, lwork, &info);
@@ -305,7 +305,7 @@ THC_API void THCTensor_(gesvd2)(THCState *state, THCTensor *ru_, THCTensor *rs_,
   real wkopt;
   int info;
 
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   magma_sgesdd(jobz, m, n, a_data, m, rs_data, ru_data, m, rv_data, n, &wkopt, -1, iunused, &info);
 #else
   magma_dgesdd(jobz, m, n, a_data, m, rs_data, ru_data, m, rv_data, n, &wkopt, -1, iunused, &info);
@@ -315,7 +315,7 @@ THC_API void THCTensor_(gesvd2)(THCState *state, THCTensor *ru_, THCTensor *rs_,
   real *work_data = th_magma_malloc_pinned<real>(lwork);
   int *iwork = th_magma_malloc_pinned<int>(8 * k);
 
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   magma_sgesdd(jobz, m, n, a_data, m, rs_data, ru_data, m, rv_data, n, work_data, lwork, iwork, &info);
 #else
   magma_dgesdd(jobz, m, n, a_data, m, rs_data, ru_data, m, rv_data, n, work_data, lwork, iwork, &info);
@@ -364,7 +364,7 @@ THC_API void THCTensor_(getri)(THCState *state, THCTensor *ra_, THCTensor *a)
   real *work_data = THCTensor_(data)(state, work);
 
   // Run LU
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   magma_sgetrf_gpu(n, n, input_data, n, ipiv, &info);
 #else
   magma_dgetrf_gpu(n, n, input_data, n, ipiv, &info);
@@ -376,7 +376,7 @@ THC_API void THCTensor_(getri)(THCState *state, THCTensor *ra_, THCTensor *a)
     THError("MAGMA getrf : Argument %d : illegal value", -info);
 
   // Inverse
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   magma_sgetri_gpu(n, input_data, n, ipiv, work_data, lwork, &info);
 #else
   magma_dgetri_gpu(n, input_data, n, ipiv, work_data, lwork, &info);
@@ -417,7 +417,7 @@ THC_API void THCTensor_(getri)(THCState *state, THCTensor *ra_, THCTensor *a)
   THCudaCheck(THCudaMalloc(state, (void**)&ipiv_gpu, n * sizeof(int)));
 
   // Run LU
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   THCudaBlas_Sgetrf(state, n, d_matrices1, n, ipiv_gpu, info_gpu, 1);
 #else
   THCudaBlas_Dgetrf(state, n, d_matrices1, n, ipiv_gpu, info_gpu, 1);
@@ -431,7 +431,7 @@ THC_API void THCTensor_(getri)(THCState *state, THCTensor *ra_, THCTensor *a)
     THError("CUBLAS getrf : Argument %d : illegal value", -info);
 
   // Inverse
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   THCudaBlas_Sgetri(state, n, (const real**)d_matrices1, n, ipiv_gpu, d_matrices2, n, info_gpu, 1);
 #else
   THCudaBlas_Dgetri(state, n, (const real**)d_matrices1, n, ipiv_gpu, d_matrices2, n, info_gpu, 1);
@@ -489,7 +489,7 @@ THC_API void THCTensor_(potri)(THCState *state, THCTensor *ra_, THCTensor *a, co
   real *input_data = THCTensor_(data)(state, input);
 
   int info;
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   magma_spotri_gpu(ul, n, input_data, n, &info);
 #else
   magma_dpotri_gpu(ul, n, input_data, n, &info);
@@ -529,7 +529,7 @@ THC_API void THCTensor_(potrf)(THCState *state, THCTensor *ra_, THCTensor *a, co
   real *input_data = THCTensor_(data)(state, input);
 
   int info;
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   magma_spotrf_gpu(ul, n, input_data, n, &info);
 #else
   magma_dpotrf_gpu(ul, n, input_data, n, &info);
@@ -567,7 +567,7 @@ THC_API void THCTensor_(potrs)(THCState *state, THCTensor *rb_, THCTensor *b, TH
   real *a_data = THCTensor_(data)(state, a_);
 
   int info;
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   magma_spotrs_gpu(ul, n, nrhs, a_data, n, b_data, n, &info);
 #else
   magma_dpotrs_gpu(ul, n, nrhs, a_data, n, b_data, n, &info);
@@ -595,13 +595,13 @@ THC_API void THCTensor_(geqrf)(THCState *state, THCTensor *ra_, THCTensor *rtau_
   int64_t k = (m < n ? m : n);
 
 #ifdef MAGMA_V2
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   int64_t nb = magma_get_sgeqrf_nb(m, n);
 #else
   int64_t nb = magma_get_dgeqrf_nb(m, n);
 #endif
 #else
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   int64_t nb = magma_get_sgeqrf_nb(m);
 #else
   int64_t nb = magma_get_dgeqrf_nb(m);
@@ -612,7 +612,7 @@ THC_API void THCTensor_(geqrf)(THCState *state, THCTensor *ra_, THCTensor *rtau_
   real *a_data = THCTensor_(data)(state, a);
 
   int info;
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   magma_sgeqrf2_gpu(m, n, a_data, m, rtau_data, &info);
 #else
   magma_dgeqrf2_gpu(m, n, a_data, m, rtau_data, &info);
@@ -640,13 +640,13 @@ THC_API void THCTensor_(qr)(THCState *state, THCTensor *rq_, THCTensor *rr_, THC
   int64_t k = (m < n ? m : n);
 
 #ifdef MAGMA_V2
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   int64_t nb = magma_get_sgeqrf_nb(m, n);
 #else
   int64_t nb = magma_get_dgeqrf_nb(m, n);
 #endif
 #else
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   int64_t nb = magma_get_sgeqrf_nb(m);
 #else
   int64_t nb = magma_get_dgeqrf_nb(m);
@@ -664,7 +664,7 @@ THC_API void THCTensor_(qr)(THCState *state, THCTensor *rq_, THCTensor *rr_, THC
   //     R properly. Note that the MAGMA documentation for this method is wrong.
   //     http://icl.cs.utk.edu/magma/forum/viewtopic.php?f=2&t=1015&p=2800&hilit=geqrf_gpu#p2800
   //   ?geqrf2_gpu gives correct R, but doesn't allow computation of Q via ?orqrf_gpu
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   magma_sgeqrf2_gpu(m, n, a_data, m, tau_data, &info);
 #else
   magma_dgeqrf2_gpu(m, n, a_data, m, tau_data, &info);
@@ -680,7 +680,7 @@ THC_API void THCTensor_(qr)(THCState *state, THCTensor *rq_, THCTensor *rr_, THC
   a = THCTensor_(newColumnMajor)(state, rq_, a_);
   a_data = THCTensor_(data)(state, a);
 
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   magma_sgeqrf_gpu(m, n, a_data, m, tau_data, work_data, &info);
 #else
   magma_dgeqrf_gpu(m, n, a_data, m, tau_data, work_data, &info);
@@ -692,7 +692,7 @@ THC_API void THCTensor_(qr)(THCState *state, THCTensor *rq_, THCTensor *rr_, THC
   THCTensor *q = THCTensor_(newColumnMajor)(state, rq_, a);
   real *q_data = THCTensor_(data)(state, q);
 
-#if defined(THC_REAL_IS_FLOAT)
+#if defined(THC_NTYPE_IS_FLOAT)
   magma_sorgqr_gpu(m, k, k, q_data, m, tau_data, work_data, nb, &info);
 #else
   magma_dorgqr_gpu(m, k, k, q_data, m, tau_data, work_data, nb, &info);

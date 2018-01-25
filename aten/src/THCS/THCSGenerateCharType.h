@@ -6,14 +6,14 @@
 #define accreal int64_t
 #define Real Char
 #define CReal CudaChar
-#define THCS_REAL_IS_CHAR
+#define THCS_NTYPE_IS_CHAR
 #line 1 THCS_GENERIC_FILE
 #include THCS_GENERIC_FILE
 #undef real
 #undef accreal
 #undef Real
 #undef CReal
-#undef THCS_REAL_IS_CHAR
+#undef THCS_NTYPE_IS_CHAR
 
 #ifndef THCSGenerateAllTypes
 #undef THCS_GENERIC_FILE

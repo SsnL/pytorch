@@ -2,8 +2,8 @@
 #define THC_GENERIC_FILE "generic/THCTensorScatterGather.cu"
 #else
 
-#define RUN(TYPE, DIMS, REAL)                                           \
-  THCudaTensor_gatherKernel<TYPE, REAL, DIMS>                                \
+#define RUN(TYPE, DIMS, NTYPE)                                           \
+  THCudaTensor_gatherKernel<TYPE, NTYPE, DIMS>                                \
   <<<grid, block, 0, THCState_getCurrentStream(state)>>>(               \
     tensorInfo, srcInfo, indexInfo, dim, (TYPE)totalElements);
 
@@ -96,8 +96,8 @@ void THCTensor_(gather)(THCState* state, THCTensor *tensor,
 #undef RUN
 
 
-#define RUN(TYPE, DIMS, REAL)                                           \
-  THCudaTensor_scatterKernel<TYPE, REAL, DIMS>                               \
+#define RUN(TYPE, DIMS, NTYPE)                                           \
+  THCudaTensor_scatterKernel<TYPE, NTYPE, DIMS>                               \
   <<<grid, block, 0, THCState_getCurrentStream(state)>>>(               \
     tensorInfo, srcInfo, indexInfo, dim, (TYPE)totalElements);
 
@@ -184,8 +184,8 @@ void THCTensor_(scatter)(THCState* state, THCTensor *tensor, int dim, THCudaLong
 
 #undef RUN
 
-#define RUN(TYPE, DIMS, REAL)                                           \
-  THCudaTensor_scatterAddKernel<TYPE, REAL, DIMS>                               \
+#define RUN(TYPE, DIMS, NTYPE)                                           \
+  THCudaTensor_scatterAddKernel<TYPE, NTYPE, DIMS>                               \
   <<<grid, block, 0, THCState_getCurrentStream(state)>>>(               \
     tensorInfo, srcInfo, indexInfo, dim, (TYPE)totalElements);
 
@@ -271,8 +271,8 @@ void THCTensor_(scatterAdd)(THCState* state, THCTensor *tensor, int dim, THCudaL
 
 #undef RUN
 
-#define RUN(TYPE, DIMS, REAL)                                           \
-  THCudaTensor_scatterFillKernel<TYPE, REAL, DIMS>                           \
+#define RUN(TYPE, DIMS, NTYPE)                                           \
+  THCudaTensor_scatterFillKernel<TYPE, NTYPE, DIMS>                           \
       <<<grid, block, 0, THCState_getCurrentStream(state)>>>(      \
           tensorInfo, indexInfo, value, dim, (TYPE)totalElements);
 

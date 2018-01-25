@@ -6,65 +6,65 @@
 #define accreal int64_t
 #define Real Byte
 #define THSInf UINT8_MAX
-#define THS_REAL_IS_BYTE
+#define THS_NTYPE_IS_BYTE
 #line 1 THS_GENERIC_FILE
 #include THS_GENERIC_FILE
 #undef real
 #undef accreal
 #undef Real
 #undef THSInf
-#undef THS_REAL_IS_BYTE
+#undef THS_NTYPE_IS_BYTE
 
 #define real int8_t
 #define accreal int64_t
 #define Real Char
 #define THSInf INT8_MAX
-#define THS_REAL_IS_CHAR
+#define THS_NTYPE_IS_CHAR
 #line 1 THS_GENERIC_FILE
 #include THS_GENERIC_FILE
 #undef real
 #undef accreal
 #undef Real
 #undef THSInf
-#undef THS_REAL_IS_CHAR
+#undef THS_NTYPE_IS_CHAR
 
 #define real int16_t
 #define accreal int64_t
 #define Real Short
 #define THSInf INT16_MAX
-#define THS_REAL_IS_SHORT
+#define THS_NTYPE_IS_SHORT
 #line 1 THS_GENERIC_FILE
 #include THS_GENERIC_FILE
 #undef real
 #undef accreal
 #undef Real
 #undef THSInf
-#undef THS_REAL_IS_SHORT
+#undef THS_NTYPE_IS_SHORT
 
 #define real int32_t
 #define accreal int64_t
 #define Real Int
 #define THSInf INT32_MAX
-#define THS_REAL_IS_INT
+#define THS_NTYPE_IS_INT
 #line 1 THS_GENERIC_FILE
 #include THS_GENERIC_FILE
 #undef real
 #undef accreal
 #undef Real
 #undef THSInf
-#undef THS_REAL_IS_INT
+#undef THS_NTYPE_IS_INT
 
 #define real int64_t
 #define accreal int64_t
 #define Real Long
 #define THSInf INT64_MAX
-#define THS_REAL_IS_LONG
+#define THS_NTYPE_IS_LONG
 #line 1 THS_GENERIC_FILE
 #include THS_GENERIC_FILE
 #undef real
 #undef accreal
 #undef Real
 #undef THSInf
-#undef THS_REAL_IS_LONG
+#undef THS_NTYPE_IS_LONG
 
 #undef THS_GENERIC_FILE

@@ -194,7 +194,7 @@ void THNN_(SpatialConvolutionMap_accGradParameters)(
           int dW, int dH,
           accreal scale_)
 {
-  real scale = TH_CONVERT_ACCREAL_TO_REAL(scale_);
+  real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
   THArgCheck(
     gradWeight != NULL && gradWeight->nDimension == 3
     && connTable != NULL && connTable->size[0] == gradWeight->size[0], 5,

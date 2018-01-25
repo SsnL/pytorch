@@ -6,14 +6,14 @@
 #define accreal int64_t
 #define Real Short
 #define CReal CudaShort
-#define THC_REAL_IS_SHORT
+#define THC_NTYPE_IS_SHORT
 #line 1 THC_GENERIC_FILE
 #include THC_GENERIC_FILE
 #undef real
 #undef accreal
 #undef Real
 #undef CReal
-#undef THC_REAL_IS_SHORT
+#undef THC_NTYPE_IS_SHORT
 
 #ifndef THCGenerateAllTypes
 #undef THC_GENERIC_FILE

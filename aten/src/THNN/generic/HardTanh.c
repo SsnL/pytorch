@@ -10,8 +10,8 @@ void THNN_(HardTanh_updateOutput)(
           accreal max_val_,
           bool inplace)
 {
-  real min_val = TH_CONVERT_ACCREAL_TO_REAL(min_val_);
-  real max_val = TH_CONVERT_ACCREAL_TO_REAL(max_val_);
+  real min_val = TH_CONVERT_ACCNTYPE_TO_NTYPE(min_val_);
+  real max_val = TH_CONVERT_ACCNTYPE_TO_NTYPE(max_val_);
   if (inplace)
     THTensor_(set)(output, input);
   else
@@ -79,8 +79,8 @@ void THNN_(HardTanh_updateGradInput)(
           accreal max_val_,
           bool inplace)
 {
-  real min_val = TH_CONVERT_ACCREAL_TO_REAL(min_val_);
-  real max_val = TH_CONVERT_ACCREAL_TO_REAL(max_val_);
+  real min_val = TH_CONVERT_ACCNTYPE_TO_NTYPE(min_val_);
+  real max_val = TH_CONVERT_ACCNTYPE_TO_NTYPE(max_val_);
 
   THNN_CHECK_NELEMENT(input, gradOutput);
   if (inplace)

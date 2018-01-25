@@ -2864,13 +2864,13 @@ void THTensor_(reshape)(THTensor *r_, THTensor *t, THLongStorage *size)
 #define IDX(III) idx[(III)*stride]
 
 #define LONG_SWAP(AAA, BBB) swap = AAA; AAA = BBB; BBB = swap
-#define REAL_SWAP(AAA, BBB) rswap = AAA; AAA = BBB; BBB = rswap
+#define NTYPE_SWAP(AAA, BBB) rswap = AAA; AAA = BBB; BBB = rswap
 
 #define ARR_SWAP(III, JJJ) \
-  REAL_SWAP(ARR(III), ARR(JJJ));
+  NTYPE_SWAP(ARR(III), ARR(JJJ));
 
 #define BOTH_SWAP(III, JJJ) \
-  REAL_SWAP(ARR(III), ARR(JJJ)); \
+  NTYPE_SWAP(ARR(III), ARR(JJJ)); \
   LONG_SWAP(IDX(III), IDX(JJJ))
 
 static void THTensor_(quicksortascend)(real *arr, int64_t *idx, int64_t elements, int64_t stride)
@@ -3183,7 +3183,7 @@ static void THTensor_(quickselect)(real *arr, int64_t *idx, int64_t k, int64_t e
 #undef ARR
 #undef IDX
 #undef LONG_SWAP
-#undef REAL_SWAP
+#undef NTYPE_SWAP
 #undef BOTH_SWAP
 
 void THTensor_(mode)(THTensor *values_, THLongTensor *indices_, THTensor *t, int dimension, int keepdim)

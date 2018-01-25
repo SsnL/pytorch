@@ -248,8 +248,8 @@ void THNN_(IndexLinear_updateParameters)(
           accreal weightDecay_,
           accreal learningRate_)
 {
-  real weightDecay = TH_CONVERT_ACCREAL_TO_REAL(weightDecay_);
-  real learningRate = TH_CONVERT_ACCREAL_TO_REAL(learningRate_);
+  real weightDecay = TH_CONVERT_ACCNTYPE_TO_NTYPE(weightDecay_);
+  real learningRate = TH_CONVERT_ACCNTYPE_TO_NTYPE(learningRate_);
   /* Retrieve all the dimensions of the problem */
   int64_t outDim = THTensor_(size)(bias, 0);
   int64_t woutDim = THTensor_(size)(weight, 1);
@@ -394,8 +394,8 @@ void THNN_(IndexLinear_accUpdateGradParameters)(
           accreal weightDecay_,
           accreal scale_)
 {
-  real weightDecay = TH_CONVERT_ACCREAL_TO_REAL(weightDecay_);
-  real scale = TH_CONVERT_ACCREAL_TO_REAL(scale_);
+  real weightDecay = TH_CONVERT_ACCNTYPE_TO_NTYPE(weightDecay_);
+  real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
   /* Retrieve all the dimensions of the problem */
   int64_t batchSize = THLongTensor_size(sizes, 0);
   int64_t keysSize = THLongTensor_size(keys, 0);
@@ -602,8 +602,8 @@ void THNN_(IndexLinear_accGradParameters)(
           accreal weightDecay_,
           accreal scale_)
 {
-  real weightDecay = TH_CONVERT_ACCREAL_TO_REAL(weightDecay_);
-  real scale = TH_CONVERT_ACCREAL_TO_REAL(scale_);
+  real weightDecay = TH_CONVERT_ACCNTYPE_TO_NTYPE(weightDecay_);
+  real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
   /* Retrieve all the dimensions of the problem */
   int64_t batchSize = THLongTensor_size(sizes, 0);
   int64_t keysSize = THLongTensor_size(keys, 0);

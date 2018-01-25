@@ -5,8 +5,8 @@
 #include "THHalf.h"
 #define real THHalf
 #define accreal float
-#define TH_CONVERT_REAL_TO_ACCREAL(_val) TH_half2float(_val)
-#define TH_CONVERT_ACCREAL_TO_REAL(_val) TH_float2half(_val)
+#define TH_CONVERT_NTYPE_TO_ACCNTYPE(_val) TH_half2float(_val)
+#define TH_CONVERT_ACCNTYPE_TO_NTYPE(_val) TH_float2half(_val)
 #define Real Half
 #define THInf TH_HALF_BITS_TO_LITERAL(TH_HALF_INF)
 #define TH_NTYPE_IS_HALF
@@ -17,8 +17,8 @@
 #undef Real
 #undef THInf
 #undef TH_NTYPE_IS_HALF
-#undef TH_CONVERT_REAL_TO_ACCREAL
-#undef TH_CONVERT_ACCREAL_TO_REAL
+#undef TH_CONVERT_NTYPE_TO_ACCNTYPE
+#undef TH_CONVERT_ACCNTYPE_TO_NTYPE
 
 #ifndef THGenerateManyTypes
 #undef TH_GENERIC_FILE

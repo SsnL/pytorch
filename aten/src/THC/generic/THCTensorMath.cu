@@ -427,7 +427,7 @@ accreal THCTensor_(trace)(THCState *state, THCTensor *src_) {
   return trace;
 }
 
-#if defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE) || defined(THC_REAL_IS_HALF)
+#if defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE) || defined(THC_NTYPE_IS_HALF)
 
 void THCTensor_(linspace)(THCState *state, THCTensor *r_, real a, real b, int64_t n) {
   THCAssertSameGPU(THCTensor_(checkGPU)(state, 1, r_));
@@ -491,7 +491,7 @@ void THCTensor_(range)(THCState *state, THCTensor *r_, accreal xmin, accreal xma
 }
 
 void THCTensor_(arange)(THCState* state, THCTensor *r_, accreal xmin, accreal xmax, accreal step) {
-#if defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE) || defined(THC_REAL_IS_HALF)
+#if defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE) || defined(THC_NTYPE_IS_HALF)
   int m = fmod(xmax - xmin, step) == 0;
 #else
   int m = (xmax - xmin) % step == 0;

@@ -2,7 +2,7 @@
 #define THC_GENERIC_FILE "generic/THCTensorMathMagma.h"
 #else
 
-#if defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE)
+#if defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE)
 
 // MAGMA (i.e. CUDA implementation of LAPACK functions)
 THC_API void THCTensor_(gesv)(THCState *state, THCTensor *rb_, THCTensor *ra_, THCTensor *b_, THCTensor *a_);
@@ -18,6 +18,6 @@ THC_API void THCTensor_(potrs)(THCState *state, THCTensor *rb_, THCTensor *a, TH
 THC_API void THCTensor_(geqrf)(THCState *state, THCTensor *ra_, THCTensor *rtau_, THCTensor *a_);
 THC_API void THCTensor_(qr)(THCState *state, THCTensor *rq_, THCTensor *rr_, THCTensor *a);
 
-#endif // defined(THC_REAL_IS_FLOAT) || defined(THC_REAL_IS_DOUBLE)
+#endif // defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE)
 
 #endif
