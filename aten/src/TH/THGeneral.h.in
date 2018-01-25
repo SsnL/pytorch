@@ -13,10 +13,12 @@
 #include <stddef.h>
 #include <inttypes.h>
 
+#cmakedefine USE_MKL
 #cmakedefine USE_BLAS
-#cmakedefine USE_LAPACK
+#cmakedefine USE_MKL_BLAS
+#cmakedefine USE_CBLAS
 #cmakedefine BLAS_F2C
-#cmakedefine BLAS_USE_CBLAS_DOT
+#cmakedefine USE_LAPACK
 
 #ifdef __cplusplus
 # define TH_EXTERNC extern "C"
