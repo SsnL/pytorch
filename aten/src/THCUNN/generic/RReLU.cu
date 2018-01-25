@@ -22,8 +22,8 @@ void THNN_(RReLU_updateOutput)(
   {
     input = THCTensor_(newContiguous)(state, input);
     THCTensor_(resizeAs)(state, noise, input);
-    real *input_data = THCTensor_(data)(state, input);
-    real *noise_data = THCTensor_(data)(state, noise);
+    ntype *input_data = THCTensor_(data)(state, input);
+    ntype *noise_data = THCTensor_(data)(state, noise);
     ptrdiff_t n = THCTensor_(nElement)(state, input);
     if (inplace)
     {
@@ -34,7 +34,7 @@ void THNN_(RReLU_updateOutput)(
     else
     {
       THCTensor_(resizeAs)(state, output, input);
-      real *output_data = THCTensor_(data)(state, output);
+      ntype *output_data = THCTensor_(data)(state, output);
       rreluUpdateOutputTrain<<<NUM_BLOCKS(n), BLOCK_SIZE, 0, THCState_getCurrentStream(state)>>>(
         n, gen_states, input_data, noise_data, output_data, lower, upper);
     }
@@ -43,16 +43,16 @@ void THNN_(RReLU_updateOutput)(
   }
   else
   {
-    const real negSlope = ScalarConvert<double, real>::to((lower + upper) / 2);
+    const ntype negSlope = ScalarConvert<double, ntype>::to((lower + upper) / 2);
     if (inplace)
     {
-      THC_pointwiseApply1(state, input, RReLUUpdateOutputEvalIP_functor<real>(negSlope));
+      THC_pointwiseApply1(state, input, RReLUUpdateOutputEvalIP_functor<ntype>(negSlope));
       THCTensor_(set)(state, output, input);
     }
     else
     {
       THCTensor_(resizeAs)(state, output, input);
-      THC_pointwiseApply2(state, output, input, RReLUUpdateOutputEval_functor<real>(negSlope));
+      THC_pointwiseApply2(state, output, input, RReLUUpdateOutputEval_functor<ntype>(negSlope));
     }
   }
 }
@@ -90,16 +90,16 @@ void THNN_(RReLU_updateGradInput)(
   else
   {
     // use constant factor for negative input values
-    const real negSlope = ScalarConvert<double, real>::to((lower + upper) / 2);
+    const ntype negSlope = ScalarConvert<double, ntype>::to((lower + upper) / 2);
     if (inplace)
     {
-      THC_pointwiseApply2(state, gradOutput, input, RReLUupdateGradInputEvalIP_functor<real>(negSlope));
+      THC_pointwiseApply2(state, gradOutput, input, RReLUupdateGradInputEvalIP_functor<ntype>(negSlope));
       THCTensor_(set)(state, gradInput, gradOutput);
     }
     else
     {
       THCTensor_(resizeAs)(state, gradInput, input);
-      THC_pointwiseApply3(state, gradInput, gradOutput, input, RReLUupdateGradInputEval_functor<real>(negSlope));
+      THC_pointwiseApply3(state, gradInput, gradOutput, input, RReLUupdateGradInputEval_functor<ntype>(negSlope));
     }
   }
 

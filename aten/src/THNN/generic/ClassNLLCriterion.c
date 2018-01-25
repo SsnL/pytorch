@@ -42,7 +42,7 @@ void THNN_(ClassNLLCriterion_updateOutput)(
         THTensor_fastSet1d(output, i, 0.0f);
         continue;
       }
-      real cur_weight = weights ? THTensor_fastGet1d(weights, cur_target) : 1.0f;
+      ntype cur_weight = weights ? THTensor_fastGet1d(weights, cur_target) : 1.0f;
       THTensor_fastSet1d(output, i, -THTensor_fastGet2d(input, i, cur_target) * cur_weight);
     }
 
@@ -59,11 +59,11 @@ void THNN_(ClassNLLCriterion_updateOutput)(
   target = THIndexTensor_(newContiguous)(target);
   weights = weights ? THTensor_(newContiguous)(weights) : NULL;
 
-  real *input_data = THTensor_(data)(input);
+  ntype *input_data = THTensor_(data)(input);
   THIndex_t *target_data = THIndexTensor_(data)(target);
-  real *weights_data = weights ? THTensor_(data)(weights) : NULL;
-  real *output_data = THTensor_(data)(output);
-  real *total_weight_data = THTensor_(data)(total_weight);
+  ntype *weights_data = weights ? THTensor_(data)(weights) : NULL;
+  ntype *output_data = THTensor_(data)(output);
+  ntype *total_weight_data = THTensor_(data)(total_weight);
 
   output_data[0] = total_weight_data[0] = 0.0;
 
@@ -86,7 +86,7 @@ void THNN_(ClassNLLCriterion_updateOutput)(
       if (cur_target != ignore_index) {
         THAssert(cur_target >= 0 && cur_target < n_classes);
 
-        real cur_weight = weights ? weights_data[cur_target] : 1.0f;
+        ntype cur_weight = weights ? weights_data[cur_target] : 1.0f;
         total_weight_data[0] += cur_weight;
         output_data[0] -= input_data[i * n_target + cur_target] * cur_weight;
       }
@@ -150,7 +150,7 @@ void THNN_(ClassNLLCriterion_updateGradInput)(
       if (cur_target == ignore_index) {
         continue;
       }
-      real weight = weights ? THTensor_fastGet1d(weights, cur_target) : 1.0f;
+      ntype weight = weights ? THTensor_fastGet1d(weights, cur_target) : 1.0f;
       THTensor_fastSet2d(gradInput, i, cur_target, -weight * THTensor_fastGet1d(gradOutput, i));
     }
     return;
@@ -160,7 +160,7 @@ void THNN_(ClassNLLCriterion_updateGradInput)(
     sizeAverage = false;
   }
 
-  real *total_weight_data = THTensor_(data)(total_weight);
+  ntype *total_weight_data = THTensor_(data)(total_weight);
   if (*total_weight_data <= 0) {
     return;
   }
@@ -171,10 +171,10 @@ void THNN_(ClassNLLCriterion_updateGradInput)(
   weights = weights ? THTensor_(newContiguous)(weights) : NULL;
 
   THIndex_t *target_data = THIndexTensor_(data)(target);
-  real *weights_data = weights ? THTensor_(data)(weights) : NULL;
-  real *gradInput_data = THTensor_(data)(gradInput);
+  ntype *weights_data = weights ? THTensor_(data)(weights) : NULL;
+  ntype *gradInput_data = THTensor_(data)(gradInput);
 
-  real gradOutput_value = THTensor_(get1d)(gradOutput, 0);
+  ntype gradOutput_value = THTensor_(get1d)(gradOutput, 0);
 
   if (THTensor_(nDimension)(input) == 1) {
     int cur_target = target_data[0] - TH_INDEX_BASE;

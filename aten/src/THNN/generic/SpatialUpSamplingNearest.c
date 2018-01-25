@@ -81,8 +81,8 @@ void THNN_(SpatialUpSamplingNearest_updateOutput)(
   int64_t *os = output->stride;
 
   // get raw pointers
-  real *pin = THTensor_(data)(input);
-  real *pout = THTensor_(data)(output);
+  ntype *pin = THTensor_(data)(input);
+  ntype *pout = THTensor_(data)(output);
 
   // perform the upsampling
   int i0, i1, i2, i3, isrc, idst;
@@ -150,8 +150,8 @@ void THNN_(SpatialUpSamplingNearest_updateGradInput)(
   int64_t *os = gradOutput->stride;
 
   // get raw pointers
-  real *pin = THTensor_(data)(gradInput);
-  real *pout = THTensor_(data)(gradOutput);
+  ntype *pin = THTensor_(data)(gradInput);
+  ntype *pout = THTensor_(data)(gradOutput);
 
   // perform the upsampling
   int i0, i1, i2, i3, isrc, idst, x, y;

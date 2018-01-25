@@ -3,7 +3,7 @@
 
 #include "THGeneral.h"
 
-#define THLapack_(NAME) TH_CONCAT_4(TH,Real,Lapack_,NAME)
+#define THLapack_(NAME) TH_CONCAT_4(TH,Ntype,Lapack_,NAME)
 
 #define THLapackCheck(fmt, func, info , ...)						\
 if (info < 0) {														\

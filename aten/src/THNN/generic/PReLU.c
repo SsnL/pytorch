@@ -14,8 +14,8 @@ void THNN_(PReLU_updateOutput)(
   if (nOutputPlane == 1)
   {
     // handle shared parameter case
-    real w = *THTensor_(data)(weight);
-    TH_TENSOR_APPLY2(real, output, real, input,
+    ntype w = *THTensor_(data)(weight);
+    TH_TENSOR_APPLY2(ntype, output, ntype, input,
       *output_data = (*input_data > 0) ? *input_data : w*(*input_data);
     );
     return;
@@ -36,15 +36,15 @@ void THNN_(PReLU_updateOutput)(
     }
   }
 
-  real *output_data = THTensor_(data)(output);
-  real *input_data = THTensor_(data)(input);
-  real *weight_data = THTensor_(data)(weight);
+  ntype *output_data = THTensor_(data)(output);
+  ntype *input_data = THTensor_(data)(input);
+  ntype *weight_data = THTensor_(data)(weight);
   THIndex_t i, j, k;
   #pragma omp parallel for private(j,k)
   for (i = 0; i < bs; ++i)
   {
-    real* n_input_data = input_data + i*nOutputPlane*ks;
-    real* n_output_data = output_data + i*nOutputPlane*ks;
+    ntype* n_input_data = input_data + i*nOutputPlane*ks;
+    ntype* n_output_data = output_data + i*nOutputPlane*ks;
     for (j = 0; j < nOutputPlane; ++j)
     {
       for (k = 0; k < ks; ++k)
@@ -69,8 +69,8 @@ void THNN_(PReLU_updateGradInput)(
 
   if (nOutputPlane == 1)
   {
-    real w = THTensor_(data)(weight)[0];
-    TH_TENSOR_APPLY3(real, gradInput, real, gradOutput, real, input,
+    ntype w = THTensor_(data)(weight)[0];
+    TH_TENSOR_APPLY3(ntype, gradInput, ntype, gradOutput, ntype, input,
        if ((*input_data) > 0)
          *gradInput_data = *gradOutput_data;
        else
@@ -82,10 +82,10 @@ void THNN_(PReLU_updateGradInput)(
   input = THTensor_(newContiguous)(input);
   gradOutput = THTensor_(newContiguous)(gradOutput);
   weight = THTensor_(newContiguous)(weight);
-  const real *input_data = THTensor_(data)(input);
-  const real *gradOutput_data = THTensor_(data)(gradOutput);
-  const real *weight_data = THTensor_(data)(weight);
-  real *gradInput_data = THTensor_(data)(gradInput);
+  const ntype *input_data = THTensor_(data)(input);
+  const ntype *gradOutput_data = THTensor_(data)(gradOutput);
+  const ntype *weight_data = THTensor_(data)(weight);
+  ntype *gradInput_data = THTensor_(data)(gradInput);
 
   int64_t bs = 1, ks = 1;
   {
@@ -105,13 +105,13 @@ void THNN_(PReLU_updateGradInput)(
   #pragma omp parallel for private(j,k)
   for (i = 0; i < bs; ++i)
   {
-    const real *n_input_data = input_data + i*nOutputPlane*ks;
-    const real *n_gradOutput_data = gradOutput_data + i*nOutputPlane*ks;
-    real *n_gradInput_data = gradInput_data + i*nOutputPlane*ks;
+    const ntype *n_input_data = input_data + i*nOutputPlane*ks;
+    const ntype *n_gradOutput_data = gradOutput_data + i*nOutputPlane*ks;
+    ntype *n_gradInput_data = gradInput_data + i*nOutputPlane*ks;
 
     for (j = 0; j < nOutputPlane; ++j)
     {
-      real w = weight_data[j];
+      ntype w = weight_data[j];
       for (k = 0; k < ks; ++k)
       {
         if (n_input_data[k] > 0)
@@ -136,17 +136,17 @@ void THNN_(PReLU_accGradParameters)(
           THTensor *gradInput,
           THTensor *weight,
           THTensor *gradWeight,
-          accreal scale_)
+          accntype scale_)
 {
-  real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
+  ntype scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
   THNN_CHECK_NELEMENT(input, gradOutput);
   int64_t nOutputPlane = THTensor_(numel)(weight);
 
   if (nOutputPlane == 1)
   {
-    real *gradWeight_data = THTensor_(data)(gradWeight);
-    real sum = 0;
-    TH_TENSOR_APPLY2(real, input, real, gradOutput,
+    ntype *gradWeight_data = THTensor_(data)(gradWeight);
+    ntype sum = 0;
+    TH_TENSOR_APPLY2(ntype, input, ntype, gradOutput,
       if ((*input_data) <= 0)
         sum += (*input_data) * (*gradOutput_data);
     );
@@ -172,20 +172,20 @@ void THNN_(PReLU_accGradParameters)(
     }
   }
 
-  const real *input_data = THTensor_(data)(input);
-  const real *gradOutput_data = THTensor_(data)(gradOutput);
-  const real *weight_data = THTensor_(data)(weight);
-  real *gradWeight_data = THTensor_(data)(gradWeight);
+  const ntype *input_data = THTensor_(data)(input);
+  const ntype *gradOutput_data = THTensor_(data)(gradOutput);
+  const ntype *weight_data = THTensor_(data)(weight);
+  ntype *gradWeight_data = THTensor_(data)(gradWeight);
 
   THIndex_t i, j, k;
   for (i = 0; i < bs; ++i)
   {
-    const real *n_input_data = input_data + i*nOutputPlane*ks;
-    const real *n_gradOutput_data = gradOutput_data + i*nOutputPlane*ks;
+    const ntype *n_input_data = input_data + i*nOutputPlane*ks;
+    const ntype *n_gradOutput_data = gradOutput_data + i*nOutputPlane*ks;
 
     for (j = 0; j < nOutputPlane; ++j)
     {
-      real sum = 0;
+      ntype sum = 0;
       for (k = 0; k < ks; ++k)
         if (n_input_data[k] <= 0)
           sum += n_gradOutput_data[k] * n_input_data[k];

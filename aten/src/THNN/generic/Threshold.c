@@ -6,15 +6,15 @@ void THNN_(Threshold_updateOutput)(
           THNNState *state,
           THTensor *input,
           THTensor *output,
-          accreal threshold_,
-          accreal val_,
+          accntype threshold_,
+          accntype val_,
           bool inplace)
 {
-  real threshold = TH_CONVERT_ACCNTYPE_TO_NTYPE(threshold_);
-  real val = TH_CONVERT_ACCNTYPE_TO_NTYPE(val_);
+  ntype threshold = TH_CONVERT_ACCNTYPE_TO_NTYPE(threshold_);
+  ntype val = TH_CONVERT_ACCNTYPE_TO_NTYPE(val_);
   if (inplace)
   {
-    TH_TENSOR_APPLY(real, input,
+    TH_TENSOR_APPLY(ntype, input,
       if (*input_data <= threshold)
         *input_data = val;
     );
@@ -23,7 +23,7 @@ void THNN_(Threshold_updateOutput)(
   else
   {
     THTensor_(resizeAs)(output, input);
-    TH_TENSOR_APPLY2(real, output, real, input,
+    TH_TENSOR_APPLY2(ntype, output, ntype, input,
       *output_data = (*input_data > threshold) ? *input_data : val;
     );
   }
@@ -34,16 +34,16 @@ void THNN_(Threshold_updateGradInput)(
           THTensor *input,
           THTensor *gradOutput,
           THTensor *gradInput,
-          accreal threshold_,
-          accreal val_,
+          accntype threshold_,
+          accntype val_,
           bool inplace)
 {
-  real threshold = TH_CONVERT_ACCNTYPE_TO_NTYPE(threshold_);
-  real val = TH_CONVERT_ACCNTYPE_TO_NTYPE(val_);
+  ntype threshold = TH_CONVERT_ACCNTYPE_TO_NTYPE(threshold_);
+  ntype val = TH_CONVERT_ACCNTYPE_TO_NTYPE(val_);
   THNN_CHECK_NELEMENT(input, gradOutput);
   if (inplace)
   {
-    TH_TENSOR_APPLY2(real, gradOutput, real, input,
+    TH_TENSOR_APPLY2(ntype, gradOutput, ntype, input,
       if ((*input_data) <= threshold)
         *gradOutput_data = 0;
     );
@@ -52,7 +52,7 @@ void THNN_(Threshold_updateGradInput)(
   else
   {
     THTensor_(resizeAs)(gradInput, input);
-    TH_TENSOR_APPLY3(real, gradInput, real, gradOutput, real, input,
+    TH_TENSOR_APPLY3(ntype, gradInput, ntype, gradOutput, ntype, input,
       if ((*input_data) > threshold)
         *gradInput_data = *gradOutput_data;
       else

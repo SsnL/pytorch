@@ -7,24 +7,24 @@ void THNN_(RReLU_updateOutput)(
           THTensor *input,
           THTensor *output,
           THTensor *noise,
-          accreal lower_,
-          accreal upper_,
+          accntype lower_,
+          accntype upper_,
           bool train,
           bool inplace,
           THGenerator *generator)
 {
-  real lower = TH_CONVERT_ACCNTYPE_TO_NTYPE(lower_);
-  real upper = TH_CONVERT_ACCNTYPE_TO_NTYPE(upper_);
+  ntype lower = TH_CONVERT_ACCNTYPE_TO_NTYPE(lower_);
+  ntype upper = TH_CONVERT_ACCNTYPE_TO_NTYPE(upper_);
   if (train)
   {
     // get default random generator
     THTensor_(resizeAs)(noise, input);
     if (inplace)
     {
-      TH_TENSOR_APPLY2(real, input, real, noise,
+      TH_TENSOR_APPLY2(ntype, input, ntype, noise,
         if (*input_data <= 0)
         {
-          const real r = (real)THRandom_uniform(generator, lower, upper);
+          const ntype r = (ntype)THRandom_uniform(generator, lower, upper);
           *input_data = (*input_data) * r;
           *noise_data = r;
         }
@@ -38,10 +38,10 @@ void THNN_(RReLU_updateOutput)(
     else
     {
       THTensor_(resizeAs)(output, input);
-      TH_TENSOR_APPLY3(real, input, real, output, real, noise,
+      TH_TENSOR_APPLY3(ntype, input, ntype, output, ntype, noise,
         if (*input_data <= 0)
         {
-          const real r = (real)THRandom_uniform(generator, lower, upper);
+          const ntype r = (ntype)THRandom_uniform(generator, lower, upper);
           *output_data = (*input_data) * r;
           *noise_data = r;
         }
@@ -55,10 +55,10 @@ void THNN_(RReLU_updateOutput)(
   }
   else
   {
-    const real negSlope = (lower + upper) / 2;
+    const ntype negSlope = (lower + upper) / 2;
     if (inplace)
     {
-      TH_TENSOR_APPLY(real, input,
+      TH_TENSOR_APPLY(ntype, input,
         if (*input_data <= 0)
         {
           *input_data = *input_data * negSlope;
@@ -69,8 +69,8 @@ void THNN_(RReLU_updateOutput)(
     else
     {
       THTensor_(resizeAs)(output, input);
-      TH_TENSOR_APPLY2(real, input, real, output,
-        const real r = (*input_data) <= 0 ? negSlope : 1;
+      TH_TENSOR_APPLY2(ntype, input, ntype, output,
+        const ntype r = (*input_data) <= 0 ? negSlope : 1;
         *output_data = *input_data * r;
       );
     }
@@ -83,13 +83,13 @@ void THNN_(RReLU_updateGradInput)(
           THTensor *gradOutput,
           THTensor *gradInput,
           THTensor *noise,
-          accreal lower_,
-          accreal upper_,
+          accntype lower_,
+          accntype upper_,
           bool train,
           bool inplace)
 {
-  real lower = TH_CONVERT_ACCNTYPE_TO_NTYPE(lower_);
-  real upper = TH_CONVERT_ACCNTYPE_TO_NTYPE(upper_);
+  ntype lower = TH_CONVERT_ACCNTYPE_TO_NTYPE(lower_);
+  ntype upper = TH_CONVERT_ACCNTYPE_TO_NTYPE(upper_);
   THNN_CHECK_NELEMENT(input, gradOutput);
   if (train && upper - lower > 1E-6)    // e.g. if upper == lower, RReLU behaves like LeakyReLU
   {
@@ -108,10 +108,10 @@ void THNN_(RReLU_updateGradInput)(
   else
   {
     // use constant factor for negative input values
-    const real negSlope = (lower + upper) / 2;
+    const ntype negSlope = (lower + upper) / 2;
     if (inplace)
     {
-      TH_TENSOR_APPLY2(real, gradOutput, real, input,
+      TH_TENSOR_APPLY2(ntype, gradOutput, ntype, input,
         if (*input_data <= 0)
         {
           *gradOutput_data = (*gradOutput_data) * negSlope;
@@ -122,7 +122,7 @@ void THNN_(RReLU_updateGradInput)(
     else
     {
       THTensor_(resizeAs)(gradInput, input);
-      TH_TENSOR_APPLY3(real, gradInput, real, gradOutput, real, input,
+      TH_TENSOR_APPLY3(ntype, gradInput, ntype, gradOutput, ntype, input,
         *gradInput_data = (*input_data) <= 0 ? (*gradOutput_data) * negSlope : (*gradOutput_data);
       );
     }

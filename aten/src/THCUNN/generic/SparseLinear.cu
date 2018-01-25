@@ -86,7 +86,7 @@ void THNN_(SparseLinear_updateOutput)(
   }
 
   // output = W * x
-  real one = ScalarConvert<int, real>::to(1);
+  ntype one = ScalarConvert<int, ntype>::to(1);
   cusparseMatDescr_t descr = 0;
   cusparseCreateMatDescr(&descr);
   cusparseSetMatType(descr,CUSPARSE_MATRIX_TYPE_GENERAL);
@@ -130,8 +130,8 @@ void THNN_(SparseLinear_accGradParameters)(
            THCTensor *gradBias,
            THCTensor *weight,
            THCTensor *bias,
-           accreal weightDecay,
-           accreal scale)
+           accntype weightDecay,
+           accntype scale)
 {
   int64_t outDim = THCTensor_(size)(state, weight, 0);
   int64_t inDim = THCTensor_(size)(state, weight, 1);
@@ -185,7 +185,7 @@ void THNN_(SparseLinear_accGradParameters)(
   THCTensor_(copy)(state, buf, tgradOutput);
   THCTensor_(free)(state, tgradOutput);
 
-  real one = ScalarConvert<int, real>::to(1);
+  ntype one = ScalarConvert<int, ntype>::to(1);
   cusparseMatDescr_t descr = 0;
   cusparseCreateMatDescr(&descr);
   cusparseSetMatType(descr,CUSPARSE_MATRIX_TYPE_GENERAL);
@@ -243,8 +243,8 @@ void THNN_(SparseLinear_legacyAccGradParameters)(
            THCTensor *gradBias,
            THCTensor *weight,
            THCTensor *bias,
-           accreal weightDecay,
-           accreal scale) {
+           accntype weightDecay,
+           accntype scale) {
   THError("CUDA does not support legacy input format, please use a table of nnz x 2 vectors");
 }
 
@@ -265,7 +265,7 @@ void THNN_(SparseLinear_updateParameters)(
            THCTensor *gradWeight,
            THCTensor *gradBias,
            THCTensor *lastInput,
-           accreal learningRate) {
+           accntype learningRate) {
   THCTensor_(cadd)(state, weight, weight, -learningRate, gradWeight);
   THCTensor_(cadd)(state, bias, bias, -learningRate, gradBias);
 }

@@ -54,8 +54,8 @@ static inline void THNN_(VolumetricMaxUnpooling_shapeCheck)(
 }
 
 static void THNN_(VolumetricMaxUnpooling_updateOutput_frame)(
-          real *input_p,
-          real *output_p,
+          ntype *input_p,
+          ntype *output_p,
           THIndex_t *ind_p,
           int nslices,
           int iT,
@@ -88,7 +88,7 @@ static void THNN_(VolumetricMaxUnpooling_updateOutput_frame)(
           int start_h = i * dH - pH;
           int start_w = j * dW - pW;
 
-          real *input_p_k = input_p + k*iT*iW*iH + ti*iW*iH + i*iW + j;
+          ntype *input_p_k = input_p + k*iT*iW*iH + ti*iW*iH + i*iW + j;
           THIndex_t *ind_p_k = ind_p + k*iT*iW*iH + ti*iW*iH + i*iW + j;
 
           maxz = ((unsigned char*)(ind_p_k))[0]; /* retrieve position of max */
@@ -142,8 +142,8 @@ void THNN_(VolumetricMaxUnpooling_updateOutput)(
   int iT;
   int iH;
   int iW;
-  real *input_data;
-  real *output_data;
+  ntype *input_data;
+  ntype *output_data;
   THIndex_t *indices_data;
 
   THNN_(VolumetricMaxUnpooling_shapeCheck)(
@@ -219,8 +219,8 @@ void THNN_(VolumetricMaxUnpooling_updateOutput)(
 }
 
 static void THNN_(VolumetricMaxUnpooling_updateGradInput_frame)(
-          real *gradInput_p,
-          real *gradOutput_p,
+          ntype *gradInput_p,
+          ntype *gradOutput_p,
           THIndex_t *ind_p,
           int nslices,
           int iT,
@@ -251,7 +251,7 @@ static void THNN_(VolumetricMaxUnpooling_updateGradInput_frame)(
           int start_h = i * dH - pH;
           int start_w = j * dW - pW;
 
-          real *gradInput_p_k = gradInput_p + k*iT*iW*iH + ti*iW*iH + i*iW + j;
+          ntype *gradInput_p_k = gradInput_p + k*iT*iW*iH + ti*iW*iH + i*iW + j;
           THIndex_t *ind_p_k = ind_p + k*iT*iW*iH + ti*iW*iH + i*iW + j;
 
           maxz = ((unsigned char*)(ind_p_k))[0]; /* retrieve position of max */
@@ -298,8 +298,8 @@ void THNN_(VolumetricMaxUnpooling_updateGradInput)(
   int iT;
   int iH;
   int iW;
-  real *gradInput_data;
-  real *gradOutput_data;
+  ntype *gradInput_data;
+  ntype *gradOutput_data;
   THIndex_t *indices_data;
 
   THNN_(VolumetricMaxUnpooling_shapeCheck)(

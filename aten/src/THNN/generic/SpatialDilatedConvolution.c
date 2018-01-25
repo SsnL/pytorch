@@ -302,9 +302,9 @@ void THNN_(SpatialDilatedConvolution_accGradParameters)(
     int dW, int dH,
     int padW, int padH,
     int dilationW, int dilationH,
-    accreal scale_)
+    accntype scale_)
 {
-  real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
+  ntype scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
   THNN_(SpatialDilatedConvolution_shapeCheck)
     (input, gradOutput, gradWeight, gradBias, kH, kW, dH, dW, padH, padW,
      dilationH, dilationW);

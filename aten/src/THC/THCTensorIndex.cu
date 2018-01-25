@@ -515,7 +515,7 @@ struct TensorPutAccumulateOp {
 };
 
 
-template<typename IndexType, typename real, template<class, class, int> class Op, typename TensorType>
+template<typename IndexType, typename ntype, template<class, class, int> class Op, typename TensorType>
 void dispatchTakePutImpl(THCState *state, TensorType *a, TensorType *b, THCudaLongTensor *index) {
   // These are only valid if index is contiguous
   auto start = THCudaLongTensor_data(state, index);
@@ -525,20 +525,20 @@ void dispatchTakePutImpl(THCState *state, TensorType *a, TensorType *b, THCudaLo
   aInfo.collapseDims();
   auto numel = TensorUtils<TensorType>::getNumElements(state, a);
   if (aInfo.isContiguous()) {
-    auto op = Op<real, IndexType, -2>(aInfo, numel, start, end);
+    auto op = Op<ntype, IndexType, -2>(aInfo, numel, start, end);
     THC_pointwiseApply2(state, b, index, op);
   } else {
-    auto op = Op<real, IndexType, -1>(aInfo, numel, start, end);
+    auto op = Op<ntype, IndexType, -1>(aInfo, numel, start, end);
     THC_pointwiseApply2(state, b, index, op);
   }
 }
 
-template<typename real, template<class, class, int> class Op, typename TensorType>
+template<typename ntype, template<class, class, int> class Op, typename TensorType>
 void dispatchTakePut(THCState *state, TensorType *a, TensorType *b, THCudaLongTensor *index) {
   if (TensorUtils<TensorType>::canUse32BitIndexMath(state, a, INT_MAX)) {
-    dispatchTakePutImpl<int32_t, real, Op>(state, a, b, index);
+    dispatchTakePutImpl<int32_t, ntype, Op>(state, a, b, index);
   } else {
-    dispatchTakePutImpl<int64_t, real, Op>(state, a, b, index);
+    dispatchTakePutImpl<int64_t, ntype, Op>(state, a, b, index);
   }
 }
 

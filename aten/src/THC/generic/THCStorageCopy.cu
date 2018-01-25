@@ -2,9 +2,9 @@
 #define THC_GENERIC_FILE "generic/THCStorageCopy.cu"
 #else
 
-void THCStorage_(rawCopy)(THCState *state, THCStorage *self, real *src)
+void THCStorage_(rawCopy)(THCState *state, THCStorage *self, ntype *src)
 {
-  THCudaCheck(cudaMemcpyAsync(self->data, src, self->size * sizeof(real), cudaMemcpyDeviceToDevice, THCState_getCurrentStream(state)));
+  THCudaCheck(cudaMemcpyAsync(self->data, src, self->size * sizeof(ntype), cudaMemcpyDeviceToDevice, THCState_getCurrentStream(state)));
 }
 
 // conversions are delegated to THCTensor implementation
@@ -35,7 +35,7 @@ THC_CUDA_STORAGE_IMPLEMENT_COPY(Half,Half)
 
 void THCStorage_(copyCuda)(THCState *state, THCStorage *self, THCStorage *src)
 {
-  THCStorage_(TH_CONCAT_2(copyCuda, Real))(state, self, src);
+  THCStorage_(TH_CONCAT_2(copyCuda, Ntype))(state, self, src);
 }
 
 void THCStorage_(copy)(THCState *state, THCStorage *self, THCStorage *src)

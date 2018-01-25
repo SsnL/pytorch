@@ -127,9 +127,9 @@ void THNN_(TemporalSubSampling_accGradParameters)(
           THTensor *gradBias,
           int kW,
           int dW,
-          accreal scale_)
+          accntype scale_)
 {
-  real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
+  ntype scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
   THTensor *gradOutputFrame;
   THTensor *inputWindow, *buffer;
   int64_t k;

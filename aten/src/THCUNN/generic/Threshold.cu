@@ -8,18 +8,18 @@ void THNN_(Threshold_updateOutput)(
            THCState *state,
            THCTensor *input,
            THCTensor *output,
-           accreal threshold_,
-           accreal val_,
+           accntype threshold_,
+           accntype val_,
            bool inplace)
 {
-  real threshold = ScalarConvert<accreal, real>::to(threshold_);
-  real val = ScalarConvert<accreal, real>::to(val_);
+  ntype threshold = ScalarConvert<accntype, ntype>::to(threshold_);
+  ntype val = ScalarConvert<accntype, ntype>::to(val_);
   THCUNN_assertSameGPU(state, 2, input, output);
 
   if (inplace)
   {
     THC_pointwiseApply1(state, input,
-      ThresholdUpdateOutputIP<real>(threshold, val)
+      ThresholdUpdateOutputIP<ntype>(threshold, val)
     );
     THCTensor_(set)(state, output, input);
   }
@@ -27,7 +27,7 @@ void THNN_(Threshold_updateOutput)(
   {
     THCTensor_(resizeAs)(state, output, input);
     THC_pointwiseApply2(state, output, input,
-      ThresholdUpdateOutput<real>(threshold, val)
+      ThresholdUpdateOutput<ntype>(threshold, val)
     );
   }
 
@@ -39,12 +39,12 @@ void THNN_(Threshold_updateGradInput)(
            THCTensor *input,
            THCTensor *gradOutput,
            THCTensor *gradInput,
-           accreal threshold_,
-           accreal val_,
+           accntype threshold_,
+           accntype val_,
            bool inplace)
 {
-  real threshold = ScalarConvert<accreal, real>::to(threshold_);
-  real val = ScalarConvert<accreal, real>::to(val_);
+  ntype threshold = ScalarConvert<accntype, ntype>::to(threshold_);
+  ntype val = ScalarConvert<accntype, ntype>::to(val_);
   (void) val;
   THCUNN_check_nElement(state, input, gradOutput);
   THCUNN_assertSameGPU(state, 3, input, gradInput, gradOutput);
@@ -52,7 +52,7 @@ void THNN_(Threshold_updateGradInput)(
   if (inplace)
   {
     THC_pointwiseApply2(state, gradOutput, input,
-      ThresholdUpdateGradInputIP<real>(threshold)
+      ThresholdUpdateGradInputIP<ntype>(threshold)
     );
     THCTensor_(set)(state, gradInput, gradOutput);
   }
@@ -60,7 +60,7 @@ void THNN_(Threshold_updateGradInput)(
   {
     THCTensor_(resizeAs)(state, gradInput, input);
     THC_pointwiseApply3(state, gradInput, input, gradOutput,
-       ThresholdUpdateGradInput<real>(threshold)
+       ThresholdUpdateGradInput<ntype>(threshold)
     );
   }
 

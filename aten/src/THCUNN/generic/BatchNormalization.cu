@@ -2,18 +2,18 @@
 #define THC_GENERIC_FILE "generic/BatchNormalization.cu"
 #else
 
-#define DeviceTensor3 THCDeviceTensor<real, 3>
-#define DeviceTensor1 THCDeviceTensor<real, 1>
+#define DeviceTensor3 THCDeviceTensor<ntype, 3>
+#define DeviceTensor1 THCDeviceTensor<ntype, 1>
 
 template <int Dim>
-static THCDeviceTensor<real, Dim> devicetensor(THCState *state, THCTensor *t) {
+static THCDeviceTensor<ntype, Dim> devicetensor(THCState *state, THCTensor *t) {
   if (!t) {
-    return THCDeviceTensor<real, Dim>();
+    return THCDeviceTensor<ntype, Dim>();
   }
 
   int inDim = THCTensor_(nDimension)(state, t);
   if (inDim == Dim) {
-    return toDeviceTensor<real, Dim>(state, t);
+    return toDeviceTensor<ntype, Dim>(state, t);
   }
 
   // View in which the last dimensions are collapsed or expanded as needed
@@ -28,7 +28,7 @@ static THCDeviceTensor<real, Dim> devicetensor(THCState *state, THCTensor *t) {
       size[Dim - 1] *= t->size[i];
     }
   }
-  return THCDeviceTensor<real, Dim>(THCTensor_(data)(state, t), size);
+  return THCDeviceTensor<ntype, Dim>(THCTensor_(data)(state, t), size);
 }
 
 void THNN_(BatchNormalization_updateOutput)(
@@ -57,12 +57,12 @@ void THNN_(BatchNormalization_updateOutput)(
   if (!train) {
     dim3 blocks(input.getSize(1));
     dim3 threads(getNumThreads(input.getSize(2)));
-    BatchNormalizationUpdateOutputInference_kernel<real, accreal, DeviceTensor1, DeviceTensor3> <<<blocks, threads, 0, s>>>(
+    BatchNormalizationUpdateOutputInference_kernel<ntype, accntype, DeviceTensor1, DeviceTensor3> <<<blocks, threads, 0, s>>>(
       input, output, runningMean, runningVar, weight, bias, eps);
   } else {
     dim3 blocks(input.getSize(1));
     dim3 threads(getNumThreads(input.getSize(2)));
-    BatchNormalizationUpdateOutput_kernel<real, accreal, DeviceTensor1, DeviceTensor3> <<<blocks, threads, 0, s>>>(
+    BatchNormalizationUpdateOutput_kernel<ntype, accntype, DeviceTensor1, DeviceTensor3> <<<blocks, threads, 0, s>>>(
       input, output, weight, bias, eps, momentum, runningMean, runningVar,
       saveMean, saveStd);
   }
@@ -95,7 +95,7 @@ void THNN_(BatchNormalization_backward)(
 
   dim3 blocks(gradOutput.getSize(1));
   dim3 threads(getNumThreads(gradOutput.getSize(2)));
-  BatchNormalizationBackward_kernel<real,  accreal,  DeviceTensor1, DeviceTensor3> <<<blocks, threads, 0, s>>>(
+  BatchNormalizationBackward_kernel<ntype,  accntype,  DeviceTensor1, DeviceTensor3> <<<blocks, threads, 0, s>>>(
     input, gradOutput, gradInput, gradWeight, gradBias, weight, runningMean, runningVar,
     saveMean, saveStd, train, scale, eps);
   THCudaCheck(cudaGetLastError());

@@ -224,7 +224,7 @@ void THTensor_(gels)(THTensor *rb_, THTensor *ra_, THTensor *b, THTensor *a)
 
   int m, n, nrhs, lda, ldb, info, lwork;
   THTensor *work = NULL;
-  real wkopt = 0;
+  ntype wkopt = 0;
 
   THTensor *ra__ = NULL;  // working version of A matrix to be passed into lapack GELS
   THTensor *rb__ = NULL;  // working version of B matrix to be passed into lapack GELS
@@ -278,8 +278,8 @@ void THTensor_(geev)(THTensor *re_, THTensor *rv_, THTensor *a_, const char *job
 {
   int n, lda, lwork, info, ldvr;
   THTensor *work, *wi, *wr, *a;
-  real wkopt;
-  real *rv_data;
+  ntype wkopt;
+  ntype *rv_data;
   int64_t i;
 
   THTensor *re__ = NULL;
@@ -330,9 +330,9 @@ void THTensor_(geev)(THTensor *re_, THTensor *rv_, THTensor *a_, const char *job
                            "geev", info,"");
 
   {
-    real *re_data = THTensor_(data)(re__);
-    real *wi_data = THTensor_(data)(wi);
-    real *wr_data = THTensor_(data)(wr);
+    ntype *re_data = THTensor_(data)(re__);
+    ntype *wi_data = THTensor_(data)(wi);
+    ntype *wr_data = THTensor_(data)(wr);
     for (i=0; i<n; i++)
     {
       re_data[2*i] = wr_data[i];
@@ -360,7 +360,7 @@ void THTensor_(syev)(THTensor *re_, THTensor *rv_, THTensor *a, const char *jobz
 
   int n, lda, lwork, info;
   THTensor *work;
-  real wkopt;
+  ntype wkopt;
 
   THTensor *rv__ = NULL;
   THTensor *re__ = NULL;
@@ -412,7 +412,7 @@ void THTensor_(gesvd2)(THTensor *ru_, THTensor *rs_, THTensor *rv_, THTensor *ra
   int k,m, n, lda, ldu, ldvt, lwork, info;
   THTensor *work;
   THTensor *rvf_ = THTensor_(new)();
-  real wkopt;
+  ntype wkopt;
 
   THTensor *ra__ = NULL;
   THTensor *ru__ = NULL;
@@ -493,7 +493,7 @@ void THTensor_(getri)(THTensor *ra_, THTensor *a)
   THArgCheck(a->size[0] == a->size[1], 1, "A should be square");
 
   int m, n, lda, info, lwork;
-  real wkopt;
+  ntype wkopt;
   THIntTensor *ipiv;
   THTensor *work;
   THTensor *ra__ = NULL;
@@ -538,7 +538,7 @@ void THTensor_(clearUpLoTriangle)(THTensor *a, const char *uplo)
   int n = a->size[0];
 
   /* Build full matrix */
-  real *p = THTensor_(data)(a);
+  ntype *p = THTensor_(data)(a);
   int64_t i, j;
 
   /* Upper Triangular Case */
@@ -571,7 +571,7 @@ void THTensor_(copyUpLoTriangle)(THTensor *a, const char *uplo)
   int n = a->size[0];
 
   /* Build full matrix */
-  real *p = THTensor_(data)(a);
+  ntype *p = THTensor_(data)(a);
   int64_t i, j;
 
   /* Upper Triangular Case */
@@ -693,7 +693,7 @@ void THTensor_(potri)(THTensor *ra_, THTensor *a, const char *uplo)
 }
 
 /*
- Computes the Cholesky factorization with complete pivoting of a real symmetric
+ Computes the Cholesky factorization with complete pivoting of a ntype symmetric
  positive semidefinite matrix.
 
  Args:
@@ -708,7 +708,7 @@ void THTensor_(potri)(THTensor *ra_, THTensor *a, const char *uplo)
  * `tol`    - double; user defined tolerance, or < 0 for automatic choice.
               The algorithm terminates when the pivot <= tol.
  */
-void THTensor_(pstrf)(THTensor *ra_, THIntTensor *rpiv_, THTensor *a, const char *uplo, real tol) {
+void THTensor_(pstrf)(THTensor *ra_, THIntTensor *rpiv_, THTensor *a, const char *uplo, ntype tol) {
   THArgCheck(a->nDimension == 2, 1, "A should be 2 dimensional");
   THArgCheck(a->size[0] == a->size[1], 1, "A should be square");
 
@@ -810,12 +810,12 @@ void THTensor_(geqrf)(THTensor *ra_, THTensor *rtau_, THTensor *a)
 
   /* Dry-run to query the suggested size of the workspace. */
   int info = 0;
-  real wkopt = 0;
+  ntype wkopt = 0;
   THLapack_(geqrf)(m, n, THTensor_(data)(ra__), lda,
                    THTensor_(data)(rtau_),
                    &wkopt, -1, &info);
 
-  /* Allocate the workspace and call LAPACK to do the real work. */
+  /* Allocate the workspace and call LAPACK to do the ntype work. */
   int lwork = (int)wkopt;
   THTensor *work = THTensor_(newWithSize1d)(lwork);
   THLapack_(geqrf)(m, n, THTensor_(data)(ra__), lda,
@@ -863,12 +863,12 @@ void THTensor_(orgqr)(THTensor *ra_, THTensor *a, THTensor *tau)
 
   /* Dry-run to query the suggested size of the workspace. */
   int info = 0;
-  real wkopt = 0;
+  ntype wkopt = 0;
   THLapack_(orgqr)(m, k, k, THTensor_(data)(ra__), lda,
                    THTensor_(data)(tau),
                    &wkopt, -1, &info);
 
-  /* Allocate the workspace and call LAPACK to do the real work. */
+  /* Allocate the workspace and call LAPACK to do the ntype work. */
   int lwork = (int)wkopt;
   THTensor *work = THTensor_(newWithSize1d)(lwork);
   THLapack_(orgqr)(m, k, k, THTensor_(data)(ra__), lda,
@@ -926,12 +926,12 @@ void THTensor_(ormqr)(THTensor *ra_, THTensor *a, THTensor *tau, THTensor *c, co
 
   /* Dry-run to query the suggested size of the workspace. */
   int info = 0;
-  real wkopt = 0;
+  ntype wkopt = 0;
   THLapack_(ormqr)(side[0], trans[0], m, n, k, THTensor_(data)(a), lda,
                    THTensor_(data)(tau), THTensor_(data)(ra__), ldc,
                    &wkopt, -1, &info);
 
-  /* Allocate the workspace and call LAPACK to do the real work. */
+  /* Allocate the workspace and call LAPACK to do the ntype work. */
   int lwork = (int)wkopt;
   THTensor *work = THTensor_(newWithSize1d)(lwork);
   THLapack_(ormqr)(side[0], trans[0], m, n, k, THTensor_(data)(a), lda,

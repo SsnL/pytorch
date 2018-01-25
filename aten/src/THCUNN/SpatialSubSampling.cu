@@ -194,7 +194,7 @@ __global__ void subgradinput(Dtype *gradInput, Dtype *gradOutput, Dtype *weight,
       int kx, ky;
       for(ky = 0; ky < kH; ky++) {
         for(kx = 0; kx < kW; kx++) {
-          // FIXME: should this be done at accreal precision?
+          // FIXME: should this be done at accntype precision?
           ptr_gradInput[kx] += z;
         }
         ptr_gradInput += input_w;
@@ -248,7 +248,7 @@ __global__ void subgradinputAtomic(Dtype *gradInput, Dtype *gradOutput, Dtype *w
       int kx, ky;
       for(ky = 0; ky < kH; ky++) {
         for(kx = 0; kx < kW; kx++) {
-          // FIXME: should this be done at accreal precision?
+          // FIXME: should this be done at accntype precision?
           atomicAdd(&(ptr_gradInput[kx]), z);
         }
         ptr_gradInput += input_w;

@@ -61,8 +61,8 @@ void THNN_(TemporalMaxPooling_updateOutput)(
   int output_w;
   int nthreads;
 
-  real *input_data;
-  real *output_data;
+  ntype *input_data;
+  ntype *output_data;
   THCIndex_t *indices_data;
 
   THCUNN_assertSameGPU(state, 3, input, output, indices);
@@ -133,8 +133,8 @@ void THNN_(TemporalMaxPooling_updateGradInput)(
   int output_w;
   int nthreads;
 
-  real *gradInput_data;
-  real *gradOutput_data;
+  ntype *gradInput_data;
+  ntype *gradOutput_data;
   THCIndex_t *indices_data;
 
   THCUNN_assertSameGPU(state, 4, input, gradOutput, gradInput, indices);

@@ -5,7 +5,7 @@
 
 #include "../common.h"
 
-#define TINFO TensorInfo<real, INDTYPE>
+#define TINFO TensorInfo<ntype, INDTYPE>
 
 //factor will be 3 for GRU and 4 for LSTM
 void THNN_(FusedRNNAssertSizes)(THCState *state, int factor, int count, ...)
@@ -77,8 +77,8 @@ bool THNN_(canUse32BitIndexMath)(THCState *state, int count, ...)
 #define DEVICE_LINEAR_GET(D_TENSOR, INDEX)                              \
   D_TENSOR.data[IndexToOffset<T, IndexType, Dims>::get(INDEX, D_TENSOR)]
 
-#define H2F(input) ScalarConvert<real, accreal>::to(input)
-#define F2H(input) ScalarConvert<accreal, real>::to(input)
+#define H2F(input) ScalarConvert<ntype, accntype>::to(input)
+#define F2H(input) ScalarConvert<accntype, ntype>::to(input)
 
 template <typename T, typename IndexType, int Dims>
 #if __CUDA_ARCH__ >= 350
@@ -137,15 +137,15 @@ THNN_(GRUForward)(TensorInfo<T, IndexType> Input,
 
       offset = (linearIndex/hsz)*5*hsz+linearIndex%hsz;
 
-      accreal rg, ig, ng;
+      accntype rg, ig, ng;
 
       rg = H2F(ir) + H2F(hr) + H2F(b1r) + H2F(b2r);
       ig = H2F(ii) + H2F(hi) + H2F(b1i) + H2F(b2i);
 
-      TensorSigmoidOp<accreal>()(&rg, &rg);
-      TensorSigmoidOp<accreal>()(&ig, &ig);
+      TensorSigmoidOp<accntype>()(&rg, &rg);
+      TensorSigmoidOp<accntype>()(&ig, &ig);
       ng = H2F(in) + H2F(b1n) + rg*( H2F(hn)+H2F(b2n) );
-      ng = THCNumerics<accreal>::tanh(ng);
+      ng = THCNumerics<accntype>::tanh(ng);
       *hy = F2H( ng + ig * ( H2F(hx)-ng ) );
 
       //SAVE FOR BACKWARDS
@@ -186,11 +186,11 @@ THNN_(GRUBackward)(TensorInfo<T, IndexType> gradInInput,
 
     offset = (linearIndex/hsz)*3*hsz+linearIndex%hsz;
 
-    accreal gig = H2F(go)*( H2F(hx)-H2F(ng) )*( 1-H2F(ig) )*H2F(ig);
-    accreal ghx = H2F(go)*H2F(ig);
-    accreal gin = H2F(go)*( 1-H2F(ig) )*( 1-H2F(ng)*H2F(ng) );
-    accreal ghn = gin * H2F(rg);
-    accreal grg = gin *H2F(hn)*( 1-H2F(rg) )*H2F(rg);
+    accntype gig = H2F(go)*( H2F(hx)-H2F(ng) )*( 1-H2F(ig) )*H2F(ig);
+    accntype ghx = H2F(go)*H2F(ig);
+    accntype gin = H2F(go)*( 1-H2F(ig) )*( 1-H2F(ng)*H2F(ng) );
+    accntype ghn = gin * H2F(rg);
+    accntype grg = gin *H2F(hn)*( 1-H2F(rg) )*H2F(rg);
 
     DEVICE_LINEAR_GET(gradInInput, offset+0*hsz) = F2H(grg);
     DEVICE_LINEAR_GET(gradInInput, offset+1*hsz) = F2H(gig);
@@ -268,21 +268,21 @@ __global__ void
 #endif
       }
 
-      accreal ig, fg, cg, og;
-      accreal f_hy, f_cy;
+      accntype ig, fg, cg, og;
+      accntype f_hy, f_cy;
 
       ig = H2F(*iig) + H2F(hig) + H2F(b1i) + H2F(b2i);
       fg = H2F(*ifg) + H2F(hfg) + H2F(b1f) + H2F(b2f);
       cg = H2F(*icg) + H2F(hcg) + H2F(b1c) + H2F(b2c);
       og = H2F(*iog) + H2F(hog) + H2F(b1o) + H2F(b2o);
 
-      TensorSigmoidOp<accreal>()(&ig, &ig);
-      TensorSigmoidOp<accreal>()(&fg, &fg);
-      cg = THCNumerics<accreal>::tanh(cg);
-      TensorSigmoidOp<accreal>()(&og, &og);
+      TensorSigmoidOp<accntype>()(&ig, &ig);
+      TensorSigmoidOp<accntype>()(&fg, &fg);
+      cg = THCNumerics<accntype>::tanh(cg);
+      TensorSigmoidOp<accntype>()(&og, &og);
 
       f_cy = (fg * H2F(cx) ) + (ig * cg);
-      f_hy = og * THCNumerics<accreal>::tanh(f_cy);
+      f_hy = og * THCNumerics<accntype>::tanh(f_cy);
 
       *hy = F2H(f_hy);
       *cy = F2H(f_cy);
@@ -336,15 +336,15 @@ __global__ void
     T go = DEVICE_LINEAR_GET(gradoutput, linearIndex);
     T goc= DEVICE_LINEAR_GET(gradoutputcell, linearIndex);
 
-    accreal gcx = THCNumerics<accreal>::tanh(H2F(cy));
+    accntype gcx = THCNumerics<accntype>::tanh(H2F(cy));
 
 
-    accreal gog = H2F(go) * gcx;
+    accntype gog = H2F(go) * gcx;
     gcx = H2F(go) * H2F(og) * ( 1 - gcx*gcx) + H2F(goc);
 
-    accreal gig = gcx * H2F(cg);
-    accreal gfg = gcx * H2F(cx);
-    accreal gcg = gcx * H2F(ig);
+    accntype gig = gcx * H2F(cg);
+    accntype gfg = gcx * H2F(cx);
+    accntype gcg = gcx * H2F(ig);
 
     gcx = gcx * H2F(fg);
 
@@ -384,26 +384,26 @@ __global__ void
   }
 
 #define LSTM_FORWARD(ITYPE, DIM) THNN_(LSTMForward)             \
-  <real, ITYPE, DIM>                                            \
+  <ntype, ITYPE, DIM>                                            \
   <<<grid, block, 0, THCState_getCurrentStream(state)>>>        \
   (inputI, hiddenI,                                             \
    bias1I, bias2I, cxI, hyI, cyI,                               \
    hid_size, totalElements);
 
 #define LSTM_BACKWARD(ITYPE, DIM) THNN_(LSTMBackward)           \
-  <real, ITYPE, DIM>                                            \
+  <ntype, ITYPE, DIM>                                            \
   <<<grid, block, 0, THCState_getCurrentStream(state)>>>        \
   (storageI, gradingatesI, cxI, cyI,                            \
    gradoutI, gradoutcI, gradincxI,                              \
    hid_size, totalElements);
 
-#define GRU_FORWARD(ITYPE, DIM) THNN_(GRUForward)<real, ITYPE, DIM> \
+#define GRU_FORWARD(ITYPE, DIM) THNN_(GRUForward)<ntype, ITYPE, DIM> \
   <<<grid, block, 0, THCState_getCurrentStream(state)>>>            \
   (inputI, hiddenI, bias1I, bias2I, hxI, hyI, storageI,             \
    hid_size, totalElements);
 
 #define GRU_BACKWARD(ITYPE, DIM) THNN_(GRUBackward)                     \
-  <real, ITYPE, DIM>                                                    \
+  <ntype, ITYPE, DIM>                                                    \
   <<<grid, block, 0, THCState_getCurrentStream(state)>>>                \
   (gradininputI, gradinhiddenI, gradoutI, gradinhxI, storageI,                        \
    hid_size, totalElements);

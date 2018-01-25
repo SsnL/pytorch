@@ -12,11 +12,11 @@ void THNN_(PReLU_updateOutput)(
   int64_t nOutputPlane = THCTensor_(numel)(state, weight);
 
   weight = THCTensor_(newContiguous)(state, weight);
-  real *w = THCTensor_(data)(state, weight);
+  ntype *w = THCTensor_(data)(state, weight);
 
   if (nOutputPlane == 1)
   {
-    THC_pointwiseApply2(state, output, input, PReLUUpdateOutput<real>(w));
+    THC_pointwiseApply2(state, output, input, PReLUUpdateOutput<ntype>(w));
   }
   else
   {
@@ -57,10 +57,10 @@ void THNN_(PReLU_updateGradInput)(
   int64_t nOutputPlane = THCTensor_(numel)(state, weight);
 
   weight = THCTensor_(newContiguous)(state, weight);
-  real *w = THCTensor_(data)(state, weight);
+  ntype *w = THCTensor_(data)(state, weight);
   if (nOutputPlane == 1)
   {
-    THC_pointwiseApply3(state, gradInput, gradOutput, input, PReLUUpdateGradInput<real>(w));
+    THC_pointwiseApply3(state, gradInput, gradOutput, input, PReLUUpdateGradInput<ntype>(w));
   }
   else
   {
@@ -98,20 +98,20 @@ void THNN_(PReLU_accGradParameters)(
            THCTensor *gradInput,
            THCTensor *weight,
            THCTensor *gradWeight,
-           accreal scale_)
+           accntype scale_)
 {
-  real scale = ScalarConvert<accreal, real>::to(scale_);
+  ntype scale = ScalarConvert<accntype, ntype>::to(scale_);
   THCUNN_check_nElement(state, input, gradOutput);
   int64_t nOutputPlane = THCTensor_(numel)(state, weight);
   // use grad input for temporary storage, then call updateGradInput again
 
   if (nOutputPlane == 1)
   {
-    THC_pointwiseApply3(state, gradInput, input, gradOutput, PReLUAccGradParametersShared<real>());
+    THC_pointwiseApply3(state, gradInput, input, gradOutput, PReLUAccGradParametersShared<ntype>());
 
     // introduces a sync point
-    real sum = ScalarConvert<accreal, real>::to(THCTensor_(sumall)(state, gradInput));
-    real w = THCTensor_(get1d)(state, gradWeight, 0);
+    ntype sum = ScalarConvert<accntype, ntype>::to(THCTensor_(sumall)(state, gradInput));
+    ntype w = THCTensor_(get1d)(state, gradWeight, 0);
     THCTensor_(set1d)(state, gradWeight, 0, w + sum * scale);
 
     // restore gradInput
@@ -123,11 +123,11 @@ void THNN_(PReLU_accGradParameters)(
 
     if (ndim == 1)
     {
-      THC_pointwiseApply3(state, gradWeight, input, gradOutput, PReLUAccGradParameters1to1<real>(scale));
+      THC_pointwiseApply3(state, gradWeight, input, gradOutput, PReLUAccGradParameters1to1<ntype>(scale));
     }
     else
     {
-      THC_pointwiseApply3(state, gradInput, input, gradOutput, PReLUAccGradParameters<real>(scale));
+      THC_pointwiseApply3(state, gradInput, input, gradOutput, PReLUAccGradParameters<ntype>(scale));
       THCTensor *gradWeightBuf = THCTensor_(new)(state);
       THCTensor_(resizeAs)(state, gradWeightBuf, gradWeight);
 

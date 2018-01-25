@@ -60,8 +60,8 @@ void THNN_(TemporalMaxPooling_updateOutput)(
   int64_t framesize;
   int64_t noframe;
 
-  real *input_data;
-  real *output_data;
+  ntype *input_data;
+  ntype *output_data;
   THIndex_t *indices_data;
 
   int64_t t, y;
@@ -100,19 +100,19 @@ void THNN_(TemporalMaxPooling_updateOutput)(
 
     for(t = 0; t < noframe; t++)
     {
-      real *ip = input_data + t*framesize*dW;
-      real *op = output_data + t*framesize;
+      ntype *ip = input_data + t*framesize*dW;
+      ntype *op = output_data + t*framesize;
       THIndex_t *xp = indices_data + t*framesize;
 #pragma omp parallel for private(y)
       for(y = 0; y < framesize; y++)
       {
         /* compute local max: */
         int64_t maxindex = -1;
-        real maxval = -THInf;
+        ntype maxval = -THInf;
         int64_t x;
         for(x = 0; x < kW; x++)
         {
-          real val = ip[x*framesize+y];
+          ntype val = ip[x*framesize+y];
           if (val > maxval)
           {
             maxval = val;
@@ -122,7 +122,7 @@ void THNN_(TemporalMaxPooling_updateOutput)(
 
         /* set output to local max */
         op[y] = maxval;
-        xp[y] = (real)maxindex;
+        xp[y] = (ntype)maxindex;
       }
     }
   }
@@ -145,14 +145,14 @@ void THNN_(TemporalMaxPooling_updateOutput)(
 
     for(i = 0; i < nbframe; i++)
     {
-      real *inputSample_data = input_data + i*niframe*framesize;
-      real *outputSample_data = output_data + i*noframe*framesize;
+      ntype *inputSample_data = input_data + i*niframe*framesize;
+      ntype *outputSample_data = output_data + i*noframe*framesize;
       THIndex_t *indicesSample_data = indices_data + i*noframe*framesize;
 
       for(t = 0; t < noframe; t++)
       {
-        real *ip = inputSample_data + t*framesize*dW;
-        real *op = outputSample_data + t*framesize;
+        ntype *ip = inputSample_data + t*framesize*dW;
+        ntype *op = outputSample_data + t*framesize;
         THIndex_t *xp = indicesSample_data + t*framesize;
 
 #pragma omp parallel for private(y)
@@ -160,11 +160,11 @@ void THNN_(TemporalMaxPooling_updateOutput)(
         {
           /* compute local max: */
           int64_t maxindex = -1;
-          real maxval = -THInf;
+          ntype maxval = -THInf;
           int64_t x;
           for(x = 0; x < kW; x++)
           {
-            real val = ip[x*framesize+y];
+            ntype val = ip[x*framesize+y];
             if (val > maxval)
             {
               maxval = val;
@@ -174,7 +174,7 @@ void THNN_(TemporalMaxPooling_updateOutput)(
 
           /* set output to local max */
           op[y] = maxval;
-          xp[y] = (real)maxindex;
+          xp[y] = (ntype)maxindex;
         }
       }
     }
@@ -198,8 +198,8 @@ void THNN_(TemporalMaxPooling_updateGradInput)(
   int noframe;
   int64_t framesize;
 
-  real *gradInput_data;
-  real *gradOutput_data;
+  ntype *gradInput_data;
+  ntype *gradOutput_data;
   THIndex_t *indices_data;
 
   int64_t t, y;
@@ -234,8 +234,8 @@ void THNN_(TemporalMaxPooling_updateGradInput)(
   {
     for(t = 0; t < noframe; t++)
     {
-      real *gip = gradInput_data + t*framesize*dW;
-      real *gop = gradOutput_data + t*framesize;
+      ntype *gip = gradInput_data + t*framesize*dW;
+      ntype *gop = gradOutput_data + t*framesize;
       THIndex_t *xp = indices_data + t*framesize;
 #pragma omp parallel for private(y)
       for(y = 0; y < framesize; y++)
@@ -255,14 +255,14 @@ void THNN_(TemporalMaxPooling_updateGradInput)(
 
     for(i = 0; i < nbframe; i++)
     {
-      real *gradInputSample_data = gradInput_data + i*niframe*framesize;
-      real *gradOutputSample_data = gradOutput_data + i*noframe*framesize;
+      ntype *gradInputSample_data = gradInput_data + i*niframe*framesize;
+      ntype *gradOutputSample_data = gradOutput_data + i*noframe*framesize;
       THIndex_t *indicesSample_data = indices_data + i*noframe*framesize;
 
       for(t = 0; t < noframe; t++)
       {
-        real *gip = gradInputSample_data + t*framesize*dW;
-        real *gop = gradOutputSample_data + t*framesize;
+        ntype *gip = gradInputSample_data + t*framesize*dW;
+        ntype *gop = gradOutputSample_data + t*framesize;
         THIndex_t *xp = indicesSample_data + t*framesize;
 #pragma omp parallel for private(y)
         for(y = 0; y < framesize; y++)

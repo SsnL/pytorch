@@ -10,8 +10,8 @@
 // 5d tensor B x D x T x H x W
 
 static void THNN_(VolumetricAdaptiveMaxPooling_updateOutput_frame)(
-          real *input_p,
-          real *output_p,
+          ntype *input_p,
+          ntype *output_p,
           THIndex_t *ind_p,
           int64_t sizeD,
           int64_t isizeT,
@@ -51,13 +51,13 @@ static void THNN_(VolumetricAdaptiveMaxPooling_updateOutput_frame)(
           int64_t kW = iendW - istartW;
 
           /* local pointers */
-          real *ip = input_p   + d*istrideD + istartT *istrideT + istartH*istrideH + istartW*istrideW;
-          real *op = output_p  + d*osizeT*osizeH*osizeW + ot*osizeH*osizeW + oh*osizeW + ow;
+          ntype *ip = input_p   + d*istrideD + istartT *istrideT + istartH*istrideH + istartW*istrideW;
+          ntype *op = output_p  + d*osizeT*osizeH*osizeW + ot*osizeH*osizeW + oh*osizeW + ow;
           THIndex_t *indp = ind_p   + d*osizeT*osizeH*osizeW + ot*osizeH*osizeW + oh*osizeW + ow;
 
           /* compute local max: */
           int64_t maxindex = -1;
-          real maxval = -FLT_MAX;
+          ntype maxval = -FLT_MAX;
           int64_t it, ih, iw;
           for(it = 0; it < kT; it++)
           {
@@ -65,7 +65,7 @@ static void THNN_(VolumetricAdaptiveMaxPooling_updateOutput_frame)(
             {
               for(iw = 0; iw < kW; iw++)
               {
-                real val = *(ip + it*istrideT + ih*istrideH + iw*istrideW);
+                ntype val = *(ip + it*istrideT + ih*istrideH + iw*istrideW);
                 if (val > maxval)
                 {
                   maxval = val;
@@ -111,8 +111,8 @@ void THNN_(VolumetricAdaptiveMaxPooling_updateOutput)(
   int64_t istrideH;
   int64_t istrideW;
 
-  real *input_data;
-  real *output_data;
+  ntype *input_data;
+  ntype *output_data;
   THIndex_t *indices_data;
 
   THNN_ARGCHECK(input->nDimension == 4 || input->nDimension == 5, 2, input,
@@ -185,8 +185,8 @@ void THNN_(VolumetricAdaptiveMaxPooling_updateOutput)(
 }
 
 static void THNN_(VolumetricAdaptiveMaxPooling_updateGradInput_frame)(
-          real *gradInput_p,
-          real *gradOutput_p,
+          ntype *gradInput_p,
+          ntype *gradOutput_p,
           THIndex_t *ind_p,
           int64_t sizeD,
           int64_t isizeT,
@@ -200,8 +200,8 @@ static void THNN_(VolumetricAdaptiveMaxPooling_updateGradInput_frame)(
 #pragma omp parallel for private(d)
   for (d = 0; d < sizeD; d++)
   {
-    real *gradInput_p_d = gradInput_p + d*isizeT*isizeH*isizeW;
-    real *gradOutput_p_d = gradOutput_p + d*osizeT*osizeH*osizeW;
+    ntype *gradInput_p_d = gradInput_p + d*isizeT*isizeH*isizeW;
+    ntype *gradOutput_p_d = gradOutput_p + d*osizeT*osizeH*osizeW;
     THIndex_t *ind_p_d = ind_p + d*osizeT*osizeH*osizeW;
 
     /* calculate max points */
@@ -242,8 +242,8 @@ void THNN_(VolumetricAdaptiveMaxPooling_updateGradInput)(
   int64_t osizeT;
   int64_t osizeH;
   int64_t osizeW;
-  real *gradInput_data;
-  real *gradOutput_data;
+  ntype *gradInput_data;
+  ntype *gradOutput_data;
   THIndex_t *indices_data;
 
   /* get contiguous gradOutput */

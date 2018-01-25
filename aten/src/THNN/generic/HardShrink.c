@@ -6,12 +6,12 @@ void THNN_(HardShrink_updateOutput)(
           THNNState *state,
           THTensor *input,
           THTensor *output,
-          accreal lambda_)
+          accntype lambda_)
 {
-  real lambda = TH_CONVERT_ACCNTYPE_TO_NTYPE(lambda_);
+  ntype lambda = TH_CONVERT_ACCNTYPE_TO_NTYPE(lambda_);
   THTensor_(resizeAs)(output, input);
 
-  TH_TENSOR_APPLY2(real, output, real, input,
+  TH_TENSOR_APPLY2(ntype, output, ntype, input,
     if (*input_data > lambda)
       *output_data = *input_data;
     else if (*input_data < -lambda)
@@ -26,12 +26,12 @@ void THNN_(HardShrink_updateGradInput)(
           THTensor *input,
           THTensor *gradOutput,
           THTensor *gradInput,
-          accreal lambda_)
+          accntype lambda_)
 {
-  real lambda = TH_CONVERT_ACCNTYPE_TO_NTYPE(lambda_);
+  ntype lambda = TH_CONVERT_ACCNTYPE_TO_NTYPE(lambda_);
   THNN_CHECK_NELEMENT(input, gradOutput);
   THTensor_(resizeAs)(gradInput, input);
-  TH_TENSOR_APPLY3(real, gradInput, real, gradOutput, real, input,
+  TH_TENSOR_APPLY3(ntype, gradInput, ntype, gradOutput, ntype, input,
     if (*input_data > lambda || *input_data < -lambda)
       *gradInput_data = *gradOutput_data;
     else

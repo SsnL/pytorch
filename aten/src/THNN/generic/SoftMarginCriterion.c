@@ -12,11 +12,11 @@ void THNN_(SoftMarginCriterion_updateOutput)(
   THNN_CHECK_NELEMENT(input, target);
   THTensor_(resize1d)(output, 1);
 
-  real sum;
+  ntype sum;
 
   sum = 0;
-  TH_TENSOR_APPLY2(real, input, real, target,
-                   real z = log(1. + exp(-*input_data* *target_data));
+  TH_TENSOR_APPLY2(ntype, input, ntype, target,
+                   ntype z = log(1. + exp(-*input_data* *target_data));
                    sum += z;)
 
   if(sizeAverage)
@@ -33,11 +33,11 @@ void THNN_(SoftMarginCriterion_updateGradInput)(
   bool sizeAverage)
 {
   THNN_CHECK_NELEMENT(input, target);
-  real norm = (sizeAverage ? 1./((real)THTensor_(nElement)(input)) : 1.);
+  ntype norm = (sizeAverage ? 1./((ntype)THTensor_(nElement)(input)) : 1.);
 
   THTensor_(resizeAs)(gradInput, input);
-  TH_TENSOR_APPLY3(real, gradInput, real, input, real, target,
-                   real z = exp(-*target_data * *input_data);
+  TH_TENSOR_APPLY3(ntype, gradInput, ntype, input, ntype, target,
+                   ntype z = exp(-*target_data * *input_data);
                    *gradInput_data = -norm*(*target_data)*z/(1. + z);)
 }
 

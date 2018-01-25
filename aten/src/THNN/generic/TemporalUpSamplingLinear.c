@@ -46,16 +46,16 @@ void THNN_(TemporalUpSamplingLinear_updateOutput)(
 		      THTensor_(size)(input, 1), 
 		      outputWidth);
   THTensor_(zero)(output);
-  real *idata = THTensor_(data)(input);
-  real *odata = THTensor_(data)(output);
+  ntype *idata = THTensor_(data)(input);
+  ntype *odata = THTensor_(data)(output);
   channels = nbatch * channels;
   THAssert(inputWidth > 0 && outputWidth > 0);
   // special case: just copy
   if (inputWidth == outputWidth) {
     for (int w2 = 0; w2 < outputWidth; ++w2) {
       const int w1 = w2;
-      const real* pos1 = &idata[w1];
-      real* pos2 = &odata[w2];
+      const ntype* pos1 = &idata[w1];
+      ntype* pos2 = &odata[w2];
       for (int c = 0; c < channels; ++c) {
         pos2[0] = pos1[0];
         pos1 += inputWidth;
@@ -69,10 +69,10 @@ void THNN_(TemporalUpSamplingLinear_updateOutput)(
     const float w1r = rwidth * w2;
     const int w1 = w1r;
     const int w1p = (w1 < inputWidth - 1) ? 1 : 0;
-    const real w1lambda = w1r - w1;
-    const real w0lambda = (real)1. - w1lambda;
-    const real* pos1 = &idata[w1];
-    real* pos2 = &odata[w2];
+    const ntype w1lambda = w1r - w1;
+    const ntype w0lambda = (ntype)1. - w1lambda;
+    const ntype* pos1 = &idata[w1];
+    ntype* pos2 = &odata[w2];
     for (int c = 0; c < channels; ++c) {
       pos2[0] = w0lambda * pos1[0] + w1lambda * pos1[w1p];
       pos1 += inputWidth;
@@ -100,16 +100,16 @@ void THNN_(TemporalUpSamplingLinear_updateGradInput)(
   THTensor_(resize3d)(gradInput, nbatch, channels, inputWidth);
   THTensor_(zero)(gradInput);
   gradOutput = THTensor_(newContiguous)(gradOutput);
-  real *data1 = THTensor_(data)(gradInput);
-  real *data2 = THTensor_(data)(gradOutput);
+  ntype *data1 = THTensor_(data)(gradInput);
+  ntype *data2 = THTensor_(data)(gradOutput);
   channels = nbatch * channels;
 
   // special case: same-size matching grids
   if (inputWidth == outputWidth) {
     for (int w2 = 0; w2 < outputWidth; ++w2) {
       const int w1 = w2;
-      real* pos1 = &data1[w1];
-      const real* pos2 = &data2[w2];
+      ntype* pos1 = &data1[w1];
+      const ntype* pos2 = &data2[w2];
       for (int c = 0; c < channels; ++c) {
         pos1[0] += pos2[0];
         pos1 += inputWidth;
@@ -123,10 +123,10 @@ void THNN_(TemporalUpSamplingLinear_updateGradInput)(
     const float w1r = rwidth * w2;
     const int w1 = w1r;
     const int w1p = (w1 < inputWidth - 1) ? 1 : 0;
-    const real w1lambda = w1r - w1;
-    const real w0lambda = (real)1. - w1lambda;
-    real* pos1 = &data1[w1];
-    const real* pos2 = &data2[w2];
+    const ntype w1lambda = w1r - w1;
+    const ntype w0lambda = (ntype)1. - w1lambda;
+    ntype* pos1 = &data1[w1];
+    const ntype* pos2 = &data2[w2];
     for (int c = 0; c < channels; ++c) {
       pos1[0] += w0lambda * pos2[0];
       pos1[w1p] += w1lambda * pos2[0];

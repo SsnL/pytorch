@@ -10,8 +10,8 @@
 // 4d tensor B x D x H x W
 
 static void THNN_(SpatialAdaptiveMaxPooling_updateOutput_frame)(
-          real *input_p,
-          real *output_p,
+          ntype *input_p,
+          ntype *output_p,
           THIndex_t *ind_p,
           int64_t sizeD,
           int64_t isizeH,
@@ -41,20 +41,20 @@ static void THNN_(SpatialAdaptiveMaxPooling_updateOutput_frame)(
         int kW = iendW - istartW;
 
         /* local pointers */
-        real *ip = input_p   + d*istrideD + istartH*istrideH + istartW*istrideW;
-        real *op = output_p  + d*osizeH*osizeW + oh*osizeW + ow;
+        ntype *ip = input_p   + d*istrideD + istartH*istrideH + istartW*istrideW;
+        ntype *op = output_p  + d*osizeH*osizeW + oh*osizeW + ow;
         THIndex_t *indp = ind_p   + d*osizeH*osizeW + oh*osizeW + ow;
 
         /* compute local max: */
         int64_t maxindex = -1;
-        real maxval = -FLT_MAX;
+        ntype maxval = -FLT_MAX;
         int64_t tcntr = 0;
         int ih, iw;
         for(ih = 0; ih < kH; ih++)
         {
           for(iw = 0; iw < kW; iw++)
           {
-            real val = *(ip + ih*istrideH + iw*istrideW);
+            ntype val = *(ip + ih*istrideH + iw*istrideW);
             if (val > maxval)
             {
               maxval = val;
@@ -93,8 +93,8 @@ void THNN_(SpatialAdaptiveMaxPooling_updateOutput)(
   int64_t istrideW;
   int64_t istrideB;
 
-  real *input_data;
-  real *output_data;
+  ntype *input_data;
+  ntype *output_data;
   THIndex_t *indices_data;
 
 
@@ -164,8 +164,8 @@ void THNN_(SpatialAdaptiveMaxPooling_updateOutput)(
 }
 
 static void THNN_(SpatialAdaptiveMaxPooling_updateGradInput_frame)(
-          real *gradInput_p,
-          real *gradOutput_p,
+          ntype *gradInput_p,
+          ntype *gradOutput_p,
           THIndex_t *ind_p,
           int64_t sizeD,
           int64_t isizeH,
@@ -177,8 +177,8 @@ static void THNN_(SpatialAdaptiveMaxPooling_updateGradInput_frame)(
 #pragma omp parallel for private(d)
   for (d = 0; d < sizeD; d++)
   {
-    real *gradInput_p_d = gradInput_p + d*isizeH*isizeW;
-    real *gradOutput_p_d = gradOutput_p + d*osizeH*osizeW;
+    ntype *gradInput_p_d = gradInput_p + d*isizeH*isizeW;
+    ntype *gradOutput_p_d = gradOutput_p + d*osizeH*osizeW;
     THIndex_t *ind_p_d = ind_p + d*osizeH*osizeW;
 
     /* calculate max points */
@@ -212,8 +212,8 @@ void THNN_(SpatialAdaptiveMaxPooling_updateGradInput)(
   int isizeW;
   int osizeH;
   int osizeW;
-  real *gradInput_data;
-  real *gradOutput_data;
+  ntype *gradInput_data;
+  ntype *gradOutput_data;
   THIndex_t *indices_data;
 
   /* get contiguous gradOutput */

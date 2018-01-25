@@ -2,7 +2,7 @@
 #define THC_GENERIC_FILE "generic/THCStorage.c"
 #else
 
-real* THCStorage_(data)(THCState *state, const THCStorage *self)
+ntype* THCStorage_(data)(THCState *state, const THCStorage *self)
 {
   return self->data;
 }
@@ -14,25 +14,25 @@ ptrdiff_t THCStorage_(size)(THCState *state, const THCStorage *self)
 
 int THCStorage_(elementSize)(THCState *state)
 {
-  return sizeof(real);
+  return sizeof(ntype);
 }
 
-void THCStorage_(set)(THCState *state, THCStorage *self, ptrdiff_t index, real value)
+void THCStorage_(set)(THCState *state, THCStorage *self, ptrdiff_t index, ntype value)
 {
   THArgCheck((index >= 0) && (index < self->size), 2, "index out of bounds");
   cudaStream_t stream = THCState_getCurrentStream(state);
-  THCudaCheck(cudaMemcpyAsync(self->data + index, &value, sizeof(real),
+  THCudaCheck(cudaMemcpyAsync(self->data + index, &value, sizeof(ntype),
                               cudaMemcpyHostToDevice,
                               stream));
   THCudaCheck(cudaStreamSynchronize(stream));
 }
 
-real THCStorage_(get)(THCState *state, const THCStorage *self, ptrdiff_t index)
+ntype THCStorage_(get)(THCState *state, const THCStorage *self, ptrdiff_t index)
 {
   THArgCheck((index >= 0) && (index < self->size), 2, "index out of bounds");
-  real value;
+  ntype value;
   cudaStream_t stream = THCState_getCurrentStream(state);
-  THCudaCheck(cudaMemcpyAsync(&value, self->data + index, sizeof(real),
+  THCudaCheck(cudaMemcpyAsync(&value, self->data + index, sizeof(ntype),
                               cudaMemcpyDeviceToHost, stream));
   THCudaCheck(cudaStreamSynchronize(stream));
   return value;
@@ -74,7 +74,7 @@ THCStorage* THCStorage_(newWithAllocator)(THCState *state, ptrdiff_t size,
     cudaError_t err =
       (*allocator->malloc)(allocatorContext,
                            (void**)&(storage->data),
-                           size * sizeof(real),
+                           size * sizeof(ntype),
                            THCState_getCurrentStream(state));
     if(err != cudaSuccess){
       free(storage);
@@ -86,14 +86,14 @@ THCStorage* THCStorage_(newWithAllocator)(THCState *state, ptrdiff_t size,
   return storage;
 }
 
-THCStorage* THCStorage_(newWithSize1)(THCState *state, real data0)
+THCStorage* THCStorage_(newWithSize1)(THCState *state, ntype data0)
 {
   THCStorage *self = THCStorage_(newWithSize)(state, 1);
   THCStorage_(set)(state, self, 0, data0);
   return self;
 }
 
-THCStorage* THCStorage_(newWithSize2)(THCState *state, real data0, real data1)
+THCStorage* THCStorage_(newWithSize2)(THCState *state, ntype data0, ntype data1)
 {
   THCStorage *self = THCStorage_(newWithSize)(state, 2);
   THCStorage_(set)(state, self, 0, data0);
@@ -101,7 +101,7 @@ THCStorage* THCStorage_(newWithSize2)(THCState *state, real data0, real data1)
   return self;
 }
 
-THCStorage* THCStorage_(newWithSize3)(THCState *state, real data0, real data1, real data2)
+THCStorage* THCStorage_(newWithSize3)(THCState *state, ntype data0, ntype data1, ntype data2)
 {
   THCStorage *self = THCStorage_(newWithSize)(state, 3);
   THCStorage_(set)(state, self, 0, data0);
@@ -110,7 +110,7 @@ THCStorage* THCStorage_(newWithSize3)(THCState *state, real data0, real data1, r
   return self;
 }
 
-THCStorage* THCStorage_(newWithSize4)(THCState *state, real data0, real data1, real data2, real data3)
+THCStorage* THCStorage_(newWithSize4)(THCState *state, ntype data0, ntype data1, ntype data2, ntype data3)
 {
   THCStorage *self = THCStorage_(newWithSize)(state, 4);
   THCStorage_(set)(state, self, 0, data0);
@@ -126,7 +126,7 @@ THCStorage* THCStorage_(newWithMapping)(THCState *state, const char *fileName, p
   return NULL;
 }
 
-THCStorage* THCStorage_(newWithData)(THCState *state, real *data, ptrdiff_t size)
+THCStorage* THCStorage_(newWithData)(THCState *state, ntype *data, ptrdiff_t size)
 {
   return THCStorage_(newWithDataAndAllocator)(state, data, size,
                                               state->cudaDeviceAllocator,
@@ -134,7 +134,7 @@ THCStorage* THCStorage_(newWithData)(THCState *state, real *data, ptrdiff_t size
 }
 
 THCStorage* THCStorage_(newWithDataAndAllocator)(
-  THCState *state, real *data, ptrdiff_t size,
+  THCState *state, ntype *data, ptrdiff_t size,
   THCDeviceAllocator *allocator, void *allocatorContext) {
   THCStorage *storage = (THCStorage*)THAlloc(sizeof(THCStorage));
   memset(storage, 0, sizeof(THCStorage));

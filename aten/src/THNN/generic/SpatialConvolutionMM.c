@@ -300,7 +300,7 @@ static void THNN_(SpatialConvolutionMM_accGradParameters_frame)(
           THTensor *gradWeight,
           THTensor *gradBias,
           THTensor *finput,
-          real scale)
+          ntype scale)
 {
   int64_t i;
   THTensor *gradOutput2d = THTensor_(newWithStorage2d)
@@ -317,8 +317,8 @@ static void THNN_(SpatialConvolutionMM_accGradParameters_frame)(
     for(i = 0; i < gradBias->size[0]; i++)
     {
       int64_t k;
-      real sum = 0;
-      real *data = gradOutput2d->storage->data + gradOutput2d->storageOffset + i*gradOutput2d->stride[0];
+      ntype sum = 0;
+      ntype *data = gradOutput2d->storage->data + gradOutput2d->storageOffset + i*gradOutput2d->stride[0];
       for(k = 0; k < gradOutput2d->size[1]; k++)
         sum += data[k];
       (gradBias->storage->data + gradBias->storageOffset)[i] += scale*sum;
@@ -342,13 +342,13 @@ void THNN_(SpatialConvolutionMM_accGradParameters)(
           int dH,
           int padW,
           int padH,
-          accreal scale_)
+          accntype scale_)
 {
   THArgCheck(THTensor_(isContiguous)(gradWeight), 4, "gradWeight needs to be contiguous");
   if (gradBias)
     THArgCheck(THTensor_(isContiguous)(gradBias), 5, "gradBias needs to be contiguous");
 
-  real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
+  ntype scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
   gradWeight = THNN_(view_weight_MM2d)(gradWeight);
 
   THNN_(SpatialConvolutionMM_shapeCheck)

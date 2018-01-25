@@ -4,8 +4,8 @@
 #include "THGeneral.h"
 #include "THAllocator.h"
 
-#define THStorage        TH_CONCAT_3(TH,Real,Storage)
-#define THStorage_(NAME) TH_CONCAT_4(TH,Real,Storage_,NAME)
+#define THStorage        TH_CONCAT_3(TH,Ntype,Storage)
+#define THStorage_(NAME) TH_CONCAT_4(TH,Ntype,Storage_,NAME)
 
 /* fast access methods */
 #define TH_STORAGE_GET(storage, idx) ((storage)->data[(idx)])

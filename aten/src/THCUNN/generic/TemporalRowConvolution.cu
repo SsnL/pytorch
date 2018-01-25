@@ -107,7 +107,7 @@ void THNN_(TemporalRowConvolution_updateOutput)(
   if (ones->nDimension != 2 || ones->size[0] * ones->size[1] < nOutputFrame) {
     // Resize plane and fill with ones...
     THCTensor_(resize2d)(state, ones, 1, nOutputFrame);
-    THCTensor_(fill)(state, ones, ScalarConvert<int, real>::to(1));
+    THCTensor_(fill)(state, ones, ScalarConvert<int, ntype>::to(1));
   }
 
   // Helpers
@@ -137,9 +137,9 @@ void THNN_(TemporalRowConvolution_updateOutput)(
 #elif defined(THC_NTYPE_IS_DOUBLE)
       THCudaBlas_Dgemm(
 #endif
-          state, 't', 'n', n_, m_, k_, ScalarConvert<int, real>::to(1),
+          state, 't', 'n', n_, m_, k_, ScalarConvert<int, ntype>::to(1),
           THCTensor_(data)(state, ones), k_, THCTensor_(data)(state, bias), k_,
-          ScalarConvert<int, real>::to(0), THCTensor_(data)(state, output_n),
+          ScalarConvert<int, ntype>::to(0), THCTensor_(data)(state, output_n),
           n_);
     } else {
       THCTensor_(zero)(state, output_n);
@@ -156,8 +156,8 @@ void THNN_(TemporalRowConvolution_updateOutput)(
 
     // weight:    inputFrameSize x 1 x kW
     // columns:   inputFrameSize x kW x nOutputFrame
-    THCTensor_(baddbmm)(state, output3d, ScalarConvert<int, real>::to(1),
-                        output3d, ScalarConvert<int, real>::to(1), weight,
+    THCTensor_(baddbmm)(state, output3d, ScalarConvert<int, ntype>::to(1),
+                        output3d, ScalarConvert<int, ntype>::to(1), weight,
                         columns);
     // output3d:  inputFrameSize x 1 x nOutputFrame
 
@@ -256,13 +256,13 @@ void THNN_(TemporalRowConvolution_updateGradInput)(
 
     // weight:          inputFrameSize x kW x 1
     // gradOutput3d:    inputFrameSize x 1 x nOutputFrame
-    THCTensor_(baddbmm)(state, gradColumns, ScalarConvert<int, real>::to(0),
-                        gradColumns, ScalarConvert<int, real>::to(1), tweight,
+    THCTensor_(baddbmm)(state, gradColumns, ScalarConvert<int, ntype>::to(0),
+                        gradColumns, ScalarConvert<int, ntype>::to(1), tweight,
                         gradOutput3d);
     // gradColumns:     inputFrameSize x kW x nOutputFrame
 
     // Unpack columns back into input:
-    col2row<real, accreal>(THCState_getCurrentStream(state),
+    col2row<ntype, accntype>(THCState_getCurrentStream(state),
                            THCTensor_(data)(state, gradColumns), inputFrameSize,
                            nInputFrame, kW, padW, dW, 1,
                            THCTensor_(data)(state, gradInput_n));
@@ -297,9 +297,9 @@ void THNN_(TemporalRowConvolution_accGradParameters)(
     THCState *state, THCTensor *input, THCTensor *gradOutput,
     THCTensor *gradWeight, THCTensor *gradBias, THCTensor *finput,
     THCTensor *fgradInput, int kW, int dW, int padW, bool featFirst,
-    accreal scale_) {
+    accntype scale_) {
 
-  real scale = ScalarConvert<accreal, real>::to(scale_);
+  ntype scale = ScalarConvert<accntype, ntype>::to(scale_);
   // Aliases
   THCTensor *columns = finput;
   THCTensor *ones = fgradInput;
@@ -348,7 +348,7 @@ void THNN_(TemporalRowConvolution_accGradParameters)(
   if (ones->nDimension != 2 || ones->size[0] * ones->size[1] < nOutputFrame) {
     // Resize plane and fill with ones...
     THCTensor_(resize2d)(state, ones, 1, nOutputFrame);
-    THCTensor_(fill)(state, ones, ScalarConvert<int, real>::to(1));
+    THCTensor_(fill)(state, ones, ScalarConvert<int, ntype>::to(1));
   }
 
   // // Resize temporary columns
@@ -378,7 +378,7 @@ void THNN_(TemporalRowConvolution_accGradParameters)(
 
     // gradOutput3d:  inputFrameSize x 1 x nOutputFrame
     // columns:       inputFrameSize x nOutputFrame x kW
-    THCTensor_(baddbmm)(state, gradWeight, ScalarConvert<int, real>::to(1),
+    THCTensor_(baddbmm)(state, gradWeight, ScalarConvert<int, ntype>::to(1),
                         gradWeight, scale, gradOutput3d, tcolumns);
     // gradWeight:    inputFrameSize x 1 x kW
 
@@ -395,14 +395,14 @@ void THNN_(TemporalRowConvolution_accGradParameters)(
       THCudaBlas_Dgemv(
 #endif
           state, 't', k_, m_, scale, THCTensor_(data)(state, gradOutput_n), k_,
-          THCTensor_(data)(state, ones), 1, ScalarConvert<int, real>::to(1),
+          THCTensor_(data)(state, ones), 1, ScalarConvert<int, ntype>::to(1),
           THCTensor_(data)(state, gradBias), 1);
 #endif
 #ifdef THC_NTYPE_IS_HALF // half not supported due to baddbmm
       THCudaBlas_Hgemm(state, 't', 'n', m_, 1, k_, scale,
                        THCTensor_(data)(state, gradOutput_n), k_,
                        THCTensor_(data)(state, ones), k_,
-                       ScalarConvert<int, real>::to(1),
+                       ScalarConvert<int, ntype>::to(1),
                        THCTensor_(data)(state, gradBias), m_);
 #endif
     }

@@ -2,20 +2,20 @@
 #error "You must define TH_GENERIC_FILE before including THGenerateLongType.h"
 #endif
 
-#define real int64_t
-#define ureal uint64_t
-#define accreal int64_t
-#define TH_CONVERT_NTYPE_TO_ACCNTYPE(_val) (accreal)(_val)
-#define TH_CONVERT_ACCNTYPE_TO_NTYPE(_val) (real)(_val)
-#define Real Long
+#define ntype int64_t
+#define untype uint64_t
+#define accntype int64_t
+#define TH_CONVERT_NTYPE_TO_ACCNTYPE(_val) (accntype)(_val)
+#define TH_CONVERT_ACCNTYPE_TO_NTYPE(_val) (ntype)(_val)
+#define Ntype Long
 #define THInf LONG_MAX
 #define TH_NTYPE_IS_LONG
 #line 1 TH_GENERIC_FILE
 #include TH_GENERIC_FILE
-#undef real
-#undef ureal
-#undef accreal
-#undef Real
+#undef ntype
+#undef untype
+#undef accntype
+#undef Ntype
 #undef THInf
 #undef TH_NTYPE_IS_LONG
 #undef TH_CONVERT_NTYPE_TO_ACCNTYPE

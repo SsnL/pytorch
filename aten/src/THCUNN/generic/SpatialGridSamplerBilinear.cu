@@ -49,9 +49,9 @@ TH_API void THNN_(SpatialGridSamplerBilinear_updateOutput)(
   // resize output to the same shape as input
   THCTensor_(resize4d)(state, output, N, C, H, W);
 
-  THCDeviceTensor<real, 4> devInput = toDeviceTensor<real, 4>(state, input);
-  THCDeviceTensor<real, 4> devGrid = toDeviceTensor<real, 4>(state, grid);
-  THCDeviceTensor<real, 4> devOutput = toDeviceTensor<real, 4>(state, output);
+  THCDeviceTensor<ntype, 4> devInput = toDeviceTensor<ntype, 4>(state, input);
+  THCDeviceTensor<ntype, 4> devGrid = toDeviceTensor<ntype, 4>(state, grid);
+  THCDeviceTensor<ntype, 4> devOutput = toDeviceTensor<ntype, 4>(state, output);
 
   int count = static_cast<int>(N*H*W);
   SpatialGridSamplerBilinear_updateOutput_kernel
@@ -81,11 +81,11 @@ TH_API void THNN_(SpatialGridSamplerBilinear_updateGradInput)(
   THCTensor_(zero)(state, gradInput);
   THCTensor_(zero)(state, gradGrid);
 
-  THCDeviceTensor<real, 4> devInput = toDeviceTensor<real, 4>(state, input);
-  THCDeviceTensor<real, 4> devGradInput = toDeviceTensor<real, 4>(state, gradInput);
-  THCDeviceTensor<real, 4> devGrid = toDeviceTensor<real, 4>(state, grid);
-  THCDeviceTensor<real, 4> devGradGrid = toDeviceTensor<real, 4>(state, gradGrid);
-  THCDeviceTensor<real, 4> devGradOutput = toDeviceTensor<real, 4>(state, gradOutput);
+  THCDeviceTensor<ntype, 4> devInput = toDeviceTensor<ntype, 4>(state, input);
+  THCDeviceTensor<ntype, 4> devGradInput = toDeviceTensor<ntype, 4>(state, gradInput);
+  THCDeviceTensor<ntype, 4> devGrid = toDeviceTensor<ntype, 4>(state, grid);
+  THCDeviceTensor<ntype, 4> devGradGrid = toDeviceTensor<ntype, 4>(state, gradGrid);
+  THCDeviceTensor<ntype, 4> devGradOutput = toDeviceTensor<ntype, 4>(state, gradOutput);
 
   int count = static_cast<int>(N*H*W);
   SpatialGridSamplerBilinear_updateGradInput_kernel

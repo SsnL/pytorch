@@ -24,8 +24,8 @@ THC_API void THCTensor_(atan2)(THCState *state, THCTensor *r_, THCTensor *tx, TH
 THC_API void THCTensor_(tanh)(THCState *state, THCTensor *self, THCTensor *src);
 THC_API void THCTensor_(erf)(THCState *state, THCTensor *self, THCTensor *src);
 THC_API void THCTensor_(erfinv)(THCState *state, THCTensor *self, THCTensor *src);
-THC_API void THCTensor_(pow)(THCState *state, THCTensor *self, THCTensor *src, real value);
-THC_API void THCTensor_(tpow)(THCState *state, THCTensor *self, real value, THCTensor *src);
+THC_API void THCTensor_(pow)(THCState *state, THCTensor *self, THCTensor *src, ntype value);
+THC_API void THCTensor_(tpow)(THCState *state, THCTensor *self, ntype value, THCTensor *src);
 THC_API void THCTensor_(sqrt)(THCState *state, THCTensor *self, THCTensor *src);
 THC_API void THCTensor_(rsqrt)(THCState *state, THCTensor *self, THCTensor *src);
 THC_API void THCTensor_(ceil)(THCState *state, THCTensor *self, THCTensor *src);
@@ -33,7 +33,7 @@ THC_API void THCTensor_(floor)(THCState *state, THCTensor *self, THCTensor *src)
 THC_API void THCTensor_(round)(THCState *state, THCTensor *self, THCTensor *src);
 THC_API void THCTensor_(trunc)(THCState *state, THCTensor *self, THCTensor *src);
 THC_API void THCTensor_(frac)(THCState *state, THCTensor *self, THCTensor *src);
-THC_API void THCTensor_(lerp)(THCState *state, THCTensor *result, THCTensor *a, THCTensor *b, real w);
+THC_API void THCTensor_(lerp)(THCState *state, THCTensor *result, THCTensor *a, THCTensor *b, ntype w);
 
 THC_API void THCTensor_(cinv)(THCState *state, THCTensor *self, THCTensor *src);
 
@@ -42,11 +42,11 @@ THC_API void THCTensor_(cinv)(THCState *state, THCTensor *self, THCTensor *src);
 THC_API void THCTensor_(neg)(THCState *state, THCTensor *self, THCTensor *src);
 THC_API void THCTensor_(abs)(THCState *state, THCTensor *self, THCTensor *src);
 THC_API void THCTensor_(sign)(THCState *state, THCTensor *self, THCTensor *src);
-THC_API void THCTensor_(clamp)(THCState *state, THCTensor *self, THCTensor *src, real min_value, real max_value);
+THC_API void THCTensor_(clamp)(THCState *state, THCTensor *self, THCTensor *src, ntype min_value, ntype max_value);
 THC_API void THCTensor_(cross)(THCState *state, THCTensor *self, THCTensor *src1, THCTensor *src2, int dimension);
 
-THC_API void THCTensor_(cadd)(THCState *state, THCTensor *self, THCTensor *src1, real value, THCTensor *src2);
-THC_API void THCTensor_(csub)(THCState *state, THCTensor *self, THCTensor *src1, real value, THCTensor *src2);
+THC_API void THCTensor_(cadd)(THCState *state, THCTensor *self, THCTensor *src1, ntype value, THCTensor *src2);
+THC_API void THCTensor_(csub)(THCState *state, THCTensor *self, THCTensor *src1, ntype value, THCTensor *src2);
 THC_API void THCTensor_(cmul)(THCState *state, THCTensor *self, THCTensor *src1, THCTensor *src2);
 THC_API void THCTensor_(cpow)(THCState *state, THCTensor *self, THCTensor *src1, THCTensor *src2);
 THC_API void THCTensor_(cdiv)(THCState *state, THCTensor *self, THCTensor *src1, THCTensor *src2);
@@ -56,13 +56,13 @@ THC_API void THCTensor_(cmax)(THCState *state, THCTensor *self, THCTensor *src1,
 THC_API void THCTensor_(cmin)(THCState *state, THCTensor *self, THCTensor *src1, THCTensor *src2);
 THC_API void THCTensor_(cfmod)(THCState *state, THCTensor *self, THCTensor *src1, THCTensor *src2);
 THC_API void THCTensor_(cremainder)(THCState *state, THCTensor *self, THCTensor *src1, THCTensor *src2);
-THC_API void THCTensor_(cmaxValue)(THCState *state, THCTensor *self, THCTensor *src, real value);
-THC_API void THCTensor_(cminValue)(THCState *state, THCTensor *self, THCTensor *src, real value);
+THC_API void THCTensor_(cmaxValue)(THCState *state, THCTensor *self, THCTensor *src, ntype value);
+THC_API void THCTensor_(cminValue)(THCState *state, THCTensor *self, THCTensor *src, ntype value);
 THC_API void THCTensor_(cbitand)(THCState *state, THCTensor *self, THCTensor *src1, THCTensor *src2);
 THC_API void THCTensor_(cbitor)(THCState *state, THCTensor *self, THCTensor *src1, THCTensor *src2);
 THC_API void THCTensor_(cbitxor)(THCState *state, THCTensor *self, THCTensor *src1, THCTensor *src2);
 
-THC_API void THCTensor_(addcmul)(THCState *state, THCTensor *self, THCTensor* t, real value, THCTensor *src1, THCTensor *src2);
-THC_API void THCTensor_(addcdiv)(THCState *state, THCTensor *self, THCTensor* t, real value, THCTensor *src1, THCTensor *src2);
+THC_API void THCTensor_(addcmul)(THCState *state, THCTensor *self, THCTensor* t, ntype value, THCTensor *src1, THCTensor *src2);
+THC_API void THCTensor_(addcdiv)(THCState *state, THCTensor *self, THCTensor* t, ntype value, THCTensor *src1, THCTensor *src2);
 
 #endif

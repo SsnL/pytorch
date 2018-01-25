@@ -3,7 +3,7 @@
 #else
 
 static void THNN_(SpatialReflectionPadding_updateOutput_frame)(
-  real *input_p, real *output_p,
+  ntype *input_p, ntype *output_p,
   int64_t nslices,
   int64_t iwidth, int64_t iheight,
   int64_t owidth, int64_t oheight,
@@ -41,8 +41,8 @@ static void THNN_(SpatialReflectionPadding_updateOutput_frame)(
         }
         ip_y = ip_y - oStartY + iStartY;
 
-        real *dest_p = output_p + k*owidth*oheight + i * owidth + j;
-        real *src_p = input_p + k*iwidth*iheight + ip_y * iwidth + ip_x;
+        ntype *dest_p = output_p + k*owidth*oheight + i * owidth + j;
+        ntype *src_p = input_p + k*iwidth*iheight + ip_y * iwidth + ip_x;
         *dest_p = *src_p;
       }
     }
@@ -64,8 +64,8 @@ void THNN_(SpatialReflectionPadding_updateOutput)(THNNState *state,
   int64_t iwidth;
   int64_t oheight;
   int64_t owidth;
-  real *input_data;
-  real *output_data;
+  ntype *input_data;
+  ntype *output_data;
 
   THNN_ARGCHECK(input->nDimension == 3 || input->nDimension == 4, 2, input,
 		"3D or 4D (batch mode) tensor expected for input, but got: %s");
@@ -148,7 +148,7 @@ void THNN_(SpatialReflectionPadding_updateOutput)(THNNState *state,
 }
 
 static void THNN_(SpatialReflectionPadding_updateGradInput_frame)(
-  real *ginput_p, real *goutput_p,
+  ntype *ginput_p, ntype *goutput_p,
   int64_t nslices,
   int64_t iwidth, int64_t iheight,
   int64_t owidth, int64_t oheight,
@@ -186,8 +186,8 @@ static void THNN_(SpatialReflectionPadding_updateGradInput_frame)(
         }
         ip_y = ip_y - oStartY + iStartY;
 
-        real *src_p = goutput_p + k*owidth*oheight + i * owidth + j;
-        real *dest_p = ginput_p + k*iwidth*iheight + ip_y * iwidth + ip_x;
+        ntype *src_p = goutput_p + k*owidth*oheight + i * owidth + j;
+        ntype *dest_p = ginput_p + k*iwidth*iheight + ip_y * iwidth + ip_x;
         *dest_p += *src_p;
       }
     }

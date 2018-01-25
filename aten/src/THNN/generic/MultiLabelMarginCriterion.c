@@ -11,11 +11,11 @@ void THNN_(MultiLabelMarginCriterion_updateOutput)(
           THTensor *isTarget,
           bool sizeAverage)
 {
-  real *input_data, *isTarget_data;
+  ntype *input_data, *isTarget_data;
   THIndex_t *target_data;
   int64_t nframe, dim;
   int64_t t, d, dt, ddt;
-  real sum;
+  ntype sum;
 
   THArgCheck((input->nDimension == 1) || (input->nDimension == 2), 2,
 	     "vector or matrix expected");
@@ -61,7 +61,7 @@ void THNN_(MultiLabelMarginCriterion_updateOutput)(
     for (dt = 0; dt < dim; dt++)
     {
       THIndex_t target_idx = target_data[dt] - TH_INDEX_BASE;
-      real input_target;
+      ntype input_target;
       if (target_idx < 0)
         break;
 
@@ -70,7 +70,7 @@ void THNN_(MultiLabelMarginCriterion_updateOutput)(
       {
         if (!isTarget_data[d])
         {
-          real z = 1 - input_target + input_data[d];
+          ntype z = 1 - input_target + input_data[d];
           if (z > 0)
             sum += z;
         }
@@ -99,13 +99,13 @@ void THNN_(MultiLabelMarginCriterion_updateGradInput)(
           THTensor *isTarget,
           bool sizeAverage)
 {
-  real *input_data;
-  real *gradInput_data;
+  ntype *input_data;
+  ntype *gradInput_data;
   THIndex_t *target_data;
-  real *isTarget_data;
+  ntype *isTarget_data;
   int64_t nframe, dim;
   int64_t t, d, dt;
-  real g;
+  ntype g;
 
   THArgCheck((input->nDimension == 1) || (input->nDimension == 2), 2,
 	     "vector or matrix expected");
@@ -142,7 +142,7 @@ void THNN_(MultiLabelMarginCriterion_updateGradInput)(
   target_data = THIndexTensor_(data)(target);
   isTarget_data = THTensor_(data)(isTarget);
 
-  g = sizeAverage ? ( 1./((real)(nframe*dim)) ) : ( 1./((real)dim) );
+  g = sizeAverage ? ( 1./((ntype)(nframe*dim)) ) : ( 1./((ntype)dim) );
 
   THTensor_(resizeAs)(gradInput, input);
   THTensor_(zero)(gradInput);
@@ -153,7 +153,7 @@ void THNN_(MultiLabelMarginCriterion_updateGradInput)(
     for (dt = 0; dt < dim; dt++)
     {
       THIndex_t target_idx = target_data[dt] - TH_INDEX_BASE;
-      real input_target;
+      ntype input_target;
       if (target_idx < 0)
         break;
 
@@ -162,7 +162,7 @@ void THNN_(MultiLabelMarginCriterion_updateGradInput)(
       {
         if (!isTarget_data[d])
         {
-          real z = 1 - input_target + input_data[d];
+          ntype z = 1 - input_target + input_data[d];
           if (z > 0)
           {
             gradInput_data[target_idx] -= g;

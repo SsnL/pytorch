@@ -51,11 +51,11 @@ void THNN_(IndexLinear_updateOutput)(
 
     THCTensor_(resize2d)(state, output, batchSize, outDim);
     int64_t *keysData        = THCudaLongTensor_data (state, keys);
-    real *valuesData      = THCTensor_(data)      (state, values);
+    ntype *valuesData      = THCTensor_(data)      (state, values);
     int64_t *cumSumSizesData = THCudaLongTensor_data (state, cumSumSizes);
-    real *biasData        = THCTensor_(data)      (state, bias);
-    real *weightData      = THCTensor_(data)      (state, weight);
-    real *outData         = THCTensor_(data)      (state, output);
+    ntype *biasData        = THCTensor_(data)      (state, bias);
+    ntype *weightData      = THCTensor_(data)      (state, weight);
+    ntype *outData         = THCTensor_(data)      (state, output);
 
     cudaStream_t stream = THCState_getCurrentStream(state);
     dim3 threads(THREADS_X, THREADS_Y);
@@ -67,18 +67,18 @@ void THNN_(IndexLinear_updateOutput)(
     dim3 blocks(blocks_x, blocks_y, blocks_z);
 
     if (blocks_z > 1) {
-        THCudaCheck(cudaMemsetAsync(outData, 0, outDim * batchSize * sizeof(real), stream));
+        THCudaCheck(cudaMemsetAsync(outData, 0, outDim * batchSize * sizeof(ntype), stream));
     }
 
-    real *normalizedValuesData = NULL;
+    ntype *normalizedValuesData = NULL;
     if (maxNormalize && train) {
         THCTensor_(resize1d)(state, normalizedValues, keysSize);
         normalizedValuesData = THCTensor_(data)(state, normalizedValues);
-        updateOutput<real, true><<<blocks, threads, 0, stream>>>
+        updateOutput<ntype, true><<<blocks, threads, 0, stream>>>
             (outData, normalizedValuesData, valuesData, cumSumSizesData, keysData,
              batchSize, outDim, weightData, biasData, weightStride, keysOffset, maxNormalize, nnzPerBlock);
     } else {
-        updateOutput<real, false><<<blocks, threads, 0, stream>>>
+        updateOutput<ntype, false><<<blocks, threads, 0, stream>>>
             (outData, normalizedValuesData, valuesData, cumSumSizesData, keysData,
              batchSize, outDim, weightData, biasData, weightStride, keysOffset, maxNormalize, nnzPerBlock);
     }
@@ -97,8 +97,8 @@ void THNN_(IndexLinear_accGradParameters)(
     THCTensor *weight,
     THCTensor *bias,
     THCTensor* valuesBuffer,
-    accreal weightDecay,
-    accreal scale)
+    accntype weightDecay,
+    accntype scale)
 {
     int64_t keysSize = keys->size[0];
     int64_t batchSize = sizes->size[0];
@@ -132,21 +132,21 @@ void THNN_(IndexLinear_accGradParameters)(
 
     THCTensor_(resize2d)(state, gradWeight, keysSize, outDim * (maxNormalize > 0 ? 2 : 1));
 
-    real *valuesData      = THCTensor_(data)      (state, values);
+    ntype *valuesData      = THCTensor_(data)      (state, values);
     int64_t *cumSumSizesData = THCudaLongTensor_data (state, cumSumSizes);
-    real *gradOutputData  = THCTensor_(data)      (state, gradOutput);
-    real *gradBiasData    = THCTensor_(data)      (state, gradBias);
-    real *gradWeightData  = THCTensor_(data)      (state, gradWeight);
+    ntype *gradOutputData  = THCTensor_(data)      (state, gradOutput);
+    ntype *gradBiasData    = THCTensor_(data)      (state, gradBias);
+    ntype *gradWeightData  = THCTensor_(data)      (state, gradWeight);
     int64_t gradWeightStride = gradWeight->stride[0];
 
     cudaStream_t stream = THCState_getCurrentStream(state);
     dim3 threads(THREADS_X, THREADS_Y);
     int blocks_x = divup(outDim, threads.x);
-    accGradBias<real, false><<<blocks_x, threads, 0, stream>>>
+    accGradBias<ntype, false><<<blocks_x, threads, 0, stream>>>
         (gradBiasData, gradOutputData, outDim, batchSize, scale, weightDecay);
 
     dim3 blocks(blocks_x, batchSize);
-    accGradWeight<real><<<blocks, threads, 0, stream>>>
+    accGradWeight<ntype><<<blocks, threads, 0, stream>>>
         (gradWeightData, gradOutputData, valuesData, cumSumSizesData, outDim,
          gradWeightStride, scale, weightDecay, maxNormalize);
 }
@@ -161,8 +161,8 @@ void THNN_(IndexLinear_accUpdateGradParameters)(
     THCTensor *gradOutput,
     THCTensor *weight,
     THCTensor *bias,
-    accreal weightDecay,
-    accreal scale)
+    accntype weightDecay,
+    accntype scale)
 {
     // Make sure these inputs are contiguous to accelerate computations
     THArgCheck(THCudaLongTensor_isContiguous(state, keys), 1,
@@ -188,10 +188,10 @@ void THNN_(IndexLinear_accUpdateGradParameters)(
     int64_t wDim = weight->size[1];
     int maxNormalize = wDim - outDim;
 
-    real *biasData         = THCTensor_(data)      (state, bias);
-    real *weightData       = THCTensor_(data)      (state, weight);
-    real *gradOutputData   = THCTensor_(data)      (state, gradOutput);
-    real *valuesData       = THCTensor_(data)      (state, values);
+    ntype *biasData         = THCTensor_(data)      (state, bias);
+    ntype *weightData       = THCTensor_(data)      (state, weight);
+    ntype *gradOutputData   = THCTensor_(data)      (state, gradOutput);
+    ntype *valuesData       = THCTensor_(data)      (state, values);
     int64_t *keysData         = THCudaLongTensor_data (state, keys);
     int64_t *cumSumSizesData  = THCudaLongTensor_data (state, cumSumSizes);
     int64_t weightStride = weight->stride[0];
@@ -200,7 +200,7 @@ void THNN_(IndexLinear_accUpdateGradParameters)(
     dim3 threads(THREADS_X, THREADS_Y);
     int blocks_x = divup(outDim, threads.x);
 
-    accGradBias<real, true><<<blocks_x, threads, 0, stream>>>
+    accGradBias<ntype, true><<<blocks_x, threads, 0, stream>>>
         (biasData, gradOutputData, outDim, batchSize, scale, weightDecay);
 
     int64_t nnzPerRow = divup(keysSize, batchSize);
@@ -208,7 +208,7 @@ void THNN_(IndexLinear_accUpdateGradParameters)(
     dim3 blocks(blocks_x, blocks_y);
 
     for (int64_t batchId = 0; batchId < batchSize; batchId++) {
-        accUpdateWeight<real><<<blocks, threads, 0, stream>>>
+        accUpdateWeight<ntype><<<blocks, threads, 0, stream>>>
             (weightData, weightStride, gradOutputData, outDim, valuesData,
              cumSumSizesData, keysData, keysOffset, scale, weightDecay, maxNormalize,
              batchId);
@@ -224,8 +224,8 @@ void THNN_(IndexLinear_updateParameters)(
     THCudaLongTensor *runningKeys,
     THCudaLongTensor *cumSumSizes,
     int64_t keysOffset,
-    accreal weightDecay,
-    accreal learningRate)
+    accntype weightDecay,
+    accntype learningRate)
 {
     // Make sure these inputs are contiguous to accelerate computations
     THArgCheck(THCTensor_(isContiguous)(state, gradWeight), 1,
@@ -253,8 +253,8 @@ void THNN_(IndexLinear_updateParameters)(
 
     int64_t *keysData        = THCudaLongTensor_data (state, runningKeys);
     int64_t *cumSumSizesData = THCudaLongTensor_data (state, cumSumSizes);
-    real *gradWeightData  = THCTensor_(data)      (state, gradWeight);
-    real *weightData      = THCTensor_(data)      (state, weight);
+    ntype *gradWeightData  = THCTensor_(data)      (state, gradWeight);
+    ntype *weightData      = THCTensor_(data)      (state, weight);
 
     dim3 threads(THREADS_X, THREADS_Y);
     int64_t nnzPerRow = divup(keysSize, batchSize);
@@ -264,7 +264,7 @@ void THNN_(IndexLinear_updateParameters)(
     cudaStream_t stream = THCState_getCurrentStream(state);
 
     for (int64_t batchId = 0; batchId < batchSize; batchId++) {
-        updateWeight<real><<<blocks, threads, 0, stream>>>
+        updateWeight<ntype><<<blocks, threads, 0, stream>>>
             (weightData, gradWeightData, keysData, cumSumSizesData, outDim,
              gradWeightStride, weightStride, keysOffset, learningRate, weightDecay,
              maxNormalize, batchId);

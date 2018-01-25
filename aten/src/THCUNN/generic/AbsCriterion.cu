@@ -18,7 +18,7 @@ void THNN_(AbsCriterion_updateOutput)(
   if (!reduce) {
     THCTensor_(resizeAs)(state, output, input);
     THC_pointwiseApply3(state, input, target, output,
-                        abs_updateOutput_no_reduce_functor<real>());
+                        abs_updateOutput_no_reduce_functor<ntype>());
     return;
   }
 
@@ -29,9 +29,9 @@ void THNN_(AbsCriterion_updateOutput)(
   input = THCTensor_(newContiguous)(state, input);
   target = THCTensor_(newContiguous)(state, target);
 
-  thrust::device_ptr<real> input_data(THCTensor_(data)(state, input));
-  thrust::device_ptr<real> target_data(THCTensor_(data)(state, target));
-  accreal sum = thrust::inner_product(input_data, input_data+size, target_data, (accreal)0, thrust::plus<accreal>(), abs_functor<real, accreal>());
+  thrust::device_ptr<ntype> input_data(THCTensor_(data)(state, input));
+  thrust::device_ptr<ntype> target_data(THCTensor_(data)(state, target));
+  accntype sum = thrust::inner_product(input_data, input_data+size, target_data, (accntype)0, thrust::plus<accntype>(), abs_functor<ntype, accntype>());
 
   if (sizeAverage)
     sum /= size;
@@ -39,7 +39,7 @@ void THNN_(AbsCriterion_updateOutput)(
   THCTensor_(free)(state, input);
   THCTensor_(free)(state, target);
 
-  THCTensor_(set1d)(state, output, 0, ScalarConvert<accreal, real>::to(sum));
+  THCTensor_(set1d)(state, output, 0, ScalarConvert<accntype, ntype>::to(sum));
 }
 
 void THNN_(AbsCriterion_updateGradInput)(
@@ -59,7 +59,7 @@ void THNN_(AbsCriterion_updateGradInput)(
   if (!reduce) {
     THCUNN_check_nElement(state, gradOutput, input);
     THC_pointwiseApply3(state, input, target, gradInput,
-                        abs_updateGradInput_no_reduce_functor<real>());
+                        abs_updateGradInput_no_reduce_functor<ntype>());
     THCTensor_(cmul)(state, gradInput, gradInput, gradOutput);
     return;
   }
@@ -67,17 +67,17 @@ void THNN_(AbsCriterion_updateGradInput)(
   THCUNN_check_dim_size(state, gradOutput, 1, 0, 1);
 
   ptrdiff_t size = THCTensor_(nElement)(state, input);
-  real norm = ScalarConvert<double, real>::to(sizeAverage ? 1./size : 1.);
+  ntype norm = ScalarConvert<double, ntype>::to(sizeAverage ? 1./size : 1.);
 
   input = THCTensor_(newContiguous)(state, input);
   target = THCTensor_(newContiguous)(state, target);
 
-  thrust::device_ptr<real> input_data(THCTensor_(data)(state, input));
-  thrust::device_ptr<real> target_data(THCTensor_(data)(state, target));
-  thrust::device_ptr<real> gradInput_data(THCTensor_(data)(state, gradInput));
+  thrust::device_ptr<ntype> input_data(THCTensor_(data)(state, input));
+  thrust::device_ptr<ntype> target_data(THCTensor_(data)(state, target));
+  thrust::device_ptr<ntype> gradInput_data(THCTensor_(data)(state, gradInput));
 
   thrust::transform(input_data, input_data+size, target_data, gradInput_data,
-                    abs_updateGradInput_functor<real>(norm, THCTensor_(get1d)(state, gradOutput, 0)));
+                    abs_updateGradInput_functor<ntype>(norm, THCTensor_(get1d)(state, gradOutput, 0)));
 
   THCTensor_(free)(state, input);
   THCTensor_(free)(state, target);

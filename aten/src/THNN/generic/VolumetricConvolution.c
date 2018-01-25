@@ -178,9 +178,9 @@ void THNN_(VolumetricConvolution_accGradParameters)(
           int pT,
           int pW,
           int pH,
-          accreal scale_)
+          accntype scale_)
 {
-  real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
+  ntype scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
   THArgCheck(pT != 0 || pW != 0 || pH != 0, 9, "padding not supported by CPU backend");   // sharing signature with CUDA version
 
   THNN_ARGCHECK(gradWeight->nDimension == 5, 4, gradWeight,
@@ -195,7 +195,7 @@ void THNN_(VolumetricConvolution_accGradParameters)(
   }
 
   int64_t k;
-  real *gradBias_data;
+  ntype *gradBias_data;
   THTensor *gradOutSlice;
   int dimPlane = 0;
   if (gradOutput->nDimension == 5)

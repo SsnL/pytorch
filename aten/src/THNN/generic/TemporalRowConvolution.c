@@ -67,8 +67,8 @@ static void THNN_(unfolded_acc_row)(
 	int64_t nOutputFrame) {
 
 	size_t c;
-	real *input_data = THTensor_(data)(input);
-	real *finput_data = THTensor_(data)(finput);
+	ntype *input_data = THTensor_(data)(input);
+	ntype *finput_data = THTensor_(data)(finput);
 
 // #pragma omp parallel for private(c)
 	for (c = 0; c < inputFrameSize; c++) {
@@ -76,18 +76,18 @@ static void THNN_(unfolded_acc_row)(
 		size_t ix = 0;
 
 		for (kw = 0; kw < kW; kw++) {
-			real *src = finput_data
+			ntype *src = finput_data
 			            + c * (kW * nOutputFrame)
 			            + kw * (nOutputFrame);
-			real *dst = input_data + c * (nInputFrame);
+			ntype *dst = input_data + c * (nInputFrame);
 
 			ix = (size_t)(kw);
 			if (dW == 1) {
-			  real *dst_slice = dst + (size_t)(ix);
+			  ntype *dst_slice = dst + (size_t)(ix);
 			  THVector_(cadd)(dst_slice, dst_slice, src, 1, nOutputFrame);
 			} else {
 				for (x = 0; x < nOutputFrame; x++) {
-				  real *dst_slice = dst + (size_t)(ix + x * dW);
+				  ntype *dst_slice = dst + (size_t)(ix + x * dW);
 				  THVector_(cadd)(dst_slice, dst_slice,
 						  src + (size_t)(x), 1, 1);
 				}
@@ -107,8 +107,8 @@ static void THNN_(unfolded_copy_row)(
 	int64_t nOutputFrame) {
 
 	int64_t k;
-	real *input_data = THTensor_(data)(input);
-	real *finput_data = THTensor_(data)(finput);
+	ntype *input_data = THTensor_(data)(input);
+	ntype *finput_data = THTensor_(data)(finput);
 
 // #pragma omp parallel for private(k)
 	for (k = 0; k < inputFrameSize * kW; k++) {
@@ -117,16 +117,16 @@ static void THNN_(unfolded_copy_row)(
 		size_t kw = rest % kW;
 		size_t x;
 		size_t ix;
-		real *dst = finput_data + c * (kW * nOutputFrame) + kw * (nOutputFrame);
-		real *src = input_data + c * (nInputFrame);
+		ntype *dst = finput_data + c * (kW * nOutputFrame) + kw * (nOutputFrame);
+		ntype *src = input_data + c * (nInputFrame);
 
 		ix = (size_t)(kw);
 		if (dW == 1) {
-			memcpy(dst, src+(size_t)(ix), sizeof(real) * (nOutputFrame));
+			memcpy(dst, src+(size_t)(ix), sizeof(ntype) * (nOutputFrame));
 		} else {
 			for (x = 0; x < nOutputFrame; x++) {
 				memcpy(dst + (size_t)(x), src + (size_t)(ix + x * dW),
-				       sizeof(real) * 1);
+				       sizeof(ntype) * 1);
 			}
 		}
 	}
@@ -368,7 +368,7 @@ void THNN_(TemporalRowConvolution_updateGradInput)(
 
 static void THNN_(TemporalRowConvolution_accGradParameters_frame)(
 	THTensor *gradOutput, THTensor *gradWeight, THTensor *gradBias,
-	THTensor *finput, real scale) {
+	THTensor *finput, ntype scale) {
 
 	int64_t i;
 	THTensor *gradOutput3d = THTensor_(newWithStorage3d)(
@@ -388,8 +388,8 @@ static void THNN_(TemporalRowConvolution_accGradParameters_frame)(
 	if (gradBias != NULL) {
 		for (i = 0; i < gradBias->size[0]; i++) {
 			int64_t k;
-			real sum = 0;
-			real *data = gradOutput3d->storage->data
+			ntype sum = 0;
+			ntype *data = gradOutput3d->storage->data
 			             + gradOutput3d->storageOffset
 			             + i * gradOutput3d->stride[0];
 			for (k = 0; k < gradOutput3d->size[2]; k++) {
@@ -416,9 +416,9 @@ void THNN_(TemporalRowConvolution_accGradParameters)(
 	int dW,
 	int padW,
 	bool featFirst,
-	accreal scale_) {
+	accntype scale_) {
 
-    real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
+    ntype scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
 	int ndim = input->nDimension;
 
 	THTensor *tinput, *tgradOutput;

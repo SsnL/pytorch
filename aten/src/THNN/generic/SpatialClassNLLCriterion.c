@@ -78,8 +78,8 @@ void THNN_(SpatialClassNLLCriterion_updateOutput)(
             THTensor_fastSet3d(output, b, h, w, 0.0f);
             continue;
           }
-          real value = THTensor_fastGet4d(input, b, cur_target, h, w);
-          real weight = weights ? THTensor_fastGet1d(weights, cur_target) : 1.0f;
+          ntype value = THTensor_fastGet4d(input, b, cur_target, h, w);
+          ntype weight = weights ? THTensor_fastGet1d(weights, cur_target) : 1.0f;
           THTensor_fastSet3d(output, b, h, w, -value * weight);
         }
       }
@@ -91,26 +91,26 @@ void THNN_(SpatialClassNLLCriterion_updateOutput)(
   target = THIndexTensor_(newContiguous)(target);
   weights = weights ? THTensor_(newContiguous)(weights) : NULL;
 
-  real *input_data = THTensor_(data)(input);
+  ntype *input_data = THTensor_(data)(input);
   THIndex_t *target_data = THIndexTensor_(data)(target);
-  real *weights_data = weights ? THTensor_(data)(weights) : NULL;
-  real *output_data = THTensor_(data)(output);
-  real *total_weight_data = THTensor_(data)(total_weight);
+  ntype *weights_data = weights ? THTensor_(data)(weights) : NULL;
+  ntype *output_data = THTensor_(data)(output);
+  ntype *total_weight_data = THTensor_(data)(total_weight);
 
   int64_t batch_size = THTensor_(size)(input, 0);
   int64_t n_classes = THTensor_(size)(input, 1);
   int64_t map_size = THTensor_(size)(input, 2) * THTensor_(size)(input, 3);
   int64_t sample_size = map_size * n_classes;
 
-  real total_weight_acc = 0;
-  real output_acc = 0;
+  ntype total_weight_acc = 0;
+  ntype output_acc = 0;
   for (int b = 0; b < batch_size; b++) {
     for (int elem = 0; elem < map_size; elem++) {
       int cur_target = target_data[b * map_size + elem] - TH_INDEX_BASE;
       if (cur_target == ignore_index) continue;
       THAssert(cur_target >= 0 && cur_target < n_classes);
 
-      real cur_weight = weights ? weights_data[cur_target] : 1.0f;
+      ntype cur_weight = weights ? weights_data[cur_target] : 1.0f;
       total_weight_acc += cur_weight;
       output_acc -= input_data[b * sample_size + cur_target * map_size + elem] * cur_weight;
     }
@@ -163,8 +163,8 @@ void THNN_(SpatialClassNLLCriterion_updateGradInput)(
           if (cur_target == ignore_index) {
             continue;
           }
-          real value = -(weights ? THTensor_fastGet1d(weights, cur_target) : 1.0f);
-          real gradOutput_value = THTensor_fastGet3d(gradOutput, b, h, w);
+          ntype value = -(weights ? THTensor_fastGet1d(weights, cur_target) : 1.0f);
+          ntype gradOutput_value = THTensor_fastGet3d(gradOutput, b, h, w);
           THTensor_fastSet4d(gradInput, b, cur_target, h, w, value * gradOutput_value);
         }
       }
@@ -174,7 +174,7 @@ void THNN_(SpatialClassNLLCriterion_updateGradInput)(
 
   THNN_CHECK_DIM_SIZE(gradOutput, 1, 0, 1);
 
-  real *total_weight_data = THTensor_(data)(total_weight);
+  ntype *total_weight_data = THTensor_(data)(total_weight);
   if (*total_weight_data <= 0)
     return;
 
@@ -182,15 +182,15 @@ void THNN_(SpatialClassNLLCriterion_updateGradInput)(
   weights = weights ? THTensor_(newContiguous)(weights) : NULL;
 
   THIndex_t *target_data = THIndexTensor_(data)(target);
-  real *weights_data = weights ? THTensor_(data)(weights) : NULL;
-  real *gradInput_data = THTensor_(data)(gradInput);
+  ntype *weights_data = weights ? THTensor_(data)(weights) : NULL;
+  ntype *gradInput_data = THTensor_(data)(gradInput);
 
   int64_t batch_size = THTensor_(size)(input, 0);
   int64_t n_classes = THTensor_(size)(input, 1);
   int64_t map_size = THTensor_(size)(input, 2) * THTensor_(size)(input, 3);
   int64_t sample_size = map_size * n_classes;
 
-  real normalize = (sizeAverage) ? *total_weight_data : 1.0f;
+  ntype normalize = (sizeAverage) ? *total_weight_data : 1.0f;
 
   int b;
   #pragma omp parallel for

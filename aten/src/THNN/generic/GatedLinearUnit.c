@@ -54,8 +54,8 @@ void THNN_(GatedLinear_updateGradInput)(
 
   THTensor_(sigmoid)(gradInputfirstHalf, secondHalf);
 
-  TH_TENSOR_APPLY2(real, gradInputsecondHalf, real, gradInputfirstHalf,
-    real z = *gradInputfirstHalf_data;
+  TH_TENSOR_APPLY2(ntype, gradInputsecondHalf, ntype, gradInputfirstHalf,
+    ntype z = *gradInputfirstHalf_data;
     *gradInputsecondHalf_data = (1. - z) * z;
   );
 

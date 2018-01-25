@@ -24,14 +24,14 @@ THC_API void THCTensor_(copyCudaDouble)(THCState *state, THCTensor *dst, struct 
 THC_API void THCTensor_(copyCudaHalf)(THCState *state, THCTensor *dst, struct THCudaHalfTensor *src);
 #endif
 
-THC_API void TH_CONCAT_2(THByteTensor_copyCuda  , Real)  (THCState *state, THByteTensor *self, THCTensor *src);
-THC_API void TH_CONCAT_2(THCharTensor_copyCuda  , Real)  (THCState *state, THCharTensor *self, THCTensor *src);
-THC_API void TH_CONCAT_2(THShortTensor_copyCuda , Real)  (THCState *state, THShortTensor *self, THCTensor *src);
-THC_API void TH_CONCAT_2(THIntTensor_copyCuda   , Real)  (THCState *state, THIntTensor *self, THCTensor *src);
-THC_API void TH_CONCAT_2(THLongTensor_copyCuda  , Real)  (THCState *state, THLongTensor *self, THCTensor *src);
-THC_API void TH_CONCAT_2(THFloatTensor_copyCuda , Real)  (THCState *state, THFloatTensor *self, THCTensor *src);
-THC_API void TH_CONCAT_2(THDoubleTensor_copyCuda, Real)  (THCState *state, THDoubleTensor *self, THCTensor *src);
-THC_API void TH_CONCAT_2(THHalfTensor_copyCuda, Real)    (THCState *state, THHalfTensor *self, THCTensor *src);
+THC_API void TH_CONCAT_2(THByteTensor_copyCuda  , Ntype)  (THCState *state, THByteTensor *self, THCTensor *src);
+THC_API void TH_CONCAT_2(THCharTensor_copyCuda  , Ntype)  (THCState *state, THCharTensor *self, THCTensor *src);
+THC_API void TH_CONCAT_2(THShortTensor_copyCuda , Ntype)  (THCState *state, THShortTensor *self, THCTensor *src);
+THC_API void TH_CONCAT_2(THIntTensor_copyCuda   , Ntype)  (THCState *state, THIntTensor *self, THCTensor *src);
+THC_API void TH_CONCAT_2(THLongTensor_copyCuda  , Ntype)  (THCState *state, THLongTensor *self, THCTensor *src);
+THC_API void TH_CONCAT_2(THFloatTensor_copyCuda , Ntype)  (THCState *state, THFloatTensor *self, THCTensor *src);
+THC_API void TH_CONCAT_2(THDoubleTensor_copyCuda, Ntype)  (THCState *state, THDoubleTensor *self, THCTensor *src);
+THC_API void TH_CONCAT_2(THHalfTensor_copyCuda, Ntype)    (THCState *state, THHalfTensor *self, THCTensor *src);
 THC_API void THCTensor_(copyCuda) (THCState *state, THCTensor *self, THCTensor *src);
 
 THC_API void THTensor_(copyCuda) (THCState *state, THTensor *self, THCTensor *src);

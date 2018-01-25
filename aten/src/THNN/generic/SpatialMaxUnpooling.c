@@ -2,7 +2,7 @@
 #define TH_GENERIC_FILE "generic/SpatialMaxUnpooling.c"
 #else
 
-static void THNN_(SpatialMaxUnpooling_updateOutput_frame)(real *input_p, real *output_p,
+static void THNN_(SpatialMaxUnpooling_updateOutput_frame)(ntype *input_p, ntype *output_p,
                                                       THIndex_t *ind_p,
                                                       int nslices,
                                                       int iwidth, int iheight,
@@ -14,8 +14,8 @@ static void THNN_(SpatialMaxUnpooling_updateOutput_frame)(real *input_p, real *o
 #pragma omp parallel for private(k)
   for (k = 0; k < nslices; k++)
   {
-    real *output_p_k = output_p + k*owidth*oheight;
-    real *input_p_k = input_p + k*iwidth*iheight;
+    ntype *output_p_k = output_p + k*owidth*oheight;
+    ntype *input_p_k = input_p + k*iwidth*iheight;
     THIndex_t *ind_p_k = ind_p + k*iwidth*iheight;
 
     int i, j;
@@ -56,8 +56,8 @@ void THNN_(SpatialMaxUnpooling_updateOutput)(
   int nslices;
   int iheight;
   int iwidth;
-  real *input_data;
-  real *output_data;
+  ntype *input_data;
+  ntype *output_data;
   THIndex_t *indices_data;
 
 
@@ -125,7 +125,7 @@ void THNN_(SpatialMaxUnpooling_updateOutput)(
   THIndexTensor_(free)(indices);
 }
 
-static void THNN_(SpatialMaxUnpooling_updateGradInput_frame)(real *gradInput_p, real *gradOutput_p,
+static void THNN_(SpatialMaxUnpooling_updateGradInput_frame)(ntype *gradInput_p, ntype *gradOutput_p,
                                                          THIndex_t *ind_p,
                                                          int nslices,
                                                          int iwidth, int iheight,
@@ -135,8 +135,8 @@ static void THNN_(SpatialMaxUnpooling_updateGradInput_frame)(real *gradInput_p, 
 #pragma omp parallel for private(k)
   for (k = 0; k < nslices; k++)
   {
-    real *gradInput_p_k = gradInput_p + k*iwidth*iheight;
-    real *gradOutput_p_k = gradOutput_p + k*owidth*oheight;
+    ntype *gradInput_p_k = gradInput_p + k*iwidth*iheight;
+    ntype *gradOutput_p_k = gradOutput_p + k*owidth*oheight;
     THIndex_t *ind_p_k = ind_p + k*iwidth*iheight;
 
     int i, j;
@@ -169,8 +169,8 @@ void THNN_(SpatialMaxUnpooling_updateGradInput)(
   int nslices;
   int iheight;
   int iwidth;
-  real *gradInput_data;
-  real *gradOutput_data;
+  ntype *gradInput_data;
+  ntype *gradOutput_data;
   THIndex_t *indices_data;
 
   THNN_CHECK_SHAPE_INDICES(input, indices);

@@ -8,8 +8,8 @@
 #include "TH.h"
 #include <stdint.h>
 
-#define THSTensor          TH_CONCAT_3(THS,Real,Tensor)
-#define THSTensor_(NAME)   TH_CONCAT_4(THS,Real,Tensor_,NAME)
+#define THSTensor          TH_CONCAT_3(THS,Ntype,Tensor)
+#define THSTensor_(NAME)   TH_CONCAT_4(THS,Ntype,Tensor_,NAME)
 
 #include "generic/THSTensor.h"
 #include "THSGenerateAllTypes.h"

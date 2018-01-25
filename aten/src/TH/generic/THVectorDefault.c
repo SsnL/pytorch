@@ -4,7 +4,7 @@
 
 #include "../THRandom.h"
 
-void THVector_(copy_DEFAULT)(real *x, const real *y, const ptrdiff_t n) {
+void THVector_(copy_DEFAULT)(ntype *x, const ntype *y, const ptrdiff_t n) {
   ptrdiff_t i = 0;
 
   for(; i <n-4; i+=4)
@@ -19,7 +19,7 @@ void THVector_(copy_DEFAULT)(real *x, const real *y, const ptrdiff_t n) {
     x[i] = y[i];
 }
 
-void THVector_(fill_DEFAULT)(real *x, const real c, const ptrdiff_t n) {
+void THVector_(fill_DEFAULT)(ntype *x, const ntype c, const ptrdiff_t n) {
   ptrdiff_t i = 0;
 
   for(; i <n-4; i+=4)
@@ -34,7 +34,7 @@ void THVector_(fill_DEFAULT)(real *x, const real c, const ptrdiff_t n) {
     x[i] = c;
 }
 
-void THVector_(cadd_DEFAULT)(real *z, const real *x, const real *y, const real c, const ptrdiff_t n)
+void THVector_(cadd_DEFAULT)(ntype *z, const ntype *x, const ntype *y, const ntype c, const ptrdiff_t n)
 {
   ptrdiff_t i = 0;
 
@@ -50,7 +50,7 @@ void THVector_(cadd_DEFAULT)(real *z, const real *x, const real *y, const real c
     z[i] = x[i] + c * y[i];
 }
 
-void THVector_(adds_DEFAULT)(real *y, const real *x, const real c, const ptrdiff_t n)
+void THVector_(adds_DEFAULT)(ntype *y, const ntype *x, const ntype c, const ptrdiff_t n)
 {
   ptrdiff_t i = 0;
 
@@ -66,7 +66,7 @@ void THVector_(adds_DEFAULT)(real *y, const real *x, const real c, const ptrdiff
     y[i] = x[i] + c;
 }
 
-void THVector_(cmul_DEFAULT)(real *z, const real *x, const real *y, const ptrdiff_t n)
+void THVector_(cmul_DEFAULT)(ntype *z, const ntype *x, const ntype *y, const ptrdiff_t n)
 {
   ptrdiff_t i = 0;
 
@@ -82,7 +82,7 @@ void THVector_(cmul_DEFAULT)(real *z, const real *x, const real *y, const ptrdif
     z[i] = x[i] * y[i];
 }
 
-void THVector_(muls_DEFAULT)(real *y, const real *x, const real c, const ptrdiff_t n)
+void THVector_(muls_DEFAULT)(ntype *y, const ntype *x, const ntype c, const ptrdiff_t n)
 {
   ptrdiff_t i = 0;
 
@@ -98,7 +98,7 @@ void THVector_(muls_DEFAULT)(real *y, const real *x, const real c, const ptrdiff
     y[i] = x[i] * c;
 }
 
-void THVector_(cdiv_DEFAULT)(real *z, const real *x, const real *y, const ptrdiff_t n)
+void THVector_(cdiv_DEFAULT)(ntype *z, const ntype *x, const ntype *y, const ptrdiff_t n)
 {
   ptrdiff_t i = 0;
 
@@ -114,7 +114,7 @@ void THVector_(cdiv_DEFAULT)(real *z, const real *x, const real *y, const ptrdif
     z[i] = x[i] / y[i];
 }
 
-void THVector_(divs_DEFAULT)(real *y, const real *x, const real c, const ptrdiff_t n)
+void THVector_(divs_DEFAULT)(ntype *y, const ntype *x, const ntype c, const ptrdiff_t n)
 {
   ptrdiff_t i = 0;
 
@@ -132,27 +132,27 @@ void THVector_(divs_DEFAULT)(real *y, const real *x, const real c, const ptrdiff
 
 // Fills 16 normally distributed samples into data, interleaved with a
 // stride of 8, i.e. in order of ([0], [8]), ([1], [9]), ...
-static void THVector_(interleaved_normal_fill_16)(real *data,
-                                                  const real mean,
-                                                  const real stddev)
+static void THVector_(interleaved_normal_fill_16)(ntype *data,
+                                                  const ntype mean,
+                                                  const ntype stddev)
 {
   for (int j = 0; j < 8; ++j) {
-    const real u1 = 1 - data[j]; // [0, 1) -> (0, 1] for log.
-    const real u2 = data[j + 8];
+    const ntype u1 = 1 - data[j]; // [0, 1) -> (0, 1] for log.
+    const ntype u2 = data[j + 8];
 
-    const real radius = sqrt(-2 * log(u1));
-    const real theta = 2.0f * M_PI * u2;
+    const ntype radius = sqrt(-2 * log(u1));
+    const ntype theta = 2.0f * M_PI * u2;
 
     data[j] = radius * cos(theta) * stddev + mean;
     data[j + 8] = radius * sin(theta) * stddev + mean;
   }
 }
 
-void THVector_(normal_fill_DEFAULT)(real *data,
+void THVector_(normal_fill_DEFAULT)(ntype *data,
                                     int64_t size,
                                     THGenerator *generator,
-                                    const real mean,
-                                    const real stddev)
+                                    const ntype mean,
+                                    const ntype stddev)
 {
   THAssert(size >= 16 && "Size must be >= 16 for normal fill");
 
@@ -183,7 +183,7 @@ void THVector_(normal_fill_DEFAULT)(real *data,
 }
 
 #define VECTOR_IMPLEMENT_FUNCTION(NAME, CFUNC)  \
-  void THVector_(NAME)(real *y, const real *x, const ptrdiff_t n) \
+  void THVector_(NAME)(ntype *y, const ntype *x, const ptrdiff_t n) \
   { \
     ptrdiff_t i = 0;  \
     for(; i<n-4; i+=4)  \
@@ -198,7 +198,7 @@ void THVector_(normal_fill_DEFAULT)(real *data,
   } \
 
 #define VECTOR_IMPLEMENT_FUNCTION_VALUE(NAME, CFUNC)  \
-  void THVector_(NAME)(real *y, const real *x, const real c, const ptrdiff_t n) \
+  void THVector_(NAME)(ntype *y, const ntype *x, const ntype c, const ptrdiff_t n) \
   { \
     ptrdiff_t i = 0;  \
     for(; i<n-4; i+=4)  \

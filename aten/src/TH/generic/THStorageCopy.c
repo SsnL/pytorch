@@ -2,7 +2,7 @@
 #define TH_GENERIC_FILE "generic/THStorageCopy.c"
 #else
 
-void THStorage_(rawCopy)(THStorage *storage, real *src)
+void THStorage_(rawCopy)(THStorage *storage, ntype *src)
 {
   ptrdiff_t i;
   for(i = 0; i < storage->size; i++)
@@ -20,7 +20,7 @@ void THStorage_(copy##TYPENAMESRC)(THStorage *storage, TH##TYPENAMESRC##Storage 
 { \
   ptrdiff_t i;                                                        \
   for(i = 0; i < storage->size; i++)                                  \
-    storage->data[i] = (real)src->data[i];                            \
+    storage->data[i] = (ntype)src->data[i];                            \
 }
 
 #define IMPLEMENT_THStorage_COPY_FROM_HALF(TYPENAMESRC)		\
@@ -29,7 +29,7 @@ void THStorage_(copy##TYPENAMESRC)(THStorage *storage, TH##TYPENAMESRC##Storage 
   THArgCheck(storage->size == src->size, 2, "size mismatch"); \
   ptrdiff_t i;								\
   for(i = 0; i < storage->size; i++)					\
-    storage->data[i] = (real)TH_half2float(src->data[i]);		\
+    storage->data[i] = (ntype)TH_half2float(src->data[i]);		\
 }
 
 #define IMPLEMENT_THStorage_COPY_TO_HALF(TYPENAMESRC)		\

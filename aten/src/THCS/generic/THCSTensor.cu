@@ -29,7 +29,7 @@ THCTensor *THCSTensor_(toDense)(THCState *state, THCSTensor *self) {
   THLongStorage_free(size);
   THCTensor_(zero)(state, dst);
 
-  real one = ScalarConvert<int, real>::to(1);
+  ntype one = ScalarConvert<int, ntype>::to(1);
   THCSTensor_(spcadd)(state, dst, dst, one, self);
   THCudaCheck(cudaGetLastError());
   return dst;
@@ -105,7 +105,7 @@ THCSTensor *THCSTensor_(newCoalesce)(THCState *state, THCSTensor *self) {
 
   dim3 grid(THCCeilDiv(newNnz, (int64_t) 4), THCCeilDiv(stride, (int64_t) 128));
   dim3 block(32, 4);
-  THCSTensor_coalesceValuesKernel<real, accreal><<<grid, block, 0, stream>>>(
+  THCSTensor_coalesceValuesKernel<ntype, accntype><<<grid, block, 0, stream>>>(
     THCIndexTensor_(data)(state, uniqueOffsets),
     THCIndexTensor_(data)(state, origIndices),
     THCTensor_(data)(state, values),
@@ -120,7 +120,7 @@ THCSTensor *THCSTensor_(newCoalesce)(THCState *state, THCSTensor *self) {
   // int64_t blockX = min(stride, (int64_t) 512);
   // dim3 block(blockX, 512 / blockX);
   // int64_t grid = min((int64_t) 1024, THCCeilDiv((int64_t) newNnz * stride, (int64_t) block.x * block.y));
-  // THCSTensor_coalesceValuesKernel_gridStrided<real, accreal><<<grid, block, 0, stream>>>(
+  // THCSTensor_coalesceValuesKernel_gridStrided<ntype, accntype><<<grid, block, 0, stream>>>(
   //   THCIndexTensor_(data)(state, uniqueOffsets),
   //   THCIndexTensor_(data)(state, origIndices),
   //   THCTensor_(data)(state, values),

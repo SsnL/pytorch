@@ -2,16 +2,16 @@
 #error "You must define THCS_GENERIC_FILE before including THGenerateIntType.h"
 #endif
 
-#define real int32_t
-#define accreal int64_t
-#define Real Int
+#define ntype int32_t
+#define accntype int64_t
+#define Ntype Int
 #define CReal CudaInt
 #define THCS_NTYPE_IS_INT
 #line 1 THCS_GENERIC_FILE
 #include THCS_GENERIC_FILE
-#undef real
-#undef accreal
-#undef Real
+#undef ntype
+#undef accntype
+#undef Ntype
 #undef CReal
 #undef THCS_NTYPE_IS_INT
 

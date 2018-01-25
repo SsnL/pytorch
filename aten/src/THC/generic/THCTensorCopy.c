@@ -15,7 +15,7 @@ void THCTensor_(copyCPU)(THCState *state, THCTensor *self, struct THTensor *src)
     cudaStream_t stream = THCState_getCurrentStream(state);
     THCudaCheck(cudaMemcpyAsync(THCTensor_(data)(state,selfc),
                                 THTensor_(data)(src),
-                                THTensor_(nElement)(src) * sizeof(real),
+                                THTensor_(nElement)(src) * sizeof(ntype),
                                 cudaMemcpyHostToDevice,
                                 stream));
     THCudaCheck(cudaStreamSynchronize(stream));
@@ -29,7 +29,7 @@ void THCTensor_(copyCPU)(THCState *state, THCTensor *self, struct THTensor *src)
 void THCTensor_(copy##TYPEC)(THCState *state, THCTensor *self, struct TH##TYPEC##Tensor *src)                \
 {                                                                       \
   THArgCheck(THCTensor_(nElement)(state, self) == TH##TYPEC##Tensor_nElement(src), 2, "sizes do not match"); \
-  if(THCTypeIdx_(Real) == THCTypeIdx_(TYPEC)) {               \
+  if(THCTypeIdx_(Ntype) == THCTypeIdx_(TYPEC)) {               \
     THCTensor_(copyCPU)(state, self, (THTensor*) src);  /* cast just removes warnings */                     \
   } else {                                                              \
     THLongStorage *size = TH##TYPEC##Tensor_newSizeOf(src);             \
@@ -65,7 +65,7 @@ void THTensor_(copyCuda)(THCState *state, THTensor *self, struct THCTensor *src)
     cudaStream_t stream = THCState_getCurrentStream(state);
     THCudaCheck(cudaMemcpyAsync(THTensor_(data)(selfc),
                                 THCTensor_(data)(state, src),
-                                THCTensor_(nElement)(state, src) * sizeof(real),
+                                THCTensor_(nElement)(state, src) * sizeof(ntype),
                                 cudaMemcpyDeviceToHost,
                                 stream));
     THCudaCheck(cudaStreamSynchronize(stream));
@@ -76,17 +76,17 @@ void THTensor_(copyCuda)(THCState *state, THTensor *self, struct THCTensor *src)
 }
 
 #define IMPLEMENT_TH_CUDA_TENSOR_COPY_TO(TYPEC)                           \
-  void TH_CONCAT_4(TH,TYPEC,Tensor_copyCuda,Real)(THCState *state, TH##TYPEC##Tensor *self, struct THCTensor *src) \
+  void TH_CONCAT_4(TH,TYPEC,Tensor_copyCuda,Ntype)(THCState *state, TH##TYPEC##Tensor *self, struct THCTensor *src) \
   {                                                                       \
     THArgCheck(TH##TYPEC##Tensor_nElement(self) == THCTensor_(nElement)(state, src), 2, "sizes do not match");       \
-    if(THCTypeIdx_(Real) == THCTypeIdx_(TYPEC)) {   \
+    if(THCTypeIdx_(Ntype) == THCTypeIdx_(TYPEC)) {   \
       THTensor_(copyCuda)(state, (THTensor*) self, src);  /* cast just removes compiler warning */                   \
     } else {                                                              \
       THLongStorage *size = THCTensor_(newSizeOf)(state, src);            \
       THTensor *srcf = THTensor_(newWithSize)(size, NULL);                \
                                                                           \
       THTensor_(copyCuda)(state, srcf, src);                              \
-      TH_CONCAT_4(TH,TYPEC,Tensor_copy,Real)(self, srcf);                 \
+      TH_CONCAT_4(TH,TYPEC,Tensor_copy,Ntype)(self, srcf);                 \
                                                                           \
       THLongStorage_free(size);                                           \
       THTensor_(free)(srcf);                                              \
@@ -127,7 +127,7 @@ void THCTensor_(copyAsyncCPU)(THCState *state, THCTensor *self, struct THTensor 
   THCStream *stream  = THCState_getStream(state);
   THCudaCheck(cudaMemcpyAsync(THCTensor_(data)(state, self),
                               THTensor_(data)(src),
-                              THTensor_(nElement)(src) * sizeof(real),
+                              THTensor_(nElement)(src) * sizeof(ntype),
                               cudaMemcpyHostToDevice,
                               stream->stream));
 
@@ -158,7 +158,7 @@ void THTensor_(copyAsyncCuda)(THCState *state, THTensor *self, struct THCTensor 
   THCStream *stream = THCState_getStream(state);
   THCudaCheck(cudaMemcpyAsync(THTensor_(data)(self),
                               THCTensor_(data)(state, src),
-                              THCTensor_(nElement)(state, src) * sizeof(real),
+                              THCTensor_(nElement)(state, src) * sizeof(ntype),
                               cudaMemcpyDeviceToHost,
                               stream->stream));
 

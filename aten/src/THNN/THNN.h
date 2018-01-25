@@ -7,7 +7,7 @@
 #include <omp.h>
 #endif
 
-#define THNN_(NAME) TH_CONCAT_3(THNN_, Real, NAME)
+#define THNN_(NAME) TH_CONCAT_3(THNN_, Ntype, NAME)
 
 #define THIndexTensor THLongTensor
 #define THIndexTensor_(NAME) THLongTensor_ ## NAME

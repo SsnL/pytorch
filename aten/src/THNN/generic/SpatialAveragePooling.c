@@ -83,8 +83,8 @@ void THNN_(SpatialAveragePooling_updateOutput)(
           bool ceil_mode,
           bool count_include_pad)
 {
-  real *output_data;
-  real *input_data;
+  ntype *output_data;
+  ntype *input_data;
 
   int dimw = 2;
   int dimh = 1;
@@ -151,8 +151,8 @@ void THNN_(SpatialAveragePooling_updateOutput)(
     {
       int64_t xx, yy;
       /* For all output pixels... */
-      real *ptr_output = output_data + p*nInputPlane*outputWidth*outputHeight + k*outputWidth*outputHeight;
-      real *ptr_input = input_data + p*nInputPlane*inputWidth*inputHeight + k*inputWidth*inputHeight;
+      ntype *ptr_output = output_data + p*nInputPlane*outputWidth*outputHeight + k*outputWidth*outputHeight;
+      ntype *ptr_input = input_data + p*nInputPlane*inputWidth*inputHeight + k*inputWidth*inputHeight;
       int64_t i;
       for(i = 0; i < outputWidth*outputHeight; i++)
         ptr_output[i] = 0;
@@ -172,7 +172,7 @@ void THNN_(SpatialAveragePooling_updateOutput)(
           hend = fminf(hend, inputHeight);
           wend = fminf(wend, inputWidth);
 
-          real sum = 0;
+          ntype sum = 0;
 
           int divide_factor;
           if(count_include_pad)
@@ -222,8 +222,8 @@ void THNN_(SpatialAveragePooling_updateGradInput)(
   int64_t outputHeight;
   int64_t nInputPlane; // number of channels (or colors)
 
-  real *gradOutput_data;
-  real *input_data, *gradInput_data;
+  ntype *gradOutput_data;
+  ntype *input_data, *gradInput_data;
 
   int64_t k;
 
@@ -280,11 +280,11 @@ void THNN_(SpatialAveragePooling_updateGradInput)(
     int64_t p;
     for(p = 0; p < nbatch; p++)
     {
-      real *ptr_gradOutput = gradOutput_data + p*nInputPlane*outputHeight*outputWidth + k*outputWidth*outputHeight;
+      ntype *ptr_gradOutput = gradOutput_data + p*nInputPlane*outputHeight*outputWidth + k*outputWidth*outputHeight;
       int64_t xx, yy;
 
-      real* ptr_gi = gradInput_data + p*nInputPlane*inputWidth*inputHeight + k*inputWidth*inputHeight;
-      real *ptr_gradInput = gradInput_data + p*nInputPlane*inputWidth*inputHeight + k*inputWidth*inputHeight;
+      ntype* ptr_gi = gradInput_data + p*nInputPlane*inputWidth*inputHeight + k*inputWidth*inputHeight;
+      ntype *ptr_gradInput = gradInput_data + p*nInputPlane*inputWidth*inputHeight + k*inputWidth*inputHeight;
 
       int64_t i;
       for(i=0; i<inputWidth*inputHeight; i++)
@@ -304,7 +304,7 @@ void THNN_(SpatialAveragePooling_updateGradInput)(
           hend = fminf(hend, inputHeight);
           wend = fminf(wend, inputWidth);
 
-          real z = *ptr_gradOutput++;
+          ntype z = *ptr_gradOutput++;
 
           int divide_factor;
           if(count_include_pad)

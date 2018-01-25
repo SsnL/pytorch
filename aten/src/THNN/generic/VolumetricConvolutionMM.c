@@ -133,8 +133,8 @@ static void THNN_(unfolded_acc_vol)(
           long outputHeight)
 {
   long nip;
-  real *input_data = THTensor_(data)(input);
-  real *finput_data = THTensor_(data)(finput);
+  ntype *input_data = THTensor_(data)(input);
+  ntype *finput_data = THTensor_(data)(finput);
 
 //#pragma omp parallel for private(nip)
   for (nip = 0; nip < nInputPlane; nip++)
@@ -146,13 +146,13 @@ static void THNN_(unfolded_acc_vol)(
       {
         for (kw = 0; kw < kW; kw++)
         {
-          real *src = finput_data
+          ntype *src = finput_data
             + nip * (kT*kH*kW*outputDepth*outputHeight*outputWidth)
             + kt  * (kH*kW*outputDepth*outputHeight*outputWidth)
             + kh  * (kW*outputDepth*outputHeight*outputWidth)
             + kw  * (outputDepth*outputHeight*outputWidth);
 
-          real *dst = input_data + nip*(inputDepth*inputHeight*inputWidth);
+          ntype *dst = input_data + nip*(inputDepth*inputHeight*inputWidth);
           if (pT > 0 || pH > 0 || pW > 0)
           {
             for (t = 0; t < outputDepth; t++)
@@ -169,7 +169,7 @@ static void THNN_(unfolded_acc_vol)(
                   }
                   else
                   {
-                    real *dst_slice = dst+it*inputHeight*inputWidth+iy*inputWidth+ix;
+                    ntype *dst_slice = dst+it*inputHeight*inputWidth+iy*inputWidth+ix;
                     THVector_(cadd)(dst_slice, dst_slice, src+t*outputHeight*outputWidth+y*outputWidth+x, 1, 1);
                   }
                 }
@@ -187,7 +187,7 @@ static void THNN_(unfolded_acc_vol)(
                 for(x = 0; x < outputWidth; x++)
                 {
                   ix = x*dW + kw;
-                  real *dst_slice = dst+it*inputHeight*inputWidth+iy*inputWidth+ix;
+                  ntype *dst_slice = dst+it*inputHeight*inputWidth+iy*inputWidth+ix;
                   THVector_(cadd)(dst_slice, dst_slice, src+t*outputHeight*outputWidth+y*outputWidth+x, 1, 1);
                 }
               }
@@ -220,8 +220,8 @@ static void THNN_(unfolded_copy_vol)(
           long outputHeight)
 {
   int64_t k;
-  real *input_data = THTensor_(data)(input);
-  real *finput_data = THTensor_(data)(finput);
+  ntype *input_data = THTensor_(data)(input);
+  ntype *finput_data = THTensor_(data)(finput);
 // #pragma omp parallel for private(k)
   for (k = 0; k < nInputPlane*kT*kH*kW; k++)
   {
@@ -232,12 +232,12 @@ static void THNN_(unfolded_copy_vol)(
     long kh = rest / kW;
     long kw = rest % kW;
     long t,x,y,it,ix,iy;
-    real *dst = finput_data
+    ntype *dst = finput_data
       + nip * (kT*kH*kW*outputDepth*outputHeight*outputWidth)
       + kt  * (kH*kW*outputDepth*outputHeight*outputWidth)
       + kh  * (kW*outputDepth*outputHeight*outputWidth)
       + kw  * (outputDepth*outputHeight*outputWidth);
-    real *src = input_data + nip*(inputDepth*inputHeight*inputWidth);
+    ntype *src = input_data + nip*(inputDepth*inputHeight*inputWidth);
 
     if (pT > 0 || pH > 0 || pW > 0)
     {
@@ -251,9 +251,9 @@ static void THNN_(unfolded_copy_vol)(
           {
             ix = x*dW - pW + kw;
             if (it < 0 || it >= inputDepth || iy < 0 || iy >= inputHeight || ix < 0 || ix >= inputWidth)
-              memset(dst+t*outputHeight*outputWidth+y*outputWidth+x, 0, sizeof(real)*(1));
+              memset(dst+t*outputHeight*outputWidth+y*outputWidth+x, 0, sizeof(ntype)*(1));
             else
-              memcpy(dst+t*outputHeight*outputWidth+y*outputWidth+x, src+it*inputHeight*inputWidth+iy*inputWidth+ix, sizeof(real)*(1));
+              memcpy(dst+t*outputHeight*outputWidth+y*outputWidth+x, src+it*inputHeight*inputWidth+iy*inputWidth+ix, sizeof(ntype)*(1));
           }
         }
       }
@@ -269,7 +269,7 @@ static void THNN_(unfolded_copy_vol)(
           for(x = 0; x < outputWidth; x++)
           {
             ix = x*dW + kw;
-            memcpy(dst+t*outputHeight*outputWidth+y*outputWidth+x, src+it*inputHeight*inputWidth+iy*inputWidth+ix, sizeof(real)*(1));
+            memcpy(dst+t*outputHeight*outputWidth+y*outputWidth+x, src+it*inputHeight*inputWidth+iy*inputWidth+ix, sizeof(ntype)*(1));
           }
         }
       }
@@ -559,7 +559,7 @@ static void THNN_(VolumetricConvolutionMM_accGradParameters_frame)(
           THTensor *gradWeight,
           THTensor *gradBias,
           THTensor *finput,
-          real scale)
+          ntype scale)
 {
   int64_t i;
   THTensor *gradOutput2d = THTensor_(newWithStorage2d)(
@@ -577,8 +577,8 @@ static void THNN_(VolumetricConvolutionMM_accGradParameters_frame)(
     for (i = 0; i < gradBias->size[0]; i++)
     {
       int64_t k;
-      real sum = 0;
-      real *data = gradOutput2d->storage->data + gradOutput2d->storageOffset + i*gradOutput2d->stride[0];
+      ntype sum = 0;
+      ntype *data = gradOutput2d->storage->data + gradOutput2d->storageOffset + i*gradOutput2d->stride[0];
       for (k = 0; k < gradOutput2d->size[1]; k++)
         sum += data[k];
 
@@ -600,9 +600,9 @@ void THNN_(VolumetricConvolutionMM_accGradParameters)(
           int kT, int kW, int kH,
           int dT, int dW, int dH,
           int pT, int pW, int pH,
-          accreal scale_)
+          accntype scale_)
 {
-  real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
+  ntype scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
   int nOutputPlane = (int)gradWeight->size[0];
 
   THNN_(VolumetricConvolutionMM_shapeCheck)(

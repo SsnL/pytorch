@@ -30,8 +30,8 @@ void THNN_(LogSoftMax_updateOutput)(
   input = THTensor_(newContiguous)(input);
   THTensor_(resizeAs)(output, input);
 
-  real *input_data_base  = THTensor_(data)(input);
-  real *output_data_base = THTensor_(data)(output);
+  ntype *input_data_base  = THTensor_(data)(input);
+  ntype *output_data_base = THTensor_(data)(output);
 
   uint64_t dim_stride = inner_size;
   uint64_t outer_stride = dim_size * dim_stride;
@@ -43,14 +43,14 @@ void THNN_(LogSoftMax_updateOutput)(
   {
     uint64_t outer_idx = i / inner_size;
     uint64_t inner_idx = i % inner_size;
-    real *input_data  = input_data_base  + outer_idx * outer_stride + inner_idx;
-    real *output_data = output_data_base + outer_idx * outer_stride + inner_idx;
+    ntype *input_data  = input_data_base  + outer_idx * outer_stride + inner_idx;
+    ntype *output_data = output_data_base + outer_idx * outer_stride + inner_idx;
 
-    real max_input = -THInf;
+    ntype max_input = -THInf;
     for (d = 0; d < LOG_SOFTMAX_CAST_TYPE dim_size; d++)
       max_input = THMax(max_input, input_data[d * dim_stride]);
 
-    accreal logsum = 0;
+    accntype logsum = 0;
     for (d = 0; d < LOG_SOFTMAX_CAST_TYPE dim_size; d++)
       logsum += exp(input_data[d * dim_stride] - max_input);
     logsum = max_input + log(logsum);
@@ -86,9 +86,9 @@ void THNN_(LogSoftMax_updateGradInput)(
   output = THTensor_(newContiguous)(output);
   THTensor_(resizeAs)(gradInput, output);
 
-  real *gradInput_data_base  = THTensor_(data)(gradInput);
-  real *output_data_base     = THTensor_(data)(output);
-  real *gradOutput_data_base = THTensor_(data)(gradOutput);
+  ntype *gradInput_data_base  = THTensor_(data)(gradInput);
+  ntype *output_data_base     = THTensor_(data)(output);
+  ntype *gradOutput_data_base = THTensor_(data)(gradOutput);
 
   uint64_t dim_stride = inner_size;
   uint64_t outer_stride = dim_size * dim_stride;
@@ -100,11 +100,11 @@ void THNN_(LogSoftMax_updateGradInput)(
   {
     uint64_t outer_idx = i / inner_size;
     uint64_t inner_idx = i % inner_size;
-    real *gradInput_data  = gradInput_data_base  + outer_idx * outer_stride + inner_idx;
-    real *output_data     = output_data_base     + outer_idx * outer_stride + inner_idx;
-    real *gradOutput_data = gradOutput_data_base + outer_idx * outer_stride + inner_idx;
+    ntype *gradInput_data  = gradInput_data_base  + outer_idx * outer_stride + inner_idx;
+    ntype *output_data     = output_data_base     + outer_idx * outer_stride + inner_idx;
+    ntype *gradOutput_data = gradOutput_data_base + outer_idx * outer_stride + inner_idx;
 
-    accreal sum = 0;
+    accntype sum = 0;
     for (d = 0; d < LOG_SOFTMAX_CAST_TYPE dim_size; d++)
       sum += gradOutput_data[d * dim_stride];
 

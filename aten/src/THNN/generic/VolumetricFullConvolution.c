@@ -47,7 +47,7 @@ void THNN_(VolumetricFullConvolution_accGradParameters)(
   int dT, int dW, int dH,   // stride
   int pT, int pW, int pH,   // padding
   int aT, int aW, int aH,   // extra output adjustment
-  accreal scale_)
+  accntype scale_)
 {
   THNN_(VolumetricFullDilatedConvolution_accGradParameters)(
       state, input, gradOutput, gradWeight, gradBias, finput, fgradInput,

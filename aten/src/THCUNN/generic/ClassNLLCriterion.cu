@@ -50,12 +50,12 @@ void THNN_(ClassNLLCriterion_updateOutput)(
       weights = THCTensor_(newContiguous)(state, weights);
     }
 
-    ClassNLLCriterion_updateOutput_no_reduce_kernel<real>
+    ClassNLLCriterion_updateOutput_no_reduce_kernel<ntype>
       <<<GET_BLOCKS(batch_size), CUDA_NUM_THREADS, 0, THCState_getCurrentStream(state)>>>(
         batch_size,
-        toDeviceTensor<real, 2>(state, input),
+        toDeviceTensor<ntype, 2>(state, input),
         toDeviceTensor<THCIndex_t, 1>(state, target),
-        toDeviceTensor<real, 1>(state, output),
+        toDeviceTensor<ntype, 1>(state, output),
         weights ? THCTensor_(data)(state, weights) : NULL,
         ignore_index);
 
@@ -76,14 +76,14 @@ void THNN_(ClassNLLCriterion_updateOutput)(
   weights = weights ? THCTensor_(newContiguous)(state, weights) : NULL;
   target = THCIndexTensor_(newContiguous)(state, target);
 
-  real *input_data = THCTensor_(data)(state, input);
-  real *weights_data = weights ? THCTensor_(data)(state, weights) : NULL;
+  ntype *input_data = THCTensor_(data)(state, input);
+  ntype *weights_data = weights ? THCTensor_(data)(state, weights) : NULL;
   THCIndex_t  *target_data = THCIndexTensor_(data)(state, target);
-  real *output_data = THCTensor_(data)(state, output);
-  real *total_weight_data = THCTensor_(data)(state, total_weight);
+  ntype *output_data = THCTensor_(data)(state, output);
+  ntype *total_weight_data = THCTensor_(data)(state, total_weight);
 
   if (THCTensor_(nDimension)(state, input) == 1) {
-    cunn_ClassNLLCriterion_updateOutput_kernel1<real>
+    cunn_ClassNLLCriterion_updateOutput_kernel1<ntype>
       <<<1, 1, 0, THCState_getCurrentStream(state)>>>(
         output_data,
         total_weight_data,
@@ -96,7 +96,7 @@ void THNN_(ClassNLLCriterion_updateOutput)(
     );
 
   } else if (THCTensor_(nDimension)(state, input) == 2) {
-    cunn_ClassNLLCriterion_updateOutput_kernel<real, accreal>
+    cunn_ClassNLLCriterion_updateOutput_kernel<ntype, accntype>
       <<<1, NTHREADS, 0, THCState_getCurrentStream(state)>>>(
         output_data,
         total_weight_data,
@@ -170,12 +170,12 @@ void THNN_(ClassNLLCriterion_updateGradInput)(
       weights = THCTensor_(newContiguous)(state, weights);
     }
 
-    ClassNLLCriterion_updateGradInput_no_reduce_kernel<real>
+    ClassNLLCriterion_updateGradInput_no_reduce_kernel<ntype>
       <<<GET_BLOCKS(batch_size), CUDA_NUM_THREADS, 0, THCState_getCurrentStream(state)>>>(
         batch_size,
         toDeviceTensor<THCIndex_t, 1>(state, target),
-        toDeviceTensor<real, 1>(state, gradOutput),
-        toDeviceTensor<real, 2>(state, gradInput),
+        toDeviceTensor<ntype, 1>(state, gradOutput),
+        toDeviceTensor<ntype, 2>(state, gradInput),
         weights ? THCTensor_(data)(state, weights) : NULL,
         ignore_index);
  
@@ -195,14 +195,14 @@ void THNN_(ClassNLLCriterion_updateGradInput)(
   target = THCIndexTensor_(newContiguous)(state, target);
 
   THCUNN_check_dim_size(state, gradOutput, 1, 0, 1);
-  real *gradOutput_data = THCTensor_(data)(state, gradOutput);
-  real *weights_data = weights ? THCTensor_(data)(state, weights) : NULL;
-  real *gradInput_data = THCTensor_(data)(state, gradInput);
+  ntype *gradOutput_data = THCTensor_(data)(state, gradOutput);
+  ntype *weights_data = weights ? THCTensor_(data)(state, weights) : NULL;
+  ntype *gradInput_data = THCTensor_(data)(state, gradInput);
   THCIndex_t  *target_data = THCIndexTensor_(data)(state, target);
-  real *total_weight_data = THCTensor_(data)(state, total_weight);
+  ntype *total_weight_data = THCTensor_(data)(state, total_weight);
 
   if (THCTensor_(nDimension)(state, input) == 1) {
-    cunn_ClassNLLCriterion_updateGradInput_kernel1<real>
+    cunn_ClassNLLCriterion_updateGradInput_kernel1<ntype>
       <<<1, 1, 0, THCState_getCurrentStream(state)>>>(
         gradInput_data,
         gradOutput_data,
@@ -214,7 +214,7 @@ void THNN_(ClassNLLCriterion_updateGradInput)(
         ignore_index
     );
   } else {
-    cunn_ClassNLLCriterion_updateGradInput_kernel<real>
+    cunn_ClassNLLCriterion_updateGradInput_kernel<ntype>
       <<<1, NTHREADS, 0, THCState_getCurrentStream(state)>>>(
         gradInput_data,
         gradOutput_data,

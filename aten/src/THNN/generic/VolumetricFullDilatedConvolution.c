@@ -3,13 +3,13 @@
 #else
 
 static void THNN_(vol2col)(
-  const real *data_vol, const int channels,
+  const ntype *data_vol, const int channels,
   const int depth, const int height, const int width,
   const int kT, const int kH, const int kW,
   const int pT, const int pH, const int pW,
   const int dT, const int dH, const int dW,
   const int dilationT, const int dilationH, const int dilationW,
-  real *data_col)
+  ntype *data_col)
 {
   int c, t, h, w;
   int depth_col  = (depth  + 2 * pT - (dilationT * (kT - 1) + 1)) / dT + 1;
@@ -45,17 +45,17 @@ static void THNN_(vol2col)(
 }
 
 static void THNN_(col2vol)(
-  const real* data_col, const int channels,
+  const ntype* data_col, const int channels,
   const int depth, const int height, const int width,
   const int out_depth, const int out_height, const int out_width,
   const int kT, const int kH, const int kW,
   const int pT, const int pH, const int pW,
   const int dT, const int dH, const int dW,
   const int dilationT, const int dilationH, const int dilationW,
-  real* data_vol)
+  ntype* data_vol)
 {
   int c, t, h, w;
-  memset(data_vol, 0, sizeof(real) * depth * height * width * channels);
+  memset(data_vol, 0, sizeof(ntype) * depth * height * width * channels);
   int depth_col  = out_depth;
   int height_col = out_height;
   int width_col  = out_width;
@@ -422,9 +422,9 @@ void THNN_(VolumetricFullDilatedConvolution_accGradParameters)(
   int pT, int pW, int pH,   // padding
   int dilationT, int dilationW, int dilationH,
   int aT, int aW, int aH,   // extra output adjustment
-  accreal scale_)
+  accntype scale_)
 {
-  real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
+  ntype scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(scale_);
   // number of input & output planes and kernel size is indirectly defined by the gradWeight tensor
   THNN_(VolumetricFullDilatedConvolution_shapeCheck)(
         input, gradOutput, gradWeight, gradBias,

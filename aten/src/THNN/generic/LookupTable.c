@@ -32,9 +32,9 @@ void THNN_(LookupTable_accGradParameters)(
           THIndexTensor *indices,
           bool scaleGradByFreq,
           int paddingValue,
-          accreal ascale)
+          accntype ascale)
 {
-  real scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(ascale);
+  ntype scale = TH_CONVERT_ACCNTYPE_TO_NTYPE(ascale);
   ptrdiff_t i;
   THInteger_t *count_data = NULL;
 
@@ -67,8 +67,8 @@ void THNN_(LookupTable_accGradParameters)(
 
   gradOutput = THTensor_(newContiguous)(gradOutput);
 
-  real *gw = THTensor_(data)(gradWeight);
-  real *go = THTensor_(data)(gradOutput);
+  ntype *gw = THTensor_(data)(gradWeight);
+  ntype *go = THTensor_(data)(gradOutput);
   int64_t stride = THTensor_(stride)(gradWeight, 0);
 
   if (count_data)
@@ -95,7 +95,7 @@ void THNN_(LookupTable_accGradParameters)(
             int64_t k = input_data[i] - TH_INDEX_BASE;
             if (k >= start && k < end)
             {
-                real scale_ = scale;
+                ntype scale_ = scale;
                 if (count_data) scale_ /= count_data[k];
                 THBlas_(axpy)(stride, scale_, go + i*stride, 1, gw + k*stride, 1);
             }
@@ -113,7 +113,7 @@ void THNN_(LookupTable_accGradParameters)(
     if (input_data[i] != paddingValue)
     {
         int64_t k = input_data[i] - TH_INDEX_BASE;
-        real scale_ = scale;
+        ntype scale_ = scale;
         if (count_data) scale_ /= count_data[k];
         THBlas_(axpy)(stride, scale_, go + i*stride, 1, gw + k*stride, 1);
      }
@@ -127,13 +127,13 @@ void THNN_(LookupTable_accGradParameters)(
  */
 
 static void THNN_(LookupTable_renormRow)(
-          real *row_data,
+          ntype *row_data,
           int64_t stride,
-          real maxNorm,
-          real normType)
+          ntype maxNorm,
+          ntype normType)
 {
-  real norm = 0;
-  real new_norm;
+  ntype norm = 0;
+  ntype new_norm;
   int64_t j;
   for (j=0; j<stride; j++)
   {
@@ -164,11 +164,11 @@ void THNN_(LookupTable_renorm)(
           THNNState *state,
           THIndexTensor *idx,
           THTensor *weight,
-          accreal maxNorm_,
-          accreal normType_)
+          accntype maxNorm_,
+          accntype normType_)
 {
-  real maxNorm = TH_CONVERT_ACCNTYPE_TO_NTYPE(maxNorm_);
-  real normType = TH_CONVERT_ACCNTYPE_TO_NTYPE(normType_);
+  ntype maxNorm = TH_CONVERT_ACCNTYPE_TO_NTYPE(maxNorm_);
+  ntype normType = TH_CONVERT_ACCNTYPE_TO_NTYPE(normType_);
   if (!THTensor_(isContiguous)(weight))
     THError("weight must be contiguous");
   if (!THIndexTensor_(isContiguous)(idx))
@@ -184,7 +184,7 @@ void THNN_(LookupTable_renorm)(
 
   int64_t numw = THTensor_(size)(weight, 0);
   int64_t stride = THTensor_(stride)(weight, 0);
-  real *gw = THTensor_(data)(weight);
+  ntype *gw = THTensor_(data)(weight);
   for (i=0; i<numel; i++) {
     if (row_idx[i] < TH_INDEX_BASE || row_idx[i] >= numw + TH_INDEX_BASE) {
       THError("input need to be in the range %ld <= input < %ld, "

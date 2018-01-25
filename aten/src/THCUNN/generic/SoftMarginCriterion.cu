@@ -12,16 +12,16 @@ void THNN_(SoftMarginCriterion_updateOutput)(
   THCUNN_check_nElement(state, input, target);
   THCTensor_(resize1d)(state, output, 1);
   THCUNN_assertSameGPU(state, 2, input, target);
-  accreal sum;
+  accntype sum;
 
   ptrdiff_t size = THCTensor_(nElement)(state, input);
 
   input = THCTensor_(newContiguous)(state, input);
   target = THCTensor_(newContiguous)(state, target);
 
-  thrust::device_ptr<real> input_data(THCTensor_(data)(state, input));
-  thrust::device_ptr<real> target_data(THCTensor_(data)(state, target));
-  sum = thrust::inner_product(input_data, input_data+size, target_data, (accreal) 0, thrust::plus<accreal>(), softmargin_functor<real, accreal>());
+  thrust::device_ptr<ntype> input_data(THCTensor_(data)(state, input));
+  thrust::device_ptr<ntype> target_data(THCTensor_(data)(state, target));
+  sum = thrust::inner_product(input_data, input_data+size, target_data, (accntype) 0, thrust::plus<accntype>(), softmargin_functor<ntype, accntype>());
 
   if(sizeAverage)
     sum /= size;
@@ -29,7 +29,7 @@ void THNN_(SoftMarginCriterion_updateOutput)(
   THCTensor_(free)(state, input);
   THCTensor_(free)(state, target);
 
-  THCTensor_(set1d)(state, output, 0, ScalarConvert<accreal, real>::to(sum));
+  THCTensor_(set1d)(state, output, 0, ScalarConvert<accntype, ntype>::to(sum));
 }
 
 void THNN_(SoftMarginCriterion_updateGradInput)(
@@ -43,18 +43,18 @@ void THNN_(SoftMarginCriterion_updateGradInput)(
   THCUNN_assertSameGPU(state, 3, input, target, gradInput);
 
   ptrdiff_t size = THCTensor_(nElement)(state, input);
-  accreal norm = (sizeAverage ? 1./size : 1.);
+  accntype norm = (sizeAverage ? 1./size : 1.);
 
   input = THCTensor_(newContiguous)(state, input);
   target = THCTensor_(newContiguous)(state, target);
 
   THCTensor_(resizeAs)(state, gradInput, input);
 
-  thrust::device_ptr<real> input_data(THCTensor_(data)(state, input));
-  thrust::device_ptr<real> target_data(THCTensor_(data)(state, target));
-  thrust::device_ptr<real> gradInput_data(THCTensor_(data)(state, gradInput));
+  thrust::device_ptr<ntype> input_data(THCTensor_(data)(state, input));
+  thrust::device_ptr<ntype> target_data(THCTensor_(data)(state, target));
+  thrust::device_ptr<ntype> gradInput_data(THCTensor_(data)(state, gradInput));
 
-  thrust::transform(input_data, input_data+size, target_data, gradInput_data, softmargin_updateGradInput_functor<real, accreal>(norm));
+  thrust::transform(input_data, input_data+size, target_data, gradInput_data, softmargin_updateGradInput_functor<ntype, accntype>(norm));
 
   THCTensor_(free)(state, input);
   THCTensor_(free)(state, target);

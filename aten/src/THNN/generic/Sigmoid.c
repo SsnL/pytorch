@@ -18,8 +18,8 @@ void THNN_(Sigmoid_updateGradInput)(
 {
   THNN_CHECK_NELEMENT(output, gradOutput);
   THTensor_(resizeAs)(gradInput, output);
-  TH_TENSOR_APPLY3(real, gradInput, real, gradOutput, real, output,
-    real z = *output_data;
+  TH_TENSOR_APPLY3(ntype, gradInput, ntype, gradOutput, ntype, output,
+    ntype z = *output_data;
     *gradInput_data = *gradOutput_data * (1. - z) * z;
   );
 }

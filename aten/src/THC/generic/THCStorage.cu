@@ -2,10 +2,10 @@
 #define THC_GENERIC_FILE "generic/THCStorage.cu"
 #else
 
-void THCStorage_(fill)(THCState *state, THCStorage *self, real value)
+void THCStorage_(fill)(THCState *state, THCStorage *self, ntype value)
 {
   THCThrustAllocator thrustAlloc(state);
-  thrust::device_ptr<real> self_data(self->data);
+  thrust::device_ptr<ntype> self_data(self->data);
   thrust::fill(
 #if CUDA_VERSION >= 7000
     thrust::cuda::par(thrustAlloc).on(THCState_getCurrentStream(state)),
@@ -27,8 +27,8 @@ void THCStorage_(resize)(THCState *state, THCStorage *self, ptrdiff_t size)
     cudaError_t err = (*self->allocator->realloc)(
       self->allocatorContext,
       (void**)&(self->data),
-      self->size * sizeof(real),
-      size * sizeof(real), THCState_getCurrentStream(state));
+      self->size * sizeof(ntype),
+      size * sizeof(ntype), THCState_getCurrentStream(state));
     if (err != cudaSuccess) {
       THCudaCheck(err);
     }
@@ -49,11 +49,11 @@ void THCStorage_(resize)(THCState *state, THCStorage *self, ptrdiff_t size)
   }
   else
   {
-    real *data = NULL;
+    ntype *data = NULL;
     cudaError_t err =
       (*self->allocator->malloc)(self->allocatorContext,
                                  (void**)&(data),
-                                 size * sizeof(real),
+                                 size * sizeof(ntype),
                                  THCState_getCurrentStream(state));
     THCudaCheck(err);
 
@@ -63,7 +63,7 @@ void THCStorage_(resize)(THCState *state, THCStorage *self, ptrdiff_t size)
 
       THCudaCheck(cudaMemcpyAsync(data,
                                   self->data,
-                                  THMin(self->size, size) * sizeof(real),
+                                  THMin(self->size, size) * sizeof(ntype),
                                   cudaMemcpyDeviceToDevice,
                                   THCState_getCurrentStream(state)));
       if(self->flag & TH_STORAGE_FREEMEM) {

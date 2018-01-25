@@ -27,7 +27,7 @@ void THNN_(SoftMax_updateOutput)(
   for (int64_t i = dim + 1; i < input->nDimension; ++i)
     inner_size *= input->size[i];
 
-  HostSoftMaxForward<real, accreal, SoftMaxForwardEpilogue>(
+  HostSoftMaxForward<ntype, accntype, SoftMaxForwardEpilogue>(
       state,
       THCTensor_(data)(state, input), THCTensor_(data)(state, output),
       outer_size, dim_size, inner_size,
@@ -69,7 +69,7 @@ void THNN_(SoftMax_updateGradInput)(
     gradOutput = tmp;
   }
 
-  HostSoftMaxBackward<real, accreal, SoftMaxBackwardEpilogue>(
+  HostSoftMaxBackward<ntype, accntype, SoftMaxBackwardEpilogue>(
       state,
       THCTensor_(data)(state, gradOutput),
       THCTensor_(data)(state, gradInput),

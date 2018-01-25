@@ -119,20 +119,20 @@ void THNN_(VolumetricMaxUnpooling_updateOutput)(
   THCTensor_(zero)(state, output);
 
   // Collapse batch and feature dimensions
-  THCDeviceTensor<real, 4> cudaInput;
-  THCDeviceTensor<real, 4> cudaOutput;
+  THCDeviceTensor<ntype, 4> cudaInput;
+  THCDeviceTensor<ntype, 4> cudaOutput;
   THCDeviceTensor<THCIndex_t, 4> cudaIndices;
 
   if (THCTensor_(nDimension)(state, input) == 4)
   {
-    cudaInput  = toDeviceTensor<real, 4>(state, input);
-    cudaOutput = toDeviceTensor<real, 4>(state, output);
+    cudaInput  = toDeviceTensor<ntype, 4>(state, input);
+    cudaOutput = toDeviceTensor<ntype, 4>(state, output);
     cudaIndices = toDeviceTensor<THCIndex_t, 4>(state, indices);
   }
   else
   {
-    cudaInput  = toDeviceTensor<real, 5>(state, input).downcastOuter<4>();
-    cudaOutput = toDeviceTensor<real, 5>(state, output).downcastOuter<4>();
+    cudaInput  = toDeviceTensor<ntype, 5>(state, input).downcastOuter<4>();
+    cudaOutput = toDeviceTensor<ntype, 5>(state, output).downcastOuter<4>();
     cudaIndices = toDeviceTensor<THCIndex_t, 5>(state, indices).downcastOuter<4>();
   }
 
@@ -206,22 +206,22 @@ void THNN_(VolumetricMaxUnpooling_updateGradInput)(
   THCTensor_(zero)(state, gradInput);
 
   // Collapse batch and feature dimensions
-  THCDeviceTensor<real, 4> cudaGradInput;
-  THCDeviceTensor<real, 4> cudaGradOutput;
+  THCDeviceTensor<ntype, 4> cudaGradInput;
+  THCDeviceTensor<ntype, 4> cudaGradOutput;
   THCDeviceTensor<THCIndex_t, 4> cudaIndices;
 
   if (THCTensor_(nDimension)(state, input) == 4)
   {
-    cudaGradInput  = toDeviceTensor<real, 4>(state, gradInput);
-    cudaGradOutput = toDeviceTensor<real, 4>(state, gradOutput);
+    cudaGradInput  = toDeviceTensor<ntype, 4>(state, gradInput);
+    cudaGradOutput = toDeviceTensor<ntype, 4>(state, gradOutput);
     cudaIndices = toDeviceTensor<THCIndex_t, 4>(state, indices);
   }
   else
   {
     cudaGradInput =
-      toDeviceTensor<real, 5>(state, gradInput).downcastOuter<4>();
+      toDeviceTensor<ntype, 5>(state, gradInput).downcastOuter<4>();
     cudaGradOutput =
-      toDeviceTensor<real, 5>(state, gradOutput).downcastOuter<4>();
+      toDeviceTensor<ntype, 5>(state, gradOutput).downcastOuter<4>();
     cudaIndices =
       toDeviceTensor<THCIndex_t, 5>(state, indices).downcastOuter<4>();
   }

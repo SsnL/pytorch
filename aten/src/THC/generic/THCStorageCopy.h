@@ -4,7 +4,7 @@
 
 /* Support for copy between different Storage types */
 
-THC_API void THCStorage_(rawCopy)(THCState *state, THCStorage *storage, real *src);
+THC_API void THCStorage_(rawCopy)(THCState *state, THCStorage *storage, ntype *src);
 THC_API void THCStorage_(copy)(THCState *state, THCStorage *storage, THCStorage *src);
 THC_API void THCStorage_(copyByte)(THCState *state, THCStorage *storage, struct THByteStorage *src);
 THC_API void THCStorage_(copyChar)(THCState *state, THCStorage *storage, struct THCharStorage *src);
@@ -26,14 +26,14 @@ THC_API void THCStorage_(copyCudaDouble)(THCState *state, THCStorage *storage, s
 THC_API void THCStorage_(copyCudaHalf)(THCState *state, THCStorage *storage, struct THCudaHalfStorage *src);
 #endif
 
-THC_API void TH_CONCAT_2(THByteStorage_copyCuda  , Real)(THCState *state, THByteStorage *self, struct THCStorage *src);
-THC_API void TH_CONCAT_2(THCharStorage_copyCuda  , Real)(THCState *state, THCharStorage *self, struct THCStorage *src);
-THC_API void TH_CONCAT_2(THShortStorage_copyCuda , Real)(THCState *state, THShortStorage *self, struct THCStorage *src);
-THC_API void TH_CONCAT_2(THIntStorage_copyCuda   , Real)(THCState *state, THIntStorage *self, struct THCStorage *src);
-THC_API void TH_CONCAT_2(THLongStorage_copyCuda  , Real)(THCState *state, THLongStorage *self, struct THCStorage *src);
-THC_API void TH_CONCAT_2(THFloatStorage_copyCuda , Real)(THCState *state, THFloatStorage *self, struct THCStorage *src);
-THC_API void TH_CONCAT_2(THDoubleStorage_copyCuda, Real)(THCState *state, THDoubleStorage *self, struct THCStorage *src);
-THC_API void TH_CONCAT_2(THHalfStorage_copyCuda, Real)(THCState *state, THHalfStorage *self, struct THCStorage *src);
+THC_API void TH_CONCAT_2(THByteStorage_copyCuda  , Ntype)(THCState *state, THByteStorage *self, struct THCStorage *src);
+THC_API void TH_CONCAT_2(THCharStorage_copyCuda  , Ntype)(THCState *state, THCharStorage *self, struct THCStorage *src);
+THC_API void TH_CONCAT_2(THShortStorage_copyCuda , Ntype)(THCState *state, THShortStorage *self, struct THCStorage *src);
+THC_API void TH_CONCAT_2(THIntStorage_copyCuda   , Ntype)(THCState *state, THIntStorage *self, struct THCStorage *src);
+THC_API void TH_CONCAT_2(THLongStorage_copyCuda  , Ntype)(THCState *state, THLongStorage *self, struct THCStorage *src);
+THC_API void TH_CONCAT_2(THFloatStorage_copyCuda , Ntype)(THCState *state, THFloatStorage *self, struct THCStorage *src);
+THC_API void TH_CONCAT_2(THDoubleStorage_copyCuda, Ntype)(THCState *state, THDoubleStorage *self, struct THCStorage *src);
+THC_API void TH_CONCAT_2(THHalfStorage_copyCuda, Ntype)(THCState *state, THHalfStorage *self, struct THCStorage *src);
 
 THC_API void THStorage_(copyCuda)(THCState *state, THStorage *self, THCStorage *src);
 THC_API void THCStorage_(copyCuda)(THCState *state, THCStorage *self, THCStorage *src);

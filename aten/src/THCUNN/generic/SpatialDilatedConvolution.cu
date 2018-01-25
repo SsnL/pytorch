@@ -117,7 +117,7 @@ void THNN_(SpatialDilatedConvolution_updateOutput)(
   if (ones->nDimension != 2 || ones->size[0]*ones->size[1] < outputHeight*outputWidth) {
     // Resize plane and fill with ones...
     THCTensor_(resize2d)(state, ones, outputHeight, outputWidth);
-    THCTensor_(fill)(state, ones, ScalarConvert<int, real>::to(1));
+    THCTensor_(fill)(state, ones, ScalarConvert<int, ntype>::to(1));
   }
 
   // Helpers
@@ -149,10 +149,10 @@ void THNN_(SpatialDilatedConvolution_updateOutput)(
           state,
           't', 'n',
           n_, m_, k_,
-          ScalarConvert<int, real>::to(1),
+          ScalarConvert<int, ntype>::to(1),
           THCTensor_(data)(state, ones), k_,
           THCTensor_(data)(state, bias), k_,
-          ScalarConvert<int, real>::to(0),
+          ScalarConvert<int, ntype>::to(0),
           THCTensor_(data)(state, output_n), n_
       );
     } else {
@@ -185,10 +185,10 @@ void THNN_(SpatialDilatedConvolution_updateOutput)(
         state,
         'n', 'n',
         n, m, k,
-        ScalarConvert<int, real>::to(1),
+        ScalarConvert<int, ntype>::to(1),
         THCTensor_(data)(state, columns), n,
         THCTensor_(data)(state, weight), k,
-        ScalarConvert<int, real>::to(1),
+        ScalarConvert<int, ntype>::to(1),
         THCTensor_(data)(state, output_n), n
     );
   }
@@ -283,15 +283,15 @@ void THNN_(SpatialDilatedConvolution_updateGradInput)(
         state,
         'n', 't',
         n, m, k,
-        ScalarConvert<int, real>::to(1),
+        ScalarConvert<int, ntype>::to(1),
         THCTensor_(data)(state, gradOutput_n), n,
         THCTensor_(data)(state, weight), m,
-        ScalarConvert<int, real>::to(0),
+        ScalarConvert<int, ntype>::to(0),
         THCTensor_(data)(state, gradColumns), n
     );
 
     // Unpack columns back into input:
-    col2im<real, accreal>(
+    col2im<ntype, accntype>(
       THCState_getCurrentStream(state),
       THCTensor_(data)(state, gradColumns),
       nInputPlane, inputHeight, inputWidth, outputHeight, outputWidth, kH, kW, padH, padW, dH, dW,
@@ -328,9 +328,9 @@ void THNN_(SpatialDilatedConvolution_accGradParameters)(
            int dW, int dH,
            int padW, int padH,
            int dilationW, int dilationH,
-           accreal scale_) {
+           accntype scale_) {
 
-  real scale = ScalarConvert<accreal, real>::to(scale_);
+  ntype scale = ScalarConvert<accntype, ntype>::to(scale_);
   THCUNN_assertSameGPU(state, 5, input, gradOutput, gradWeight, columns, ones);
   if (gradBias) {
    THCUNN_assertSameGPU(state, 2, gradWeight, gradBias);
@@ -369,7 +369,7 @@ void THNN_(SpatialDilatedConvolution_accGradParameters)(
   if (ones->nDimension != 2 || ones->size[0]*ones->size[1] < outputHeight*outputWidth) {
     // Resize plane and fill with ones...
     THCTensor_(resize2d)(state, ones, outputHeight, outputWidth);
-    THCTensor_(fill)(state, ones, ScalarConvert<int, real>::to(1));
+    THCTensor_(fill)(state, ones, ScalarConvert<int, ntype>::to(1));
   }
 
   // Resize temporary columns
@@ -414,7 +414,7 @@ void THNN_(SpatialDilatedConvolution_accGradParameters)(
         scale,
         THCTensor_(data)(state, columns), k,
         THCTensor_(data)(state, gradOutput_n), k,
-        ScalarConvert<int, real>::to(1),
+        ScalarConvert<int, ntype>::to(1),
         THCTensor_(data)(state, gradWeight), n
     );
 
@@ -438,7 +438,7 @@ void THNN_(SpatialDilatedConvolution_accGradParameters)(
           scale,
           THCTensor_(data)(state, gradOutput_n), k_,
           THCTensor_(data)(state, ones), 1,
-          ScalarConvert<int, real>::to(1),
+          ScalarConvert<int, ntype>::to(1),
           THCTensor_(data)(state, gradBias), 1
       );
       #endif
@@ -450,7 +450,7 @@ void THNN_(SpatialDilatedConvolution_accGradParameters)(
           scale,
           THCTensor_(data)(state, gradOutput_n), k_,
           THCTensor_(data)(state, ones), k_,
-          ScalarConvert<int, real>::to(1),
+          ScalarConvert<int, ntype>::to(1),
           THCTensor_(data)(state, gradBias), m_
       );
       #endif

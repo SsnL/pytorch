@@ -1,8 +1,8 @@
 #include "TH.h"
 #include "THNN.h"
 
-#define torch_(NAME) TH_CONCAT_3(torch_, Real, NAME)
-#define nn_(NAME) TH_CONCAT_3(nn_, Real, NAME)
+#define torch_(NAME) TH_CONCAT_3(torch_, Ntype, NAME)
+#define nn_(NAME) TH_CONCAT_3(nn_, Ntype, NAME)
 
 #define THNN_CHECK_SHAPE(I1, I2)			\
   if (I1 != NULL && I2 != NULL && !THTensor_(isSameSizeAs)(I1, I2))	\

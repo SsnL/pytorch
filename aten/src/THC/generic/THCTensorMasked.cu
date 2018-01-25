@@ -5,7 +5,7 @@
 
 THC_API void
 THCTensor_(maskedFill)(THCState* state,
-                       THCTensor *tensor, THCudaByteTensor *mask, real value)
+                       THCTensor *tensor, THCudaByteTensor *mask, ntype value)
 {
   THCAssertSameGPU(THCTensor_(checkGPU)(state, 2, tensor, mask));
   THArgCheck(THCTensor_(nElement)(state, tensor) ==
@@ -13,7 +13,7 @@ THCTensor_(maskedFill)(THCState* state,
              2, "sizes do not match");
 
   if (!THC_pointwiseApply2(state, tensor, mask,
-                           TensorMaskedFillOp<real, unsigned char>(value))) {
+                           TensorMaskedFillOp<ntype, unsigned char>(value))) {
     THArgCheck(false, 2, CUTORCH_DIM_WARNING);
   }
 
@@ -22,7 +22,7 @@ THCTensor_(maskedFill)(THCState* state,
 
 THC_API void
 THCTensor_(maskedFillByte)(THCState* state,
-                           THCTensor *tensor, THByteTensor *mask, real value)
+                           THCTensor *tensor, THByteTensor *mask, ntype value)
 {
   THCAssertSameGPU(THCTensor_(checkGPU)(state, 1, tensor));
   THLongStorage* maskSizes = THByteTensor_newSizeOf(mask);
@@ -90,7 +90,7 @@ THCTensor_(maskedCopy)(THCState* state,
   // maskPrefixSum
   bool status = THC_pointwiseApply3(
     state, tensor, mask, maskPrefixSum,
-    TensorMaskedCopyOp<real, unsigned char, int64_t>(
+    TensorMaskedCopyOp<ntype, unsigned char, int64_t>(
       THCTensor_(data)(state, contigSrc)));
 
   THCTensor_(free)(state, contigSrc);
@@ -160,7 +160,7 @@ THCTensor_(maskedSelect)(THCState* state,
   // Then copy over the masked elements at their desired output index
   bool status = THC_pointwiseApply3(
     state, mask, maskPrefixSum,
-    src, TensorMaskedSelectOp<real, unsigned char, int64_t>(
+    src, TensorMaskedSelectOp<ntype, unsigned char, int64_t>(
       THCTensor_(data)(state, tensor)));
 
   THCudaLongTensor_free(state, maskLong);

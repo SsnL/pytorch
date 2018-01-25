@@ -46,15 +46,15 @@ void THCSTensor_(zerosLike)(THCState *state, THCSTensor *r_, THCSTensor *input)
   THCSTensor_(zero)(state, r_);
 }
 
-void THCTensor_(spaddcmul)(THCState *state, THCTensor *r_, THCTensor *t, real value, THCSTensor *src1, THCSTensor *src2) {
+void THCTensor_(spaddcmul)(THCState *state, THCTensor *r_, THCTensor *t, ntype value, THCSTensor *src1, THCSTensor *src2) {
   THError("WARNING: Sparse Cuda Tensor op spaddcmul is not implemented");
 }
 
-void THCTensor_(spaddcdiv)(THCState *state, THCTensor *r_, THCTensor *t, real value, THCSTensor *src1, THCSTensor *src2) {
+void THCTensor_(spaddcdiv)(THCState *state, THCTensor *r_, THCTensor *t, ntype value, THCSTensor *src1, THCSTensor *src2) {
   THError("WARNING: Sparse Cuda Tensor op spaddcdiv is not implemented");
 }
 
-void THCSTensor_(spaddmm)(THCState *state, THCTensor *r_, real beta, THCTensor *t, real alpha, THCSTensor *sparse_, THCTensor *dense) {
+void THCSTensor_(spaddmm)(THCState *state, THCTensor *r_, ntype beta, THCTensor *t, ntype alpha, THCSTensor *sparse_, THCTensor *dense) {
 #if defined(THCS_NTYPE_IS_FLOAT) || defined(THCS_NTYPE_IS_DOUBLE)
   THCAssertSameGPU(THCSTensor_(checkGPU)(state, 1, 4, sparse_, r_, t, dense));
   THCudaIntTensor *csr;
@@ -97,7 +97,7 @@ void THCSTensor_(spaddmm)(THCState *state, THCTensor *r_, real beta, THCTensor *
 
   if (beta == 0) {
     THCTensor_(zero)(state, r_);
-  } else if (beta == ScalarConvert<int, real>::to(1)) {
+  } else if (beta == ScalarConvert<int, ntype>::to(1)) {
     if (t != r_) {
       THCTensor_(copy)(state, r_, t);
     }
@@ -166,12 +166,12 @@ void THCSTensor_(spaddmm)(THCState *state, THCTensor *r_, real beta, THCTensor *
 #endif
 }
 
-void THCSTensor_(sspaddmm)(THCState *state, THCSTensor *r_, real beta, THCSTensor *t, real alpha, THCSTensor *sparse, THCTensor *dense) {
+void THCSTensor_(sspaddmm)(THCState *state, THCSTensor *r_, ntype beta, THCSTensor *t, ntype alpha, THCSTensor *sparse, THCTensor *dense) {
   THError("WARNING: Sparse Cuda Tensor op sspaddmm is not implemented");
   // TODO Write some kernels
 }
 
-void THCSTensor_(hspmm)(THCState *state, THCSTensor *r_, real alpha, THCSTensor *sparse_, THCTensor *dense) {
+void THCSTensor_(hspmm)(THCState *state, THCSTensor *r_, ntype alpha, THCSTensor *sparse_, THCTensor *dense) {
 #if CUDA_VERSION >= 7000
   THCThrustAllocator thrustAlloc(state);
 #define THRUST_EXEC(fn, ...) fn(thrust::cuda::par(thrustAlloc).on(THCState_getCurrentStream(state)), ##__VA_ARGS__)
@@ -217,7 +217,7 @@ void THCSTensor_(hspmm)(THCState *state, THCSTensor *r_, real alpha, THCSTensor 
   thrust::device_ptr<indexT> indicesIter(THCIndexTensor_(data)(state, dstIndices));
   THRUST_EXEC(thrust::sequence, indicesIter, indicesIter + nnz);
   newSparse->size[0] = nnz;
-  THCSTensor_(spaddmm)(state, values, ScalarConvert<int, real>::to(0), values, alpha, newSparse, dense);
+  THCSTensor_(spaddmm)(state, values, ScalarConvert<int, ntype>::to(0), values, alpha, newSparse, dense);
   THCSTensor_(_move)(state, r_, indices, values);
 
   THCSTensor_(free)(state, newSparse);
@@ -228,7 +228,7 @@ void THCSTensor_(hspmm)(THCState *state, THCSTensor *r_, real alpha, THCSTensor 
 #undef THRUST_EXEC
 }
 
-void THCSTensor_(spcadd)(THCState *state, THCTensor *r_, THCTensor *dense, real value, THCSTensor *sparse) {
+void THCSTensor_(spcadd)(THCState *state, THCTensor *r_, THCTensor *dense, ntype value, THCSTensor *sparse) {
   THCAssertSameGPU(THCSTensor_(checkGPU)(state, 1, 3, sparse, r_, dense));
 
   const ptrdiff_t nnz = THCSTensor_(nnz)(state, sparse);
@@ -262,17 +262,17 @@ void THCSTensor_(spcadd)(THCState *state, THCTensor *r_, THCTensor *dense, real 
     if (sparse->nDimensionV == 0) {
       THArgCheck(getApplyGrid(state, nnz, grid), 1, CUTORCH_DIM_WARNING);
 
-      THCSTensor_sparseElementwiseKernelScalar<TensorCAddOp<real>, uint64_t, real>
+      THCSTensor_sparseElementwiseKernelScalar<TensorCAddOp<ntype>, uint64_t, ntype>
         <<<grid, block, 0, THCState_getCurrentStream(state)>>>(
-          TensorCAddOp<real>(value),
+          TensorCAddOp<ntype>(value),
           V_INFO(r_), I_INFO(indices), V_INFO(values),
           (uint64_t) nnz);
     } else {
       THArgCheck(getApplyGrid(state, nnz * block.x, grid), 1, CUTORCH_DIM_WARNING);
 
-      THCSTensor_sparseElementwiseKernel<TensorCAddOp<real>, uint64_t, real>
+      THCSTensor_sparseElementwiseKernel<TensorCAddOp<ntype>, uint64_t, ntype>
         <<<grid, block, 0, THCState_getCurrentStream(state)>>>(
-          TensorCAddOp<real>(value),
+          TensorCAddOp<ntype>(value),
           V_INFO(r_), I_INFO(indices), V_INFO(values),
           (uint64_t) nnz);
     }
@@ -280,7 +280,7 @@ void THCSTensor_(spcadd)(THCState *state, THCTensor *r_, THCTensor *dense, real 
     THCIndexTensor *indices1D = THCSTensor_(newFlattenedIndices)(state, sparse, 0);
     THCIndexTensor_(resize1d)(state, indices1D, nnz);
 
-    if (value != ScalarConvert<int, real>::to(1)) {
+    if (value != ScalarConvert<int, ntype>::to(1)) {
       // FIXME: at some point we can wrap the scale into indexAdd
       THCTensor *scaled = THCTensor_(new)(state);
       THCTensor_(mul)(state, scaled, values, value);
@@ -314,7 +314,7 @@ void THCSTensor_(spcadd)(THCState *state, THCTensor *r_, THCTensor *dense, real 
   THCTensor_(free)(state, r);
 }
 
-void THCSTensor_(mul)(THCState *state, THCSTensor *r_, THCSTensor *t, real value) {
+void THCSTensor_(mul)(THCState *state, THCSTensor *r_, THCSTensor *t, ntype value) {
   if (r_ == t) {
     THCTensor *r_values_ = THCSTensor_(newValues)(state, r_);
     THCTensor_(mul)(state, r_values_, r_values_, value);
@@ -340,7 +340,7 @@ void THCSTensor_(mul)(THCState *state, THCSTensor *r_, THCSTensor *t, real value
   }
 }
 
-void THCSTensor_(div)(THCState *state, THCSTensor *r_, THCSTensor *t, real value) {
+void THCSTensor_(div)(THCState *state, THCSTensor *r_, THCSTensor *t, ntype value) {
   if (r_ == t) {
     THCTensor *r_values_ = THCSTensor_(newValues)(state, r_);
     THCTensor_(div)(state, r_values_, r_values_, value);
@@ -366,7 +366,7 @@ void THCSTensor_(div)(THCState *state, THCSTensor *r_, THCSTensor *t, real value
   }
 }
 
-void THCSTensor_(cadd)(THCState *state, THCSTensor *r_, THCSTensor *t, real value, THCSTensor *src) {
+void THCSTensor_(cadd)(THCState *state, THCSTensor *r_, THCSTensor *t, ntype value, THCSTensor *src) {
   THCAssertSameGPU(THCSTensor_(checkGPU)(state, 3, 3, r_, t, src));
   if(!THCSTensor_(isSameSizeAs)(state, t, src)) {
     THError("cadd operands have incompatible sizes or dimension types");
@@ -389,7 +389,7 @@ void THCSTensor_(cadd)(THCState *state, THCSTensor *r_, THCSTensor *t, real valu
   THCTensor *t_values_ = THCSTensor_(newValues)(state, t);
   THCIndexTensor *s_indices_ = THCSTensor_(newIndices)(state, src);
   THCTensor *s_values_ = THCSTensor_(newValues)(state, src);
-  if (value != ScalarConvert<int, real>::to(1)) {
+  if (value != ScalarConvert<int, ntype>::to(1)) {
     THCTensor *s_values_orig = s_values_;
     s_values_ = THCTensor_(new)(state);
     THCTensor_(mul)(state, s_values_, s_values_orig, value);
@@ -416,8 +416,8 @@ void THCSTensor_(cadd)(THCState *state, THCSTensor *r_, THCSTensor *t, real valu
   THCTensor_(free)(state, s_values_);
 }
 
-void THCSTensor_(csub)(THCState *state, THCSTensor *r_, THCSTensor *t, real value, THCSTensor *src) {
-  THCSTensor_(cadd)(state, r_, t, ScalarNegate<real>::to(value), src);
+void THCSTensor_(csub)(THCState *state, THCSTensor *r_, THCSTensor *t, ntype value, THCSTensor *src) {
+  THCSTensor_(cadd)(state, r_, t, ScalarNegate<ntype>::to(value), src);
 }
 
 void THCSTensor_(cmul)(THCState *state, THCSTensor *r_, THCSTensor *t_, THCSTensor *src_) {
@@ -452,16 +452,16 @@ void THCSTensor_(cmul)(THCState *state, THCSTensor *r_, THCSTensor *t_, THCSTens
   dim3 grid;
   THArgCheck(getApplyGrid(state, valueSize, grid), 1, CUTORCH_DIM_WARNING);
 
-  THCSTensor_valueSparseIntersectionKernel<TensorMulOp<real>, uint64_t, real>
+  THCSTensor_valueSparseIntersectionKernel<TensorMulOp<ntype>, uint64_t, ntype>
     <<<grid, block, 0, THCState_getCurrentStream(state)>>>(
-      TensorMulOp<real>(),
+      TensorMulOp<ntype>(),
       I_INFO(r_indices_), I_INFO(t_indices_), I_INFO(s_indices_),
       V_INFO(r_values_), V_INFO(t_values_), V_INFO(s_values_),
       (uint64_t)t_nnz, (uint64_t)s_nnz);
   THCudaCheck(cudaGetLastError());
 
   THCudaLongStorage *resultNnz = THCudaLongStorage_newWithSize(state, 1);
-  THCSTensor_indexSparseIntersectionKernel<uint64_t, real>
+  THCSTensor_indexSparseIntersectionKernel<uint64_t, ntype>
     <<<1, 1, 0, THCState_getCurrentStream(state)>>>(
       I_INFO(r_indices_), I_INFO(t_indices_), I_INFO(s_indices_),
       (uint64_t)t_nnz, (uint64_t)s_nnz, (uint64_t*)resultNnz->data);
@@ -479,7 +479,7 @@ void THCSTensor_(cmul)(THCState *state, THCSTensor *r_, THCSTensor *t_, THCSTens
 }
 
 #if defined(THCS_NTYPE_IS_FLOAT) || defined(THCS_NTYPE_IS_DOUBLE)
-void THCSTensor_(pow)(THCState *state, THCSTensor *r_, THCSTensor *t_, real value) {
+void THCSTensor_(pow)(THCState *state, THCSTensor *r_, THCSTensor *t_, ntype value) {
   if (value == 0) {
     THError("cannot raise to zeroth power on sparse tensor");
   }

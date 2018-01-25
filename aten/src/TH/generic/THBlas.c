@@ -30,24 +30,24 @@
 
 #if defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_FLOAT)
 #ifndef USE_CBLAS
-TH_EXTERNC void BLAS_(swap)(const blas_int *n, real *x, const blas_int *incx, real *y, const blas_int *incy);
-TH_EXTERNC void BLAS_(scal)(const blas_int *n, const real *a, real *x, const blas_int *incx);
-TH_EXTERNC void BLAS_(copy)(const blas_int *n, const real *x, const blas_int *incx, real *y, const blas_int *incy);
-TH_EXTERNC void BLAS_(axpy)(const blas_int *n, const real *a, const real *x, const blas_int *incx, real *y, const blas_int *incy);
+TH_EXTERNC void BLAS_(swap)(const blas_int *n, ntype *x, const blas_int *incx, ntype *y, const blas_int *incy);
+TH_EXTERNC void BLAS_(scal)(const blas_int *n, const ntype *a, ntype *x, const blas_int *incx);
+TH_EXTERNC void BLAS_(copy)(const blas_int *n, const ntype *x, const blas_int *incx, ntype *y, const blas_int *incy);
+TH_EXTERNC void BLAS_(axpy)(const blas_int *n, const ntype *a, const ntype *x, const blas_int *incx, ntype *y, const blas_int *incy);
 
 #if defined(BLAS_F2C) || defined(TH_NTYPE_IS_DOUBLE)
-TH_EXTERNC double BLAS_(dot)(const blas_int *n, const real *x, const blas_int *incx, const real *y, const blas_int *incy);
+TH_EXTERNC double BLAS_(dot)(const blas_int *n, const ntype *x, const blas_int *incx, const ntype *y, const blas_int *incy);
 #else
-TH_EXTERNC float BLAS_(dot)(const blas_int *n, const real *x, const blas_int *incx, const real *y, const blas_int *incy);
+TH_EXTERNC float BLAS_(dot)(const blas_int *n, const ntype *x, const blas_int *incx, const ntype *y, const blas_int *incy);
 #endif
 
-TH_EXTERNC void BLAS_(gemv)(const char *trans, const blas_int *m, const blas_int *n, const real *alpha, const real *a, const blas_int *lda,
-                           const real *x, const blas_int *incx, const real *beta, real *y, const blas_int *incy);
-TH_EXTERNC void BLAS_(ger)(const blas_int *m, const blas_int *n, const real *alpha, const real *x, const blas_int *incx, const real *y,
-                          const blas_int *incy, real *a, const blas_int *lda);
+TH_EXTERNC void BLAS_(gemv)(const char *trans, const blas_int *m, const blas_int *n, const ntype *alpha, const ntype *a, const blas_int *lda,
+                           const ntype *x, const blas_int *incx, const ntype *beta, ntype *y, const blas_int *incy);
+TH_EXTERNC void BLAS_(ger)(const blas_int *m, const blas_int *n, const ntype *alpha, const ntype *x, const blas_int *incx, const ntype *y,
+                          const blas_int *incy, ntype *a, const blas_int *lda);
 
-TH_EXTERNC void BLAS_(gemm)(const char *transa, const char *transb, const blas_int *m, const blas_int *n, const blas_int *k, const real *alpha,
-                                   const real *a, const blas_int *lda, const real *b, const blas_int *ldb, const real *beta, real *c, const blas_int *ldc);
+TH_EXTERNC void BLAS_(gemm)(const char *transa, const char *transb, const blas_int *m, const blas_int *n, const blas_int *k, const ntype *alpha,
+                                   const ntype *a, const blas_int *lda, const ntype *b, const blas_int *ldb, const ntype *beta, ntype *c, const blas_int *ldc);
 #else // USE_CBLAS
 
 #ifndef _cblas_transpose_trasform
@@ -63,62 +63,62 @@ static inline CBLAS_TRANSPOSE toCBlasTranspose(const char fortran_transpose) {
 #define _cblas_transpose_trasform
 #endif
 
-// TH_EXTERNC void CBLAS_(swap)(const blas_int n, const real *x, const blas_int incx, const real *y, const blas_int incy);
-// TH_EXTERNC void CBLAS_(scal)(const blas_int n, const real *a, const real *x, const blas_int incx);
-// TH_EXTERNC void CBLAS_(copy)(const blas_int n, const real *x, const blas_int incx, const real *y, const blas_int incy);
-// TH_EXTERNC void CBLAS_(axpy)(const blas_int n, const real *a, const real *x, const blas_int *incx, const real *y, const blas_int incy);
-// TH_EXTERNC real CBLAS_(dot)(const blas_int n, const real *x, const blas_int incx, const real *y, const blas_int incy);
+// TH_EXTERNC void CBLAS_(swap)(const blas_int n, const ntype *x, const blas_int incx, const ntype *y, const blas_int incy);
+// TH_EXTERNC void CBLAS_(scal)(const blas_int n, const ntype *a, const ntype *x, const blas_int incx);
+// TH_EXTERNC void CBLAS_(copy)(const blas_int n, const ntype *x, const blas_int incx, const ntype *y, const blas_int incy);
+// TH_EXTERNC void CBLAS_(axpy)(const blas_int n, const ntype *a, const ntype *x, const blas_int *incx, const ntype *y, const blas_int incy);
+// TH_EXTERNC ntype CBLAS_(dot)(const blas_int n, const ntype *x, const blas_int incx, const ntype *y, const blas_int incy);
 // TH_EXTERNC void CBLAS_(gemv)(const CBLAS_ORDER order,
 //                              const CBLAS_TRANSPOSE trans, const blas_int m, const blas_int n,
-//                              const real alpha, const real *a, const blas_int lda,
-//                              const real *x, const blas_int incx, const real beta,
-//                              const real *y, const blas_int incy);
+//                              const ntype alpha, const ntype *a, const blas_int lda,
+//                              const ntype *x, const blas_int incx, const ntype beta,
+//                              const ntype *y, const blas_int incy);
 // TH_EXTERNC void CBLAS_(ger)(const CBLAS_ORDER order, const blas_int m, const blas_int n,
-//                             const real alpha, const real *x, const blas_int incx,
-//                             const real *y, const blas_int incy, const real *a, const blas_int lda);
+//                             const ntype alpha, const ntype *x, const blas_int incx,
+//                             const ntype *y, const blas_int incy, const ntype *a, const blas_int lda);
 // TH_EXTERNC void CBLAS_(gemm)(const CBLAS_ORDER order, const CBLAS_TRANSPOSE transa, const CBLAS_TRANSPOSEtransb,
-//                              const blas_int *m, const blas_int n, const blas_int k, const real alpha,
-//                              const real *a, const blas_int lda, const real *b, const blas_int ldb, const real beta,
-//                              const real *c, const blas_int ldc);
+//                              const blas_int *m, const blas_int n, const blas_int k, const ntype alpha,
+//                              const ntype *a, const blas_int lda, const ntype *b, const blas_int ldb, const ntype beta,
+//                              const ntype *c, const blas_int ldc);
 
-static inline void BLAS_(swap)(const blas_int *n, real *x, const blas_int *incx, real *y, const blas_int *incy) {
+static inline void BLAS_(swap)(const blas_int *n, ntype *x, const blas_int *incx, ntype *y, const blas_int *incy) {
   return CBLAS_(swap)(*n, x, *incx, y, *incy);
 }
 
-static inline void BLAS_(scal)(const blas_int *n, const real *a, real *x, const blas_int *incx){
+static inline void BLAS_(scal)(const blas_int *n, const ntype *a, ntype *x, const blas_int *incx){
   return CBLAS_(scal)(*n, *a, x, *incx);
 }
 
-static inline void BLAS_(copy)(const blas_int *n, const real *x, const blas_int *incx, real *y, const blas_int *incy) {
+static inline void BLAS_(copy)(const blas_int *n, const ntype *x, const blas_int *incx, ntype *y, const blas_int *incy) {
   return CBLAS_(copy)(*n, x, *incx, y, *incy);
 }
 
-static inline void BLAS_(axpy)(const blas_int *n, const real *a, const real *x, const blas_int *incx, real *y, const blas_int *incy) {
+static inline void BLAS_(axpy)(const blas_int *n, const ntype *a, const ntype *x, const blas_int *incx, ntype *y, const blas_int *incy) {
   return CBLAS_(axpy)(*n, *a, x, *incx, y, *incy);
 }
 
-static inline real BLAS_(dot)(const blas_int *n, const real *x, const blas_int *incx, const real *y, const blas_int *incy) {
+static inline ntype BLAS_(dot)(const blas_int *n, const ntype *x, const blas_int *incx, const ntype *y, const blas_int *incy) {
   return CBLAS_(dot)(*n, x, *incx, y, *incy);
 }
 
-static inline void BLAS_(gemv)(const char *trans, const blas_int *m, const blas_int *n, const real *alpha, const real *a, const blas_int *lda,
-                           const real *x, const blas_int *incx, const real *beta, real *y, const blas_int *incy) {
+static inline void BLAS_(gemv)(const char *trans, const blas_int *m, const blas_int *n, const ntype *alpha, const ntype *a, const blas_int *lda,
+                           const ntype *x, const blas_int *incx, const ntype *beta, ntype *y, const blas_int *incy) {
   return CBLAS_(gemv)(CblasColMajor, toCBlasTranspose(*trans), *m, *n, *alpha, a, *lda, x, *incx, *beta, y, *incy);
 }
 
-static inline void BLAS_(ger)(const blas_int *m, const blas_int *n, const real *alpha, const real *x, const blas_int *incx, const real *y,
-                          const blas_int *incy, real *a, const blas_int *lda) {
+static inline void BLAS_(ger)(const blas_int *m, const blas_int *n, const ntype *alpha, const ntype *x, const blas_int *incx, const ntype *y,
+                          const blas_int *incy, ntype *a, const blas_int *lda) {
   return CBLAS_(ger)(CblasColMajor, *m, *n, *alpha, x, *incx, y, *incy, a, *lda);
 }
 
-static inline void BLAS_(gemm)(const char *transa, const char *transb, const blas_int *m, const blas_int *n, const blas_int *k, const real *alpha,
-                                   const real *a, const blas_int *lda, const real *b, const blas_int *ldb, const real *beta, real *c, const blas_int *ldc) {
+static inline void BLAS_(gemm)(const char *transa, const char *transb, const blas_int *m, const blas_int *n, const blas_int *k, const ntype *alpha,
+                                   const ntype *a, const blas_int *lda, const ntype *b, const blas_int *ldb, const ntype *beta, ntype *c, const blas_int *ldc) {
   return CBLAS_(gemm)(CblasColMajor, toCBlasTranspose(*transa), toCBlasTranspose(*transb), *m, *n, *k, *alpha, a, *lda, b, *ldb, *beta, c, *ldc);
 }
 #endif // USE_CBLAS
 #endif // defined(TH_NTYPE_IS_DOUBLE) || defined(TH_NTYPE_IS_FLOAT)
 
-void THBlas_(swap)(int64_t n, real *x, int64_t incx, real *y, int64_t incy)
+void THBlas_(swap)(int64_t n, ntype *x, int64_t incx, ntype *y, int64_t incy)
 {
   if(n == 1)
   {
@@ -140,14 +140,14 @@ void THBlas_(swap)(int64_t n, real *x, int64_t incx, real *y, int64_t incy)
     int64_t i;
     for(i = 0; i < n; i++)
     {
-      real z = x[i*incx];
+      ntype z = x[i*incx];
       x[i*incx] = y[i*incy];
       y[i*incy] = z;
     }
   }
 }
 
-void THBlas_(scal)(int64_t n, real a, real *x, int64_t incx)
+void THBlas_(scal)(int64_t n, ntype a, ntype *x, int64_t incx)
 {
   if(n == 1)
     incx = 1;
@@ -174,7 +174,7 @@ void THBlas_(scal)(int64_t n, real a, real *x, int64_t incx)
   }
 }
 
-void THBlas_(copy)(int64_t n, real *x, int64_t incx, real *y, int64_t incy)
+void THBlas_(copy)(int64_t n, ntype *x, int64_t incx, ntype *y, int64_t incy)
 {
   if(n == 1)
   {
@@ -200,7 +200,7 @@ void THBlas_(copy)(int64_t n, real *x, int64_t incx, real *y, int64_t incy)
   }
 }
 
-void THBlas_(axpy)(int64_t n, real a, real *x, int64_t incx, real *y, int64_t incy)
+void THBlas_(axpy)(int64_t n, ntype a, ntype *x, int64_t incx, ntype *y, int64_t incy)
 {
   if(n == 1)
   {
@@ -226,7 +226,7 @@ void THBlas_(axpy)(int64_t n, real a, real *x, int64_t incx, real *y, int64_t in
   }
 }
 
-real THBlas_(dot)(int64_t n, real *x, int64_t incx, real *y, int64_t incy)
+ntype THBlas_(dot)(int64_t n, ntype *x, int64_t incx, ntype *y, int64_t incy)
 {
   if(n == 1)
   {
@@ -241,20 +241,20 @@ real THBlas_(dot)(int64_t n, real *x, int64_t incx, real *y, int64_t incy)
     blas_int i_incx = (blas_int) incx;
     blas_int i_incy = (blas_int) incy;
 
-    return (real) BLAS_(dot)(&i_n, x, &i_incx, y, &i_incy);
+    return (ntype) BLAS_(dot)(&i_n, x, &i_incx, y, &i_incy);
   }
 #endif
   {
     int64_t i;
-    real sum = 0;
+    ntype sum = 0;
     for(i = 0; i < n; i++)
     sum += x[i*incx]*y[i*incy];
     return sum;
   }
 }
 
-void THBlas_(gemv)(char trans, int64_t m, int64_t n, real alpha, real *a, int64_t lda,
-                   real *x, int64_t incx, real beta, real *y, int64_t incy)
+void THBlas_(gemv)(char trans, int64_t m, int64_t n, ntype alpha, ntype *a, int64_t lda,
+                   ntype *x, int64_t incx, ntype beta, ntype *y, int64_t incy)
 {
   if(n == 1)
     lda = m;
@@ -284,8 +284,8 @@ void THBlas_(gemv)(char trans, int64_t m, int64_t n, real alpha, real *a, int64_
     {
       for(i = 0; i < n; i++)
       {
-        real sum = 0;
-        real *row_ = a+lda*i;
+        ntype sum = 0;
+        ntype *row_ = a+lda*i;
         for(j = 0; j < m; j++)
           sum += x[j*incx]*row_[j];
 	if (beta == 0)
@@ -301,8 +301,8 @@ void THBlas_(gemv)(char trans, int64_t m, int64_t n, real alpha, real *a, int64_
 
       for(j = 0; j < n; j++)
       {
-        real *column_ = a+lda*j;
-        real z = alpha*x[j*incx];
+        ntype *column_ = a+lda*j;
+        ntype z = alpha*x[j*incx];
         for(i = 0; i < m; i++)
           y[i*incy] += z*column_[i];
       }
@@ -310,7 +310,7 @@ void THBlas_(gemv)(char trans, int64_t m, int64_t n, real alpha, real *a, int64_
   }
 }
 
-void THBlas_(ger)(int64_t m, int64_t n, real alpha, real *x, int64_t incx, real *y, int64_t incy, real *a, int64_t lda)
+void THBlas_(ger)(int64_t m, int64_t n, ntype alpha, ntype *x, int64_t incx, ntype *y, int64_t incy, ntype *a, int64_t lda)
 {
   if(n == 1)
     lda = m;
@@ -337,16 +337,16 @@ void THBlas_(ger)(int64_t m, int64_t n, real alpha, real *x, int64_t incx, real 
     int64_t i, j;
     for(j = 0; j < n; j++)
     {
-      real *column_ = a+j*lda;
-      real z = alpha*y[j*incy];
+      ntype *column_ = a+j*lda;
+      ntype z = alpha*y[j*incy];
       for(i = 0; i < m; i++)
         column_[i] += z*x[i*incx] ;
     }
   }
 }
 
-void THBlas_(gemm)(char transa, char transb, int64_t m, int64_t n, int64_t k, real alpha,
-                   real *a, int64_t lda, real *b, int64_t ldb, real beta, real *c, int64_t ldc)
+void THBlas_(gemm)(char transa, char transb, int64_t m, int64_t n, int64_t k, ntype alpha,
+                   ntype *a, int64_t lda, ntype *b, int64_t ldb, ntype beta, ntype *c, int64_t ldc)
 {
   int transa_ = ((transa == 't') || (transa == 'T'));
   int transb_ = ((transb == 't') || (transb == 'T'));
@@ -402,13 +402,13 @@ void THBlas_(gemm)(char transa, char transb, int64_t m, int64_t n, int64_t k, re
     int64_t i, j, l;
     if(!transa_ && !transb_)
     {
-      real *a_ = a;
+      ntype *a_ = a;
       for(i = 0; i < m; i++)
       {
-        real *b_ = b;
+        ntype *b_ = b;
         for(j = 0; j < n; j++)
         {
-          real sum = 0;
+          ntype sum = 0;
           for(l = 0; l < k; l++)
             sum += a_[l*lda]*b_[l];
           b_ += ldb;
@@ -422,13 +422,13 @@ void THBlas_(gemm)(char transa, char transb, int64_t m, int64_t n, int64_t k, re
     }
     else if(transa_ && !transb_)
     {
-      real *a_ = a;
+      ntype *a_ = a;
       for(i = 0; i < m; i++)
       {
-        real *b_ = b;
+        ntype *b_ = b;
         for(j = 0; j < n; j++)
         {
-          real sum = 0;
+          ntype sum = 0;
           for(l = 0; l < k; l++)
             sum += a_[l]*b_[l];
           b_ += ldb;
@@ -442,13 +442,13 @@ void THBlas_(gemm)(char transa, char transb, int64_t m, int64_t n, int64_t k, re
     }
     else if(!transa_ && transb_)
     {
-      real *a_ = a;
+      ntype *a_ = a;
       for(i = 0; i < m; i++)
       {
-        real *b_ = b;
+        ntype *b_ = b;
         for(j = 0; j < n; j++)
         {
-          real sum = 0;
+          ntype sum = 0;
           for(l = 0; l < k; l++)
             sum += a_[l*lda]*b_[l*ldb];
           b_++;
@@ -462,13 +462,13 @@ void THBlas_(gemm)(char transa, char transb, int64_t m, int64_t n, int64_t k, re
     }
     else
     {
-      real *a_ = a;
+      ntype *a_ = a;
       for(i = 0; i < m; i++)
       {
-        real *b_ = b;
+        ntype *b_ = b;
         for(j = 0; j < n; j++)
         {
-          real sum = 0;
+          ntype sum = 0;
           for(l = 0; l < k; l++)
             sum += a_[l]*b_[l*ldb];
           b_++;

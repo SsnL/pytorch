@@ -21,7 +21,7 @@ void THNN_(HardShrink_updateGradInput)(
           THTensor *input,
           THTensor *gradOutput,
           THTensor *gradInput,
-          real lambda)
+          ntype lambda)
 ```
 
 ### Criterions

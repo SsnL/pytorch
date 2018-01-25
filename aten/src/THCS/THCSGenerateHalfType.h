@@ -6,16 +6,16 @@
 
 #ifdef CUDA_HALF_TENSOR
 
-#define real half
-#define accreal float
-#define Real Half
+#define ntype half
+#define accntype float
+#define Ntype Half
 #define CReal CudaHalf
 #define THCS_NTYPE_IS_HALF
 #line 1 THCS_GENERIC_FILE
 #include THCS_GENERIC_FILE
-#undef real
-#undef accreal
-#undef Real
+#undef ntype
+#undef accntype
+#undef Ntype
 #undef CReal
 #undef THCS_NTYPE_IS_HALF
 

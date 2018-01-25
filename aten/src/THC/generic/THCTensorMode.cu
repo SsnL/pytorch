@@ -15,7 +15,7 @@ THC_API void THCTensor_(calculateMode)(THCState *state,
   // location of the buffer at the innermost dimension that we are going
   // to calculate the mode for --> we do this by manually doing the stride
   // calculations to get an offset
-  real *data = THCTensor_(data)(state, input);
+  ntype *data = THCTensor_(data)(state, input);
   for (int i = 0; i < THLongStorage_size(position); ++i) {
     data += THLongStorage_data(position)[i] * THCTensor_(stride)(state, input, i);
   }
@@ -24,8 +24,8 @@ THC_API void THCTensor_(calculateMode)(THCState *state,
   THCThrustAllocator thrustAlloc(state);
 
   // Wrap input data, sortBuffer, in Thrust device vectors
-  thrust::device_ptr<real> vecPtr = thrust::device_pointer_cast(data);
-  thrust::device_vector<real> iter(vecPtr, vecPtr + nElement);
+  thrust::device_ptr<ntype> vecPtr = thrust::device_pointer_cast(data);
+  thrust::device_vector<ntype> iter(vecPtr, vecPtr + nElement);
   thrust::device_ptr<int64_t> sbPtr = thrust::device_pointer_cast(THCudaLongStorage_data(state, sortBuffer));
   thrust::device_vector<int64_t> seq(sbPtr, sbPtr + nElement);
 
@@ -63,12 +63,12 @@ THC_API void THCTensor_(calculateMode)(THCState *state,
 #if defined(THC_NTYPE_IS_HALF)
     ThrustHalfNotEqualTo()
 #else
-    thrust::not_equal_to<real>()
+    thrust::not_equal_to<ntype>()
 #endif
   );
 
   // Count frequency of each element
-  thrust::device_vector<real> keys(unique);
+  thrust::device_vector<ntype> keys(unique);
   thrust::device_vector<int> counts(unique);
   thrust::reduce_by_key(
 #if CUDA_VERSION >= 7000
@@ -91,11 +91,11 @@ THC_API void THCTensor_(calculateMode)(THCState *state,
     thrust::device,
 #endif
     counts.begin(), counts.end());
-  real mode = keys[it - counts.begin()];
+  ntype mode = keys[it - counts.begin()];
 
   // Find first index within which it occurs
 #if defined(THC_NTYPE_IS_HALF)
-  thrust::device_vector<real>::iterator positionIter = thrust::find_if(
+  thrust::device_vector<ntype>::iterator positionIter = thrust::find_if(
 #if CUDA_VERSION >= 7000
     thrust::cuda::par(thrustAlloc).on(THCState_getCurrentStream(state)),
 #else
@@ -103,7 +103,7 @@ THC_API void THCTensor_(calculateMode)(THCState *state,
 #endif
     iter.begin(), iter.end(), ThrustHalfEqualToPredicate(mode));
 #else
-  thrust::device_vector<real>::iterator positionIter = thrust::find(
+  thrust::device_vector<ntype>::iterator positionIter = thrust::find(
 #if CUDA_VERSION >= 7000
     thrust::cuda::par(thrustAlloc).on(THCState_getCurrentStream(state)),
 #else
@@ -218,7 +218,7 @@ THC_API void THCTensor_(mode)(THCState *state,
     indicesTransposed = THCudaLongTensor_newTranspose(state, indices, dimension, ndim-1);
 
     // Set-up TensorInfo structs for passing to kernel
-    TensorInfo<real, unsigned int> tiValues = getTensorInfo<THCTensor, unsigned int>(state, valuesTransposed);
+    TensorInfo<ntype, unsigned int> tiValues = getTensorInfo<THCTensor, unsigned int>(state, valuesTransposed);
     TensorInfo<int64_t, unsigned int> tiIndices = getTensorInfo<THCudaLongTensor, unsigned int>(state, indicesTransposed);
 
     // The number of blocks is the number of slices that we need to calculate the mode for. Each block
@@ -235,8 +235,8 @@ THC_API void THCTensor_(mode)(THCState *state,
   { \
     dim3 blockSize(SIZE / 2); \
 \
-    int memsize = (sizeof(real) * SIZE) + (2 * SIZE * sizeof(unsigned int)); \
-    computeMode<real, SIZE> \
+    int memsize = (sizeof(ntype) * SIZE) + (2 * SIZE * sizeof(unsigned int)); \
+    computeMode<ntype, SIZE> \
       <<<grid, blockSize, memsize, THCState_getCurrentStream(state)>>>( \
         THCTensor_(data)(state, contiguous), tiValues, tiIndices, sliceSize); \
   }

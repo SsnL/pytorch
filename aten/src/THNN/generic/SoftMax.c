@@ -29,8 +29,8 @@ void THNN_(SoftMax_updateOutput)(
   input = THTensor_(newContiguous)(input);
   THTensor_(resizeAs)(output, input);
 
-  real *input_data_base  = THTensor_(data)(input);
-  real *output_data_base = THTensor_(data)(output);
+  ntype *input_data_base  = THTensor_(data)(input);
+  ntype *output_data_base = THTensor_(data)(output);
 
   uint64_t dim_stride = inner_size;
   uint64_t outer_stride = dim_size * dim_stride;
@@ -41,22 +41,22 @@ void THNN_(SoftMax_updateOutput)(
   for (i = 0; i < SOFTMAX_CAST_TYPE (outer_size * inner_size); i++) {
     uint64_t outer_idx = i / inner_size;
     uint64_t inner_idx = i % inner_size;
-    real *input_data  = input_data_base  + outer_idx * outer_stride + inner_idx;
-    real *output_data = output_data_base + outer_idx * outer_stride + inner_idx;
+    ntype *input_data  = input_data_base  + outer_idx * outer_stride + inner_idx;
+    ntype *output_data = output_data_base + outer_idx * outer_stride + inner_idx;
 
-    real input_max = -THInf;
+    ntype input_max = -THInf;
     for (d = 0; d < SOFTMAX_CAST_TYPE dim_size; d++) {
       if (input_data[d * dim_stride] >= input_max) input_max = input_data[d * dim_stride];
     }
 
-    accreal sum = 0;
+    accntype sum = 0;
     for (d = 0; d < SOFTMAX_CAST_TYPE dim_size; d++) {
-      real z = exp(input_data[d * dim_stride] - input_max);
+      ntype z = exp(input_data[d * dim_stride] - input_max);
       output_data[d * dim_stride] = z;
       sum += z;
     }
 
-    real invsum = 1 / sum; // NOTE: truncate sum to real once
+    ntype invsum = 1 / sum; // NOTE: truncate sum to ntype once
     for (d = 0; d < SOFTMAX_CAST_TYPE dim_size; d++) {
       output_data[d * dim_stride] *= invsum;
     }
@@ -89,9 +89,9 @@ void THNN_(SoftMax_updateGradInput)(
   output = THTensor_(newContiguous)(output);
   THTensor_(resizeAs)(gradInput, output);
 
-  real *gradInput_data_base  = THTensor_(data)(gradInput);
-  real *output_data_base     = THTensor_(data)(output);
-  real *gradOutput_data_base = THTensor_(data)(gradOutput);
+  ntype *gradInput_data_base  = THTensor_(data)(gradInput);
+  ntype *output_data_base     = THTensor_(data)(output);
+  ntype *gradOutput_data_base = THTensor_(data)(gradOutput);
 
   uint64_t dim_stride = inner_size;
   uint64_t outer_stride = dim_size * dim_stride;
@@ -103,13 +103,13 @@ void THNN_(SoftMax_updateGradInput)(
   {
     uint64_t outer_idx = i / inner_size;
     uint64_t inner_idx = i % inner_size;
-    real *gradInput_data  = gradInput_data_base  + outer_idx * outer_stride + inner_idx;
-    real *output_data     = output_data_base     + outer_idx * outer_stride + inner_idx;
-    real *gradOutput_data = gradOutput_data_base + outer_idx * outer_stride + inner_idx;
+    ntype *gradInput_data  = gradInput_data_base  + outer_idx * outer_stride + inner_idx;
+    ntype *output_data     = output_data_base     + outer_idx * outer_stride + inner_idx;
+    ntype *gradOutput_data = gradOutput_data_base + outer_idx * outer_stride + inner_idx;
 
-    accreal sum = 0;
+    accntype sum = 0;
     for (d = 0; d < SOFTMAX_CAST_TYPE dim_size; d++)
-      sum += ((accreal)gradOutput_data[d * dim_stride]) * ((accreal)output_data[d * dim_stride]);
+      sum += ((accntype)gradOutput_data[d * dim_stride]) * ((accntype)output_data[d * dim_stride]);
 
     for (d = 0; d < SOFTMAX_CAST_TYPE dim_size; d++)
       gradInput_data[d * dim_stride] = output_data[d * dim_stride] * (gradOutput_data[d * dim_stride] - sum);

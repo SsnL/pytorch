@@ -104,8 +104,8 @@ static inline void THNN_(VolumetricAveragePooling_shapeCheck)(
 }
 
 static void THNN_(VolumetricAveragePooling_updateOutput_frame)(
-          real *input_p,
-          real *output_p,
+          ntype *input_p,
+          ntype *output_p,
           int64_t nslices,
           int64_t itime,
           int64_t iwidth,
@@ -131,8 +131,8 @@ static void THNN_(VolumetricAveragePooling_updateOutput_frame)(
     int64_t i, j, ti;
 
     /* local pointers. */
-    real *ip = input_p + k * itime * iwidth * iheight;
-    real *op = output_p + k * otime * owidth * oheight;
+    ntype *ip = input_p + k * itime * iwidth * iheight;
+    ntype *op = output_p + k * otime * owidth * oheight;
     for (i = 0; i < otime * oheight * owidth; ++i)
       *(op + i) = 0;
 
@@ -165,7 +165,7 @@ static void THNN_(VolumetricAveragePooling_updateOutput_frame)(
             divide_factor = (tend - tstart) * (hend - hstart) * (wend - wstart);
 
           /* compute local sum: */
-          real sum = 0.0;
+          ntype sum = 0.0;
           int64_t x, y, z;
 
           for (z = tstart; z < tend; z++)
@@ -210,8 +210,8 @@ void THNN_(VolumetricAveragePooling_updateOutput)(
   int64_t otime;
   int64_t oheight;
   int64_t owidth;
-  real *input_data;
-  real *output_data;
+  ntype *input_data;
+  ntype *output_data;
 
   THNN_(VolumetricAveragePooling_shapeCheck)(
         state, input, NULL, kT, kW, kH,
@@ -314,8 +314,8 @@ void THNN_(VolumetricAveragePooling_updateOutput)(
 }
 
 static void THNN_(VolumetricAveragePooling_updateGradInput_frame)(
-          real *gradInput_p,
-          real *gradOutput_p,
+          ntype *gradInput_p,
+          ntype *gradOutput_p,
           int64_t nslices,
           int64_t itime,
           int64_t iwidth,
@@ -341,8 +341,8 @@ static void THNN_(VolumetricAveragePooling_updateGradInput_frame)(
     int64_t i, j, ti;
 
     /* local pointers */
-    real *ip = gradInput_p + k * itime * iwidth * iheight;
-    real *op = gradOutput_p + k * otime * owidth * oheight;
+    ntype *ip = gradInput_p + k * itime * iwidth * iheight;
+    ntype *op = gradOutput_p + k * otime * owidth * oheight;
     for (i = 0; i < itime*iwidth*iheight; i++)
       *(ip + i) = 0;
 
@@ -374,7 +374,7 @@ static void THNN_(VolumetricAveragePooling_updateGradInput_frame)(
             divide_factor = (tend - tstart) * (hend - hstart) * (wend - wstart);
 
           /* scatter gradients out to footprint: */
-          real val  = *op++;
+          ntype val  = *op++;
 
           int64_t x,y,z;
           for (z = tstart; z < tend; z++)
@@ -417,8 +417,8 @@ void THNN_(VolumetricAveragePooling_updateGradInput)(
   int64_t otime;
   int64_t oheight;
   int64_t owidth;
-  real *gradInput_data;
-  real *gradOutput_data;
+  ntype *gradInput_data;
+  ntype *gradOutput_data;
 
   int dimN = 0;
   int dimt = 1;

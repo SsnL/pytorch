@@ -75,7 +75,7 @@ void THNN_(Col2Im_updateOutput)(
     THCTensor_(select)(state, input_n, input, 0, elt);
     THCTensor_(select)(state, output_n, output, 0, elt);
 
-    col2im<real, accreal>(
+    col2im<ntype, accntype>(
       THCState_getCurrentStream(state),
       THCTensor_(data)(state, input_n),
       nOutputPlane,

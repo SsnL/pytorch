@@ -2,12 +2,12 @@
 #define TH_GENERIC_FILE "generic/Col2Im.c"
 #else
 
-static void THNN_(im2col)(const real* data_im, const int channels,
+static void THNN_(im2col)(const ntype* data_im, const int channels,
       const int height, const int width, const int kernel_h, const int kernel_w,
       const int pad_h, const int pad_w,
       const int stride_h, const int stride_w,
       const int dilation_h, const int dilation_w,
-      real* data_col) {
+      ntype* data_col) {
   const int height_col = (height + 2 * pad_h -
                           (dilation_h * (kernel_h - 1) + 1)) / stride_h + 1;
   const int width_col = (width + 2 * pad_w -
@@ -29,15 +29,15 @@ static void THNN_(im2col)(const real* data_im, const int channels,
   }
 }
 
-static void THNN_(col2im)(const real* data_col, const int channels,
+static void THNN_(col2im)(const ntype* data_col, const int channels,
       const int height, const int width,
       const int output_height, const int output_width,
       const int kernel_h, const int kernel_w,
       const int pad_h, const int pad_w,
       const int stride_h, const int stride_w,
       const int dilation_h, const int dilation_w,
-      real* data_im) {
-  memset(data_im, 0, sizeof(real) * height * width * channels);
+      ntype* data_im) {
+  memset(data_im, 0, sizeof(ntype) * height * width * channels);
   const int height_col = output_height;
   const int width_col = output_width;
   const int channels_col = channels * kernel_h * kernel_w;

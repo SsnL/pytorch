@@ -24,46 +24,46 @@ void THNN_(BatchNormalization_updateOutput)(
     THTensor *in = THTensor_(newSelect)(input, 1, f);
     THTensor *out = THTensor_(newSelect)(output, 1, f);
 
-    real mean, invstd;
+    ntype mean, invstd;
 
     if (train) {
       // compute mean per input
-      accreal sum = 0;
-      TH_TENSOR_APPLY(real, in, sum += *in_data;);
+      accntype sum = 0;
+      TH_TENSOR_APPLY(ntype, in, sum += *in_data;);
 
-      mean = (real) sum / n;
-      THTensor_(set1d)(save_mean, f, (real) mean);
+      mean = (ntype) sum / n;
+      THTensor_(set1d)(save_mean, f, (ntype) mean);
 
       // compute variance per input
       sum = 0;
-      TH_TENSOR_APPLY(real, in,
+      TH_TENSOR_APPLY(ntype, in,
         sum += (*in_data - mean) * (*in_data - mean););
 
       if (sum == 0 && eps == 0.0) {
         invstd = 0;
       } else {
-        invstd = (real) (1 / sqrt(sum/n + eps));
+        invstd = (ntype) (1 / sqrt(sum/n + eps));
       }
-      THTensor_(set1d)(save_std, f, (real) invstd);
+      THTensor_(set1d)(save_std, f, (ntype) invstd);
 
       // update running averages
       THTensor_(set1d)(running_mean, f,
-        (real) (momentum * mean + (1 - momentum) * THTensor_(get1d)(running_mean, f)));
+        (ntype) (momentum * mean + (1 - momentum) * THTensor_(get1d)(running_mean, f)));
 
-      accreal unbiased_var = sum / (n - 1);
+      accntype unbiased_var = sum / (n - 1);
       THTensor_(set1d)(running_var, f,
-        (real) (momentum * unbiased_var + (1 - momentum) * THTensor_(get1d)(running_var, f)));
+        (ntype) (momentum * unbiased_var + (1 - momentum) * THTensor_(get1d)(running_var, f)));
     } else {
       mean = THTensor_(get1d)(running_mean, f);
       invstd = 1 / sqrt(THTensor_(get1d)(running_var, f) + eps);
     }
 
     // compute output
-    real w = weight ? THTensor_(get1d)(weight, f) : 1;
-    real b = bias ? THTensor_(get1d)(bias, f) : 0;
+    ntype w = weight ? THTensor_(get1d)(weight, f) : 1;
+    ntype b = bias ? THTensor_(get1d)(bias, f) : 0;
 
-    TH_TENSOR_APPLY2(real, in, real, out,
-      *out_data = (real) (((*in_data - mean) * invstd) * w + b););
+    TH_TENSOR_APPLY2(ntype, in, ntype, out,
+      *out_data = (ntype) (((*in_data - mean) * invstd) * w + b););
 
     THTensor_(free)(out);
     THTensor_(free)(in);
@@ -90,8 +90,8 @@ void THNN_(BatchNormalization_backward)(
   for (f = 0; f < nInput; ++f) {
     THTensor *in = THTensor_(newSelect)(input, 1, f);
     THTensor *gradOut = THTensor_(newSelect)(gradOutput, 1, f);
-    real w = weight ? THTensor_(get1d)(weight, f) : 1;
-    real mean, invstd;
+    ntype w = weight ? THTensor_(get1d)(weight, f) : 1;
+    ntype mean, invstd;
     if (train) {
       mean = THTensor_(get1d)(save_mean, f);
       invstd = THTensor_(get1d)(save_std, f);
@@ -101,12 +101,12 @@ void THNN_(BatchNormalization_backward)(
     }
 
     // sum over all gradOutput in feature plane
-    accreal sum = 0;
-    TH_TENSOR_APPLY(real, gradOut, sum += *gradOut_data;);
+    accntype sum = 0;
+    TH_TENSOR_APPLY(ntype, gradOut, sum += *gradOut_data;);
 
     // dot product of the Q(X) and gradOuput
-    accreal dotp = 0;
-    TH_TENSOR_APPLY2(real, in, real, gradOut,
+    accntype dotp = 0;
+    TH_TENSOR_APPLY2(ntype, in, ntype, gradOut,
       dotp += (*in_data - mean) * (*gradOut_data););
 
     if (gradInput) {
@@ -119,12 +119,12 @@ void THNN_(BatchNormalization_backward)(
         // dL/dX = (Q(dL/dY) - dot(Y, dL/dY) * Y) / σ * w
 
         // projection of gradOutput on to output scaled by std
-        real k = (real) dotp * invstd * invstd / n;
-        TH_TENSOR_APPLY2(real, gradIn, real, in,
+        ntype k = (ntype) dotp * invstd * invstd / n;
+        TH_TENSOR_APPLY2(ntype, gradIn, ntype, in,
           *gradIn_data = (*in_data - mean) * k;);
 
-        accreal gradMean = sum / n;
-        TH_TENSOR_APPLY2(real, gradIn, real, gradOut,
+        accntype gradMean = sum / n;
+        TH_TENSOR_APPLY2(ntype, gradIn, ntype, gradOut,
           *gradIn_data = (*gradOut_data - gradMean - *gradIn_data) * invstd * w;);
 
       } else {
@@ -132,7 +132,7 @@ void THNN_(BatchNormalization_backward)(
         // Q(X) = X - running_mean  ; i.e. input centered to zero mean
         // Y = Q(X) / running_std    ; i.e. BN output before weight and bias
         // dL/dX = w / running_std
-        TH_TENSOR_APPLY2(real, gradIn, real, gradOut,
+        TH_TENSOR_APPLY2(ntype, gradIn, ntype, gradOut,
           *gradIn_data = *gradOut_data * invstd * w;);
       }
 
@@ -140,12 +140,12 @@ void THNN_(BatchNormalization_backward)(
     }
 
     if (gradWeight) {
-      real val = THTensor_(get1d)(gradWeight, f);
+      ntype val = THTensor_(get1d)(gradWeight, f);
       THTensor_(set1d)(gradWeight, f, val + scale * dotp * invstd);
     }
 
     if (gradBias) {
-      real val = THTensor_(get1d)(gradBias, f);
+      ntype val = THTensor_(get1d)(gradBias, f);
       THTensor_(set1d)(gradBias, f, val + scale * sum);
     }
 

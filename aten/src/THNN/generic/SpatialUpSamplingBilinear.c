@@ -52,8 +52,8 @@ void THNN_(SpatialUpSamplingBilinear_updateOutput)(
 		      THTensor_(size)(input, 1), 
 		      outputHeight, outputWidth);
   THTensor_(zero)(output);
-  real *idata = THTensor_(data)(input);
-  real *odata = THTensor_(data)(output);
+  ntype *idata = THTensor_(data)(input);
+  ntype *odata = THTensor_(data)(output);
   channels = nbatch * channels;
   THAssert(inputHeight > 0 && inputWidth > 0 && outputHeight > 0 && outputWidth > 0);
   // special case: just copy
@@ -62,8 +62,8 @@ void THNN_(SpatialUpSamplingBilinear_updateOutput)(
       const int h1 = h2;
       for (int w2 = 0; w2 < outputWidth; ++w2) {
         const int w1 = w2;
-        const real* pos1 = &idata[h1 * inputWidth + w1];
-        real* pos2 = &odata[h2 * outputWidth + w2];
+        const ntype* pos1 = &idata[h1 * inputWidth + w1];
+        ntype* pos2 = &odata[h2 * outputWidth + w2];
         for (int c = 0; c < channels; ++c) {
           pos2[0] = pos1[0];
           pos1 += inputWidth * inputHeight;
@@ -79,16 +79,16 @@ void THNN_(SpatialUpSamplingBilinear_updateOutput)(
     const float h1r = rheight * h2;
     const int h1 = h1r;
     const int h1p = (h1 < inputHeight - 1) ? 1 : 0;
-    const real h1lambda = h1r - h1;
-    const real h0lambda = (real)1. - h1lambda;
+    const ntype h1lambda = h1r - h1;
+    const ntype h0lambda = (ntype)1. - h1lambda;
     for (int w2 = 0; w2 < outputWidth; ++w2) {
       const float w1r = rwidth * w2;
       const int w1 = w1r;
       const int w1p = (w1 < inputWidth - 1) ? 1 : 0;
-      const real w1lambda = w1r - w1;
-      const real w0lambda = (real)1. - w1lambda;
-      const real* pos1 = &idata[h1 * inputWidth + w1];
-      real* pos2 = &odata[h2 * outputWidth + w2];
+      const ntype w1lambda = w1r - w1;
+      const ntype w0lambda = (ntype)1. - w1lambda;
+      const ntype* pos1 = &idata[h1 * inputWidth + w1];
+      ntype* pos2 = &odata[h2 * outputWidth + w2];
       for (int c = 0; c < channels; ++c) {
         pos2[0] = h0lambda * (w0lambda * pos1[0]+ w1lambda * pos1[w1p])
                   + h1lambda * (w0lambda * pos1[h1p * inputWidth]
@@ -121,8 +121,8 @@ void THNN_(SpatialUpSamplingBilinear_updateGradInput)(
   THTensor_(resize4d)(gradInput, nbatch, channels, inputHeight, inputWidth);
   THTensor_(zero)(gradInput);
   gradOutput = THTensor_(newContiguous)(gradOutput);
-  real *data1 = THTensor_(data)(gradInput);
-  real *data2 = THTensor_(data)(gradOutput);
+  ntype *data1 = THTensor_(data)(gradInput);
+  ntype *data2 = THTensor_(data)(gradOutput);
   channels = nbatch * channels;
 
   // special case: same-size matching grids
@@ -131,8 +131,8 @@ void THNN_(SpatialUpSamplingBilinear_updateGradInput)(
       const int h1 = h2;
       for (int w2 = 0; w2 < outputWidth; ++w2) {
         const int w1 = w2;
-        real* pos1 = &data1[h1 * inputWidth + w1];
-        const real* pos2 = &data2[h2 * outputWidth + w2];
+        ntype* pos1 = &data1[h1 * inputWidth + w1];
+        const ntype* pos2 = &data2[h2 * outputWidth + w2];
         for (int c = 0; c < channels; ++c) {
           pos1[0] += pos2[0];
           pos1 += inputWidth * inputHeight;
@@ -148,16 +148,16 @@ void THNN_(SpatialUpSamplingBilinear_updateGradInput)(
     const float h1r = rheight * h2;
     const int h1 = h1r;
     const int h1p = (h1 < inputHeight - 1) ? 1 : 0;
-    const real h1lambda = h1r - h1;
-    const real h0lambda = (real)1. - h1lambda;
+    const ntype h1lambda = h1r - h1;
+    const ntype h0lambda = (ntype)1. - h1lambda;
     for (int w2 = 0; w2 < outputWidth; ++w2) {
       const float w1r = rwidth * w2;
       const int w1 = w1r;
       const int w1p = (w1 < inputWidth - 1) ? 1 : 0;
-      const real w1lambda = w1r - w1;
-      const real w0lambda = (real)1. - w1lambda;
-      real* pos1 = &data1[h1 * inputWidth + w1];
-      const real* pos2 = &data2[h2 * outputWidth + w2];
+      const ntype w1lambda = w1r - w1;
+      const ntype w0lambda = (ntype)1. - w1lambda;
+      ntype* pos1 = &data1[h1 * inputWidth + w1];
+      const ntype* pos2 = &data2[h2 * outputWidth + w2];
       for (int c = 0; c < channels; ++c) {
         pos1[0] += h0lambda * w0lambda * pos2[0];
         pos1[w1p] += h0lambda * w1lambda * pos2[0];

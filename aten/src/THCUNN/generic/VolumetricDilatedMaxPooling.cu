@@ -222,17 +222,17 @@ void THNN_(VolumetricDilatedMaxPooling_updateOutput)(
   input = THCTensor_(newContiguous)(state, input);
 
   // Collapse batch and feature dimensions
-  THCDeviceTensor<real, 4> cudaInput;
-  THCDeviceTensor<real, 4> cudaOutput;
+  THCDeviceTensor<ntype, 4> cudaInput;
+  THCDeviceTensor<ntype, 4> cudaOutput;
   if (THCTensor_(nDimension)(state, input) == 4)
   {
-    cudaInput  = toDeviceTensor<real, 4>(state, input);
-    cudaOutput = toDeviceTensor<real, 4>(state, output);
+    cudaInput  = toDeviceTensor<ntype, 4>(state, input);
+    cudaOutput = toDeviceTensor<ntype, 4>(state, output);
   }
   else
   {
-    cudaInput  = toDeviceTensor<real, 5>(state, input).downcastOuter<4>();
-    cudaOutput = toDeviceTensor<real, 5>(state, output).downcastOuter<4>();
+    cudaInput  = toDeviceTensor<ntype, 5>(state, input).downcastOuter<4>();
+    cudaOutput = toDeviceTensor<ntype, 5>(state, output).downcastOuter<4>();
   }
 
   THLongStorage *indicesSize = THLongStorage_newWithSize(4);
@@ -338,19 +338,19 @@ void THNN_(VolumetricDilatedMaxPooling_updateGradInput)(
   gradOutput = THCTensor_(newContiguous)(state, gradOutput);
 
   // Collapse batch and feature dimensions
-  THCDeviceTensor<real, 4> cudaGradInput;
-  THCDeviceTensor<real, 4> cudaGradOutput;
+  THCDeviceTensor<ntype, 4> cudaGradInput;
+  THCDeviceTensor<ntype, 4> cudaGradOutput;
   if (THCTensor_(nDimension)(state, input) == 4)
   {
-    cudaGradInput  = toDeviceTensor<real, 4>(state, gradInput);
-    cudaGradOutput = toDeviceTensor<real, 4>(state, gradOutput);
+    cudaGradInput  = toDeviceTensor<ntype, 4>(state, gradInput);
+    cudaGradOutput = toDeviceTensor<ntype, 4>(state, gradOutput);
   }
   else
   {
     cudaGradInput =
-      toDeviceTensor<real, 5>(state, gradInput).downcastOuter<4>();
+      toDeviceTensor<ntype, 5>(state, gradInput).downcastOuter<4>();
     cudaGradOutput =
-      toDeviceTensor<real, 5>(state, gradOutput).downcastOuter<4>();
+      toDeviceTensor<ntype, 5>(state, gradOutput).downcastOuter<4>();
   }
 
   THLongStorage *indicesSize = THLongStorage_newWithSize(4);

@@ -44,15 +44,15 @@ void THNN_(TemporalUpSamplingLinear_updateOutput)(
                        THCTensor_(size)(state, input, 1),
                        outputWidth);
   THCTensor_(zero)(state, output);
-  THCDeviceTensor<real, 3> idata = toDeviceTensor<real, 3>(state, input);
-  THCDeviceTensor<real, 3> odata = toDeviceTensor<real, 3>(state, output);
+  THCDeviceTensor<ntype, 3> idata = toDeviceTensor<ntype, 3>(state, input);
+  THCDeviceTensor<ntype, 3> odata = toDeviceTensor<ntype, 3>(state, output);
   THAssert(inputWidth > 0 && outputWidth > 0);
-  const accreal rwidth = (outputWidth > 1) ? (accreal)(inputWidth - 1)/(outputWidth - 1) : accreal(0);
+  const accntype rwidth = (outputWidth > 1) ? (accntype)(inputWidth - 1)/(outputWidth - 1) : accntype(0);
   const int num_kernels = outputWidth;
   const int num_threads =
     THCState_getCurrentDeviceProperties(state)->maxThreadsPerBlock;
   cudaStream_t stream = THCState_getCurrentStream(state);
-  caffe_gpu_interp2_kernel<real, accreal> <<<THCCeilDiv(num_kernels, num_threads), num_threads ,
+  caffe_gpu_interp2_kernel<ntype, accntype> <<<THCCeilDiv(num_kernels, num_threads), num_threads ,
    0 , stream>>>(num_kernels, rwidth, idata, odata);
   THCudaCheck(cudaGetLastError());
   THCTensor_(free)(state, input);
@@ -77,17 +77,17 @@ void THNN_(TemporalUpSamplingLinear_updateGradInput)(
   THCUNN_assertSameGPU(state, 2, gradOutput, gradInput);
   THCTensor_(resize3d)(state, gradInput, nbatch, nchannels, inputWidth);
   THCTensor_(zero)(state, gradInput);
-  THCDeviceTensor<real, 3> data1 = toDeviceTensor<real, 3>(state, gradInput);
-  THCDeviceTensor<real, 3> data2 = toDeviceTensor<real, 3>(state, gradOutput);
+  THCDeviceTensor<ntype, 3> data1 = toDeviceTensor<ntype, 3>(state, gradInput);
+  THCDeviceTensor<ntype, 3> data2 = toDeviceTensor<ntype, 3>(state, gradOutput);
   int width1 = data1.getSize(2);
   int width2 = data2.getSize(2);
   assert(width1 > 0 && width2 > 0);
-  const accreal rwidth = (width2 > 1) ? (accreal)(width1 - 1) / (width2 - 1) : accreal(0);
+  const accntype rwidth = (width2 > 1) ? (accntype)(width1 - 1) / (width2 - 1) : accntype(0);
   const int num_kernels = width2;
   const int num_threads =
     THCState_getCurrentDeviceProperties(state)->maxThreadsPerBlock;
   cudaStream_t stream = THCState_getCurrentStream(state);
-  caffe_gpu_interp2_kernel_backward<real ,accreal> <<<THCCeilDiv(num_kernels, num_threads),
+  caffe_gpu_interp2_kernel_backward<ntype ,accntype> <<<THCCeilDiv(num_kernels, num_threads),
   num_threads, 0, stream>>>(num_kernels, rwidth, data1, data2);
   THCudaCheck(cudaGetLastError());
   THCTensor_(free)(state, gradInput);

@@ -10,8 +10,8 @@
 
 #include "THCSparse.h"
 
-#define THCSTensor          TH_CONCAT_3(THCS,Real,Tensor)
-#define THCSTensor_(NAME)   TH_CONCAT_4(THCS,Real,Tensor_,NAME)
+#define THCSTensor          TH_CONCAT_3(THCS,Ntype,Tensor)
+#define THCSTensor_(NAME)   TH_CONCAT_4(THCS,Ntype,Tensor_,NAME)
 
 #define THCIndexTensor          THCudaLongTensor
 #define THCIndexTensor_(NAME)   TH_CONCAT_2(THCudaLongTensor_,NAME)

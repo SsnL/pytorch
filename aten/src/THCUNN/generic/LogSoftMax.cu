@@ -27,7 +27,7 @@ void THNN_(LogSoftMax_updateOutput)(
   for (int64_t i = dim + 1; i < input->nDimension; ++i)
     inner_size *= input->size[i];
 
-  HostSoftMaxForward<real, accreal, LogSoftMaxForwardEpilogue>(
+  HostSoftMaxForward<ntype, accntype, LogSoftMaxForwardEpilogue>(
       state,
       THCTensor_(data)(state, input), THCTensor_(data)(state, output),
       outer_size, dim_size, inner_size,
@@ -64,7 +64,7 @@ void THNN_(LogSoftMax_updateGradInput)(
   output = THCTensor_(newContiguous)(state, output);
   gradOutput = THCTensor_(newContiguous)(state, gradOutput);
 
-  HostSoftMaxBackward<real, accreal, LogSoftMaxBackwardEpilogue>(
+  HostSoftMaxBackward<ntype, accntype, LogSoftMaxBackwardEpilogue>(
       state,
       THCTensor_(data)(state, gradOutput),
       THCTensor_(data)(state, gradInput),

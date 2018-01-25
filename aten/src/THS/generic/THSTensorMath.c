@@ -27,7 +27,7 @@ void THSTensor_(zerosLike)(THSTensor *r_, THSTensor *input)
   THSTensor_(zero)(r_);
 }
 
-void THSTensor_(mul)(THSTensor *r_, THSTensor *t, real value) {
+void THSTensor_(mul)(THSTensor *r_, THSTensor *t, ntype value) {
   if (r_ == t) {
     THTensor *r_values_ = THSTensor_(newValues)(r_);
     THTensor_(mul)(r_values_, r_values_, value);
@@ -56,7 +56,7 @@ void THSTensor_(mul)(THSTensor *r_, THSTensor *t, real value) {
 /* floating point only, because that is what TH supports */
 /* TODO: add in-place support */
 #if defined(THS_NTYPE_IS_FLOAT) || defined(THS_NTYPE_IS_DOUBLE)
-void THSTensor_(pow)(THSTensor *r_, THSTensor *t_, real value) {
+void THSTensor_(pow)(THSTensor *r_, THSTensor *t_, ntype value) {
   if (value == 0) {
     THError("cannot raise to zeroth power on sparse tensor");
   }
@@ -85,7 +85,7 @@ void THSTensor_(pow)(THSTensor *r_, THSTensor *t_, real value) {
 }
 #endif
 
-void THSTensor_(div)(THSTensor *r_, THSTensor *t, real value) {
+void THSTensor_(div)(THSTensor *r_, THSTensor *t, ntype value) {
   if (r_ == t) {
     THTensor *r_values_ = THSTensor_(newValues)(r_);
     THTensor_(div)(r_values_, r_values_, value);
@@ -111,7 +111,7 @@ void THSTensor_(div)(THSTensor *r_, THSTensor *t, real value) {
   }
 }
 
-void THSTensor_(cadd)(THSTensor *r_, THSTensor *t, real value, THSTensor *src) {
+void THSTensor_(cadd)(THSTensor *r_, THSTensor *t, ntype value, THSTensor *src) {
   if(!THSTensor_(isSameSizeAs)(t, src)) {
     THError("cadd operands have incompatible sizes or dimension types");
   }
@@ -195,7 +195,7 @@ void THSTensor_(cadd)(THSTensor *r_, THSTensor *t, real value, THSTensor *src) {
   THTensor_(free)(s_values_);
 }
 
-void THSTensor_(csub)(THSTensor *r_, THSTensor *t, real value, THSTensor *src) {
+void THSTensor_(csub)(THSTensor *r_, THSTensor *t, ntype value, THSTensor *src) {
   THSTensor_(cadd)(r_, t, -value, src);
 }
 
@@ -270,7 +270,7 @@ void THSTensor_(cmul)(THSTensor *r_, THSTensor *t_, THSTensor *src_) {
   THSTensor_(free)(src);
 }
 
-void THTensor_(spaddcmul)(THTensor *r_, THTensor *t, real value, THSTensor *src1, THSTensor *src2) {
+void THTensor_(spaddcmul)(THTensor *r_, THTensor *t, ntype value, THSTensor *src1, THSTensor *src2) {
   THSTensor *intermediate = THSTensor_(new)();
   THSTensor_(cmul)(intermediate, src1, src2);
   THSTensor_(spcadd)(r_, t, value, intermediate);
@@ -295,8 +295,8 @@ THLongTensor *THSTensor_(toCSR)(int64_t const *indices, int64_t dim, int64_t nnz
 }
 
 void THSTensor_(spaddmm)(THTensor *r_,
-    real beta, THTensor *t,
-    real alpha, THSTensor *sparse_, THTensor *dense) {
+    ntype beta, THTensor *t,
+    ntype alpha, THSTensor *sparse_, THTensor *dense) {
   int64_t h, i;
   int64_t dim_i, dim_j, dim_k; // ixj * jxk = ixk
   int64_t nnz;
@@ -346,7 +346,7 @@ void THSTensor_(spaddmm)(THTensor *r_,
     int64_t i_start = THTensor_fastGet1d(csr, h);
     int64_t i_end = THTensor_fastGet1d(csr, h+1);
     for (i = i_start; i < i_end; i++) {
-      real val = THTensor_fastGet1d(values, i);
+      ntype val = THTensor_fastGet1d(values, i);
       int64_t col = THTensor_fastGet2d(indices, 1, i);
       if (col >= 0 && col < dim_j) {
         THBlas_(axpy)(dim_k,
@@ -367,8 +367,8 @@ void THSTensor_(spaddmm)(THTensor *r_,
 }
 
 void THSTensor_(sspaddmm)(THSTensor *r_,
-    real beta, THSTensor *t,
-    real alpha, THSTensor *sparse_, THTensor *dense) {
+    ntype beta, THSTensor *t,
+    ntype alpha, THSTensor *sparse_, THTensor *dense) {
 
   int64_t h, i, p;
   int64_t dim_i, dim_j, dim_k; // ixj * jxk = ixk
@@ -429,7 +429,7 @@ void THSTensor_(sspaddmm)(THSTensor *r_,
     int64_t i_start = THTensor_fastGet1d(csr, h);
     int64_t i_end = THTensor_fastGet1d(csr, h+1);
     for (i = i_start; i < i_end; i++) {
-      real val = THTensor_fastGet1d(values, i);
+      ntype val = THTensor_fastGet1d(values, i);
       int64_t col = THTensor_fastGet2d(indices, 1, i);
       if (col >= 0 && col < dim_j) {
         THBlas_(axpy)(dim_k,
@@ -463,7 +463,7 @@ void THSTensor_(sspaddmm)(THSTensor *r_,
   THSTensor_(free)(sparse);
 }
 
-void THSTensor_(hspmm)(THSTensor *r_, real alpha, THSTensor *sparse_, THTensor *dense) {
+void THSTensor_(hspmm)(THSTensor *r_, ntype alpha, THSTensor *sparse_, THTensor *dense) {
   THArgCheck(sparse_->nDimensionI == 2, 2,
       "matrices expected, got %dD tensor", sparse_->nDimensionI);
   THArgCheck(sparse_->nDimensionV == 0, 2,
@@ -517,7 +517,7 @@ void THSTensor_(hspmm)(THSTensor *r_, real alpha, THSTensor *sparse_, THTensor *
   THSTensor_(free)(sparse);
 }
 
-void THSTensor_(spcadd)(THTensor *r_, THTensor *dense, real value, THSTensor *sparse_) {
+void THSTensor_(spcadd)(THTensor *r_, THTensor *dense, ntype value, THSTensor *sparse_) {
   THTensor_(resizeAs)(r_, dense);
   THSTensor *sparse = THSTensor_(newCoalesce)(sparse_);
 

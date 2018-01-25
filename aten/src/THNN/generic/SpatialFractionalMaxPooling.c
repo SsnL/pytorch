@@ -3,11 +3,11 @@
 #else
 
 static int64_t* THNN_(SpatialFractionalMaxPooling_generateIntervals)(
-  real sample,
+  ntype sample,
   int64_t inputSize,
   int64_t outputSize,
   int poolSize) {
-  real alpha = (real) (inputSize - poolSize) / (real) (outputSize - 1);
+  ntype alpha = (ntype) (inputSize - poolSize) / (ntype) (outputSize - 1);
   int64_t* sequence = (int64_t*) THAlloc(sizeof(int64_t) * outputSize);
 
   int64_t i;
@@ -21,10 +21,10 @@ static int64_t* THNN_(SpatialFractionalMaxPooling_generateIntervals)(
 }
 
 static void THNN_(SpatialFractionalMaxPooling_updateOutput_frame)(
-  real* input,
-  real* output,
+  ntype* input,
+  ntype* output,
   THIndex_t* indices,
-  real* randomSamples,
+  ntype* randomSamples,
   int64_t numPlanes,
   int64_t inputW, int64_t inputH,
   int64_t outputW, int64_t outputH,
@@ -33,7 +33,7 @@ static void THNN_(SpatialFractionalMaxPooling_updateOutput_frame)(
 #pragma omp parallel for private(plane)
   for (plane = 0; plane < numPlanes; ++plane) {
     /* each plane contains 2 random samples, one for W and one for H */
-    real* randomSamplesForPlane = randomSamples + plane * 2;
+    ntype* randomSamplesForPlane = randomSamples + plane * 2;
 
     /* Generate interval sequence */
     int64_t* sequenceW =
@@ -46,8 +46,8 @@ static void THNN_(SpatialFractionalMaxPooling_updateOutput_frame)(
     /* loop over output */
     int64_t h, w;
 
-    real* inputForPlane = input + plane * inputW * inputH;
-    real* outputForPlane = output + plane * outputW * outputH;
+    ntype* inputForPlane = input + plane * inputW * inputH;
+    ntype* outputForPlane = output + plane * outputW * outputH;
     THIndex_t* indicesForPlane = indices + plane * outputW * outputH;
 
     for (h = 0; h < outputH; ++h) {
@@ -56,7 +56,7 @@ static void THNN_(SpatialFractionalMaxPooling_updateOutput_frame)(
       for (w = 0; w < outputW; ++w) {
         int64_t inputWStart = sequenceW[w];
 
-        real maxVal = -THInf;
+        ntype maxVal = -THInf;
         int64_t maxIndex = -1;
 
         int64_t h2, w2;
@@ -66,7 +66,7 @@ static void THNN_(SpatialFractionalMaxPooling_updateOutput_frame)(
             THAssert(w2 >= 0 && w2 < inputW);
 
             int64_t planeIndex = h2 * inputW + w2;
-            real val = inputForPlane[planeIndex];
+            ntype val = inputForPlane[planeIndex];
             if (val > maxVal) {
               maxVal = val;
               maxIndex = planeIndex;
@@ -162,8 +162,8 @@ void THNN_(SpatialFractionalMaxPooling_updateOutput)(
 }
 
 static void THNN_(SpatialFractionalMaxPooling_updateGradInput_frame)(
-  real* gradInput,
-  real* gradOutput,
+  ntype* gradInput,
+  ntype* gradOutput,
   THIndex_t* indices,
   int64_t numPlanes,
   int64_t inputW, int64_t inputH,
@@ -171,8 +171,8 @@ static void THNN_(SpatialFractionalMaxPooling_updateGradInput_frame)(
   int64_t plane;
 #pragma omp parallel for private(plane)
   for (plane = 0; plane < numPlanes; plane++) {
-    real* gradInputForPlane = gradInput + plane * inputW * inputH;
-    real* gradOutputForPlane = gradOutput + plane * outputW * outputH;
+    ntype* gradInputForPlane = gradInput + plane * inputW * inputH;
+    ntype* gradOutputForPlane = gradOutput + plane * outputW * outputH;
     THIndex_t* indicesForPlane = indices + plane * outputW * outputH;
 
     int64_t h, w;

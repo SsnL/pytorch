@@ -8,9 +8,9 @@ void THNN_(MarginCriterion_updateOutput)(
            THCTensor *target,
            THCTensor *output,
            bool sizeAverage,
-           accreal margin_)
+           accntype margin_)
 {
-  real margin = ScalarConvert<accreal, real>::to(margin_);
+  ntype margin = ScalarConvert<accntype, ntype>::to(margin_);
   THCUNN_check_nElement(state, input, target);
   THCUNN_check_dim_size(state, output, 1, 0, 1);
   THCUNN_assertSameGPU(state, 2, input, target);
@@ -20,10 +20,10 @@ void THNN_(MarginCriterion_updateOutput)(
   input = THCTensor_(newContiguous)(state, input);
   target = THCTensor_(newContiguous)(state, target);
 
-  thrust::device_ptr<real> input_data(THCTensor_(data)(state, input));
-  thrust::device_ptr<real> target_data(THCTensor_(data)(state, target));
-  accreal sum = thrust::inner_product(input_data, input_data+size, target_data, (accreal) 0, thrust::plus<accreal>(),
-      margin_functor<real, accreal>(ScalarConvert<real, accreal>::to(margin)));
+  thrust::device_ptr<ntype> input_data(THCTensor_(data)(state, input));
+  thrust::device_ptr<ntype> target_data(THCTensor_(data)(state, target));
+  accntype sum = thrust::inner_product(input_data, input_data+size, target_data, (accntype) 0, thrust::plus<accntype>(),
+      margin_functor<ntype, accntype>(ScalarConvert<ntype, accntype>::to(margin)));
 
   if (sizeAverage)
     sum /= size;
@@ -31,7 +31,7 @@ void THNN_(MarginCriterion_updateOutput)(
   THCTensor_(free)(state, input);
   THCTensor_(free)(state, target);
 
-  THCTensor_(set1d)(state, output, 0, ScalarConvert<accreal, real>::to(sum));
+  THCTensor_(set1d)(state, output, 0, ScalarConvert<accntype, ntype>::to(sum));
 }
 
 
@@ -41,27 +41,27 @@ void THNN_(MarginCriterion_updateGradInput)(
            THCTensor *target,
            THCTensor *gradInput,
            bool sizeAverage,
-           accreal margin_)
+           accntype margin_)
 {
-  real margin = ScalarConvert<accreal, real>::to(margin_);
+  ntype margin = ScalarConvert<accntype, ntype>::to(margin_);
 
   THCUNN_check_nElement(state, input, target);
   THCUNN_assertSameGPU(state, 3, input, target, gradInput);
 
   ptrdiff_t size = THCTensor_(nElement)(state, input);
-  accreal norm = sizeAverage ? 1.f/size : 1;
+  accntype norm = sizeAverage ? 1.f/size : 1;
 
   input = THCTensor_(newContiguous)(state, input);
   target = THCTensor_(newContiguous)(state, target);
 
   THCTensor_(resizeAs)(state, gradInput, input);
 
-  thrust::device_ptr<real> input_data(THCTensor_(data)(state, input));
-  thrust::device_ptr<real> target_data(THCTensor_(data)(state, target));
-  thrust::device_ptr<real> gradInput_data(THCTensor_(data)(state, gradInput));
+  thrust::device_ptr<ntype> input_data(THCTensor_(data)(state, input));
+  thrust::device_ptr<ntype> target_data(THCTensor_(data)(state, target));
+  thrust::device_ptr<ntype> gradInput_data(THCTensor_(data)(state, gradInput));
 
   thrust::transform(input_data, input_data+size, target_data, gradInput_data,
-      margin_updateGradInput_functor<real, accreal>(ScalarConvert<real, accreal>::to(margin), norm));
+      margin_updateGradInput_functor<ntype, accntype>(ScalarConvert<ntype, accntype>::to(margin), norm));
 
   THCTensor_(free)(state, input);
   THCTensor_(free)(state, target);

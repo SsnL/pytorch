@@ -780,13 +780,13 @@ struct TensorBitXorOp {
   }
 };
 
-template <typename real, typename accreal>
+template <typename ntype, typename accntype>
 struct TensorDigammaOp {
-  using compute_type = typename std::conditional<std::is_same<real, half>::value, accreal, real>::type;
+  using compute_type = typename std::conditional<std::is_same<ntype, half>::value, accntype, ntype>::type;
   __device__ __forceinline__ void
-  operator()(real* out, real* in) {
+  operator()(ntype* out, ntype* in) {
     static const compute_type PI = 3.14159265358979323846;
-    compute_type x = ScalarConvert<real, compute_type>::to(*in);
+    compute_type x = ScalarConvert<ntype, compute_type>::to(*in);
     compute_type result = 0;
     if (x < 0.5f) {
       result -= PI / THCNumerics<compute_type>::tan(PI * x);
@@ -798,17 +798,17 @@ struct TensorDigammaOp {
     }
     const compute_type ixx = 1 / (x*x);
     result += THCNumerics<compute_type>::log(x) - 1 / (2*x) - ixx * (1.f/12 - ixx * (1.f/120 - ixx * (1.f/252)));
-    *out = ScalarConvert<compute_type, real>::to(result);
+    *out = ScalarConvert<compute_type, ntype>::to(result);
   }
 };
 
-template <typename real, typename accreal>
+template <typename ntype, typename accntype>
 struct TensorTrigammaOp {
-  using compute_type = typename std::conditional<std::is_same<real, half>::value, accreal, real>::type;
+  using compute_type = typename std::conditional<std::is_same<ntype, half>::value, accntype, ntype>::type;
   __device__ __forceinline__ void
-  operator()(real* out, real* in) {
+  operator()(ntype* out, ntype* in) {
     static const compute_type PI = 3.14159265358979323846;
-    compute_type x = ScalarConvert<real, compute_type>::to(*in);
+    compute_type x = ScalarConvert<ntype, compute_type>::to(*in);
     compute_type sign = +1;
     compute_type result = 0;
     if (x < 0.5f) {
@@ -823,7 +823,7 @@ struct TensorTrigammaOp {
     }
     const compute_type ixx = 1 / (x*x);
     result += (1 + 1 / (2*x) + ixx * (1.f/6 - ixx * (1.f/30 - ixx * (1.f/42)))) / x;
-    *out = ScalarConvert<compute_type, real>::to(sign * result);
+    *out = ScalarConvert<compute_type, ntype>::to(sign * result);
   }
 };
 

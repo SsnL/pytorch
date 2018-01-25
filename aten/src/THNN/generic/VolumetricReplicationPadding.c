@@ -63,7 +63,7 @@ static inline void THNN_(VolumetricReplicationPadding_shapeCheck)(
 }
 
 static void THNN_(VolumetricReplicationPadding_updateOutput_frame)(
-  real *input_p, real *output_p,
+  ntype *input_p, ntype *output_p,
   int64_t nslices,
   int64_t iwidth, int64_t iheight, int64_t idepth,
   int64_t owidth, int64_t oheight, int64_t odepth,
@@ -112,9 +112,9 @@ static void THNN_(VolumetricReplicationPadding_updateOutput_frame)(
           }
           ip_z = ip_z - oStartZ + iStartZ;
 
-          real *dest_p = output_p + k * owidth * oheight * odepth +
+          ntype *dest_p = output_p + k * owidth * oheight * odepth +
               z * owidth * oheight + i * owidth + j;
-          real *src_p = input_p + k * iwidth * iheight * idepth +
+          ntype *src_p = input_p + k * iwidth * iheight * idepth +
               ip_z * iwidth * iheight + ip_y * iwidth + ip_x;
           *dest_p = *src_p;
         }
@@ -142,8 +142,8 @@ void THNN_(VolumetricReplicationPadding_updateOutput)(THNNState *state,
   int64_t odepth;
   int64_t oheight;
   int64_t owidth;
-  real *input_data;
-  real *output_data;
+  ntype *input_data;
+  ntype *output_data;
 
 THNN_(VolumetricReplicationPadding_shapeCheck)(
       state, input, NULL, pleft, pright,
@@ -212,7 +212,7 @@ THNN_(VolumetricReplicationPadding_shapeCheck)(
 }
 
 static void THNN_(VolumetricReplicationPadding_updateGradInput_frame)(
-  real *ginput_p, real *goutput_p,
+  ntype *ginput_p, ntype *goutput_p,
   int64_t nslices,
   int64_t iwidth, int64_t iheight, int64_t idepth,
   int64_t owidth, int64_t oheight, int64_t odepth,
@@ -261,9 +261,9 @@ static void THNN_(VolumetricReplicationPadding_updateGradInput_frame)(
           }
           ip_z = ip_z - oStartZ + iStartZ;
 
-          real *src_p = goutput_p + k * owidth * oheight * odepth +
+          ntype *src_p = goutput_p + k * owidth * oheight * odepth +
               z * owidth * oheight + i * owidth + j;
-          real *dest_p = ginput_p + k * iwidth * iheight * idepth +
+          ntype *dest_p = ginput_p + k * iwidth * iheight * idepth +
               ip_z * iwidth * iheight + ip_y * iwidth + ip_x;
           *dest_p += *src_p;
         }

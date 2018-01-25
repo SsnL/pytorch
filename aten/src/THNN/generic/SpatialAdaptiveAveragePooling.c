@@ -10,8 +10,8 @@
 // 4d tensor B x D x H x W
 
 static void THNN_(SpatialAdaptiveAveragePooling_updateOutput_frame)(
-          real *input_p,
-          real *output_p,
+          ntype *input_p,
+          ntype *output_p,
           int64_t sizeD,
           int64_t isizeH,
           int64_t isizeW,
@@ -41,17 +41,17 @@ static void THNN_(SpatialAdaptiveAveragePooling_updateOutput_frame)(
         int kW = iendW - istartW;
 
         /* local pointers */
-        real *ip = input_p   + d*istrideD + istartH*istrideH + istartW*istrideW;
-        real *op = output_p  + d*osizeH*osizeW + oh*osizeW + ow;
+        ntype *ip = input_p   + d*istrideD + istartH*istrideH + istartW*istrideW;
+        ntype *op = output_p  + d*osizeH*osizeW + oh*osizeW + ow;
 
         /* compute local average: */
-        real sum = 0;
+        ntype sum = 0;
         int ih, iw;
         for(ih = 0; ih < kH; ih++)
         {
           for(iw = 0; iw < kW; iw++)
           {
-            real val = *(ip + ih*istrideH + iw*istrideW);
+            ntype val = *(ip + ih*istrideH + iw*istrideW);
             sum += val;
           }
         }
@@ -83,8 +83,8 @@ void THNN_(SpatialAdaptiveAveragePooling_updateOutput)(
   int64_t istrideH;
   int64_t istrideW;
 
-  real *input_data;
-  real *output_data;
+  ntype *input_data;
+  ntype *output_data;
 
 
   THNN_ARGCHECK(input->nDimension == 3 || input->nDimension == 4, 2, input,
@@ -146,8 +146,8 @@ void THNN_(SpatialAdaptiveAveragePooling_updateOutput)(
 }
 
 static void THNN_(SpatialAdaptiveAveragePooling_updateGradInput_frame)(
-          real *gradInput_p,
-          real *gradOutput_p,
+          ntype *gradInput_p,
+          ntype *gradOutput_p,
           int64_t sizeD,
           int64_t isizeH,
           int64_t isizeW,
@@ -158,8 +158,8 @@ static void THNN_(SpatialAdaptiveAveragePooling_updateGradInput_frame)(
 #pragma omp parallel for private(d)
   for (d = 0; d < sizeD; d++)
   {
-    real *gradInput_p_d = gradInput_p + d*isizeW*isizeH;
-    real *gradOutput_p_d = gradOutput_p + d*osizeW*osizeH;
+    ntype *gradInput_p_d = gradInput_p + d*isizeW*isizeH;
+    ntype *gradOutput_p_d = gradOutput_p + d*osizeW*osizeH;
 
     /* calculate average */
     int64_t oh, ow;
@@ -176,7 +176,7 @@ static void THNN_(SpatialAdaptiveAveragePooling_updateGradInput_frame)(
         int iendW   = END_IND(ow, osizeW, isizeW);
         int kW = iendW - istartW;
 
-        real grad_delta = gradOutput_p_d[oh*osizeW +ow] / kH / kW;
+        ntype grad_delta = gradOutput_p_d[oh*osizeW +ow] / kH / kW;
 
         int ih, iw;
         for(ih = istartH; ih < iendH; ih++)
@@ -207,8 +207,8 @@ void THNN_(SpatialAdaptiveAveragePooling_updateGradInput)(
   int isizeW;
   int osizeH;
   int osizeW;
-  real *gradInput_data;
-  real *gradOutput_data;
+  ntype *gradInput_data;
+  ntype *gradOutput_data;
 
   /* get contiguous gradOutput */
   gradOutput = THTensor_(newContiguous)(gradOutput);

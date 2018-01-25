@@ -6,13 +6,13 @@ void THNN_(LeakyReLU_updateOutput)(
           THNNState *state,
           THTensor *input,
           THTensor *output,
-          accreal negval_,
+          accntype negval_,
           bool inplace)
 {
-  real negval = TH_CONVERT_ACCNTYPE_TO_NTYPE(negval_);
+  ntype negval = TH_CONVERT_ACCNTYPE_TO_NTYPE(negval_);
   if (inplace)
   {
-    TH_TENSOR_APPLY(real, input,
+    TH_TENSOR_APPLY(ntype, input,
       if (*input_data <= 0)
         *input_data *= negval;
     );
@@ -21,7 +21,7 @@ void THNN_(LeakyReLU_updateOutput)(
   else
   {
     THTensor_(resizeAs)(output, input);
-    TH_TENSOR_APPLY2(real, output, real, input,
+    TH_TENSOR_APPLY2(ntype, output, ntype, input,
       *output_data = *input_data > 0 ? *input_data : *input_data * negval;
     );
   }
@@ -32,14 +32,14 @@ void THNN_(LeakyReLU_updateGradInput)(
           THTensor *input,
           THTensor *gradOutput,
           THTensor *gradInput,
-          accreal negval_,
+          accntype negval_,
           bool inplace)
 {
-  real negval = TH_CONVERT_ACCNTYPE_TO_NTYPE(negval_);
+  ntype negval = TH_CONVERT_ACCNTYPE_TO_NTYPE(negval_);
   THNN_CHECK_NELEMENT(input, gradOutput);
   if (inplace)
   {
-    TH_TENSOR_APPLY2(real, gradOutput, real, input,
+    TH_TENSOR_APPLY2(ntype, gradOutput, ntype, input,
       if (*input_data <= 0)
         *gradOutput_data *= negval;
     );
@@ -48,7 +48,7 @@ void THNN_(LeakyReLU_updateGradInput)(
   else
   {
     THTensor_(resizeAs)(gradInput, input);
-    TH_TENSOR_APPLY3(real, gradInput, real, gradOutput, real, input,
+    TH_TENSOR_APPLY3(ntype, gradInput, ntype, gradOutput, ntype, input,
       *gradInput_data = *input_data > 0 ? *gradOutput_data : *gradOutput_data * negval;
     );
   }

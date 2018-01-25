@@ -5,13 +5,13 @@
 THC_API void THCTensor_(maskedFill)(THCState *state,
                                     THCTensor *tensor,
                                     THCudaByteTensor *mask,
-                                    real value);
+                                    ntype value);
 
 // FIXME: remove now that we have THCudaByteTensor?
 THC_API void THCTensor_(maskedFillByte)(THCState *state,
                                         THCTensor *tensor,
                                         THByteTensor *mask,
-                                        real value);
+                                        ntype value);
 
 THC_API void THCTensor_(maskedCopy)(THCState *state,
                                     THCTensor *tensor,

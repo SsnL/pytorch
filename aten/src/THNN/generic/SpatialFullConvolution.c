@@ -49,7 +49,7 @@ void THNN_(SpatialFullConvolution_accGradParameters)(
     int dW, int dH,
     int padW, int padH,
     int adjW, int adjH,
-    accreal scale_)
+    accntype scale_)
 {
 THNN_(SpatialFullDilatedConvolution_accGradParameters)(
     state, input, gradOutput, gradWeight, gradBias, columns, ones,

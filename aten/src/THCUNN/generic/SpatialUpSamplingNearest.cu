@@ -87,8 +87,8 @@ void THNN_(SpatialUpSamplingNearest_updateOutput)(
     d3 = output->size[3];
   }
 
-  real *input_data = THCTensor_(data)(state, input);
-  real *output_data = THCTensor_(data)(state, output);
+  ntype *input_data = THCTensor_(data)(state, input);
+  ntype *output_data = THCTensor_(data)(state, output);
 
   // cuda blocks & threads:
   int64_t nthreads = 256;
@@ -126,8 +126,8 @@ void THNN_(SpatialUpSamplingNearest_updateGradInput)(
 
   THCTensor_(zero)(state, gradInput);
 
-  real *gradInput_data = THCTensor_(data)(state, gradInput);
-  real *gradOutput_data = THCTensor_(data)(state, gradOutput);
+  ntype *gradInput_data = THCTensor_(data)(state, gradInput);
+  ntype *gradOutput_data = THCTensor_(data)(state, gradOutput);
 
   int64_t no_elements = 1;
   for(int i = 0; i < gradInput->nDimension; i++){
@@ -162,7 +162,7 @@ void THNN_(SpatialUpSamplingNearest_updateGradInput)(
   dim3 threads(nthreads);
 
   // kernel:
-  downscale<real ,accreal> <<<blocks, threads, 0, THCState_getCurrentStream(state)>>> (gradInput_data, gradOutput_data, no_elements,
+  downscale<ntype ,accntype> <<<blocks, threads, 0, THCState_getCurrentStream(state)>>> (gradInput_data, gradOutput_data, no_elements,
     scale_factor, d1, d2, d3);
   THCudaCheck(cudaGetLastError());
   THCTensor_(free)(state, gradOutput);

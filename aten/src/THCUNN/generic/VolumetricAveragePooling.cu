@@ -201,17 +201,17 @@ void THNN_(VolumetricAveragePooling_updateOutput)(
   input = THCTensor_(newContiguous)(state, input);
 
   // Collapse batch and feature dimensions
-  THCDeviceTensor<real, 4> cudaInput;
-  THCDeviceTensor<real, 4> cudaOutput;
+  THCDeviceTensor<ntype, 4> cudaInput;
+  THCDeviceTensor<ntype, 4> cudaOutput;
   if (THCTensor_(nDimension)(state, input) == 4)
   {
-    cudaInput  = toDeviceTensor<real, 4>(state, input);
-    cudaOutput = toDeviceTensor<real, 4>(state, output);
+    cudaInput  = toDeviceTensor<ntype, 4>(state, input);
+    cudaOutput = toDeviceTensor<ntype, 4>(state, output);
   }
   else
   {
-    cudaInput  = toDeviceTensor<real, 5>(state, input).downcastOuter<4>();
-    cudaOutput = toDeviceTensor<real, 5>(state, output).downcastOuter<4>();
+    cudaInput  = toDeviceTensor<ntype, 5>(state, input).downcastOuter<4>();
+    cudaOutput = toDeviceTensor<ntype, 5>(state, output).downcastOuter<4>();
   }
 
   int totalZ = outputTime * inputSlices * batchSize;
@@ -232,7 +232,7 @@ void THNN_(VolumetricAveragePooling_updateOutput)(
         LAUNCH_UPDATE_OUTPUT_KERNEL_WIDTH(6);
         LAUNCH_UPDATE_OUTPUT_KERNEL_WIDTH(7);
       default:
-        cuda_VolumetricAveragePooling_updateOutput<real, accreal>
+        cuda_VolumetricAveragePooling_updateOutput<ntype, accntype>
           <<<grid, block, 0, THCState_getCurrentStream(state)>>>(
             cudaInput,
             cudaOutput,
@@ -308,19 +308,19 @@ void THNN_(VolumetricAveragePooling_updateGradInput)(
   gradOutput = THCTensor_(newContiguous)(state, gradOutput);
 
   // Collapse batch and feature dimensions
-  THCDeviceTensor<real, 4> cudaGradInput;
-  THCDeviceTensor<real, 4> cudaGradOutput;
+  THCDeviceTensor<ntype, 4> cudaGradInput;
+  THCDeviceTensor<ntype, 4> cudaGradOutput;
   if (THCTensor_(nDimension)(state, input) == 4)
   {
-    cudaGradInput  = toDeviceTensor<real, 4>(state, gradInput);
-    cudaGradOutput = toDeviceTensor<real, 4>(state, gradOutput);
+    cudaGradInput  = toDeviceTensor<ntype, 4>(state, gradInput);
+    cudaGradOutput = toDeviceTensor<ntype, 4>(state, gradOutput);
   }
   else
   {
     cudaGradInput =
-      toDeviceTensor<real, 5>(state, gradInput).downcastOuter<4>();
+      toDeviceTensor<ntype, 5>(state, gradInput).downcastOuter<4>();
     cudaGradOutput =
-      toDeviceTensor<real, 5>(state, gradOutput).downcastOuter<4>();
+      toDeviceTensor<ntype, 5>(state, gradOutput).downcastOuter<4>();
   }
 
   dim3 block(32, 8);
@@ -336,7 +336,7 @@ void THNN_(VolumetricAveragePooling_updateGradInput)(
       dim3 grid(THCCeilDiv(inputWidth, static_cast<int>(block.x)),
                 THCCeilDiv(inputHeight, static_cast<int>(block.y)),
                 totalZ > 65535 ? 65535 : totalZ);
-      cuda_VolumetricAveragePooling_updateGradInput_Stride1<real, accreal>
+      cuda_VolumetricAveragePooling_updateGradInput_Stride1<ntype, accntype>
         <<<grid, block, 0, THCState_getCurrentStream(state)>>>(
           cudaGradOutput, cudaGradInput, kT, kH, kW, 1.0f/(kT * kH * kW), offsetZ);
       THCudaCheck(cudaGetLastError());
@@ -354,14 +354,14 @@ void THNN_(VolumetricAveragePooling_updateGradInput)(
                 totalZ > 65535 ? 65535 : totalZ);
       if (kernelsOverlap)
       {
-        cuda_VolumetricAveragePooling_updateGradInput_atomicAdd<real, accreal>
+        cuda_VolumetricAveragePooling_updateGradInput_atomicAdd<ntype, accntype>
           <<<grid, block, 0, THCState_getCurrentStream(state)>>>(
             cudaGradOutput, cudaGradInput, kT, kH, kW, dT, dH, dW,
             padT, padH, padW, count_include_pad, offsetZ);
       }
       else
       {
-        cuda_VolumetricAveragePooling_updateGradInput<real, accreal>
+        cuda_VolumetricAveragePooling_updateGradInput<ntype, accntype>
           <<<grid, block, 0, THCState_getCurrentStream(state)>>>(
             cudaGradOutput, cudaGradInput, kT, kH, kW, dT, dH, dW,
             padT, padH, padW, count_include_pad, offsetZ);

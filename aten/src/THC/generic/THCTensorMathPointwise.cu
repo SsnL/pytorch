@@ -4,11 +4,11 @@
 
 #define IMPLEMENT_CUDA_TENSOR_BASIC_FUNC_(NAME, CFUNC, NTYPE)           \
   struct Tensor_##NAME##_##NTYPE##_Op {                                 \
-    __device__ __forceinline__ void operator()(real* out, real* in) const { \
+    __device__ __forceinline__ void operator()(ntype* out, ntype* in) const { \
       *out = CFUNC(*in);                                                \
     }                                                                   \
                                                                         \
-    __device__ __forceinline__ void operator()(real* v) const {         \
+    __device__ __forceinline__ void operator()(ntype* v) const {         \
       *v = CFUNC(*v);                                                   \
     }                                                                   \
   };                                                                    \
@@ -35,36 +35,36 @@
 
 #if defined(THC_NTYPE_IS_FLOAT) || defined(THC_NTYPE_IS_DOUBLE) || defined(THC_NTYPE_IS_HALF)
 
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  log, THCNumerics<real>::log,   Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(lgamma, THCNumerics<real>::lgamma, Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(log1p, THCNumerics<real>::log1p, Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  exp, THCNumerics<real>::exp,   Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(expm1, THCNumerics<real>::expm1, Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  cos, THCNumerics<real>::cos,   Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  sin, THCNumerics<real>::sin,   Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC( sqrt, THCNumerics<real>::sqrt,  Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(rsqrt, THCNumerics<real>::rsqrt, Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC( ceil, THCNumerics<real>::ceil,  Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(floor, THCNumerics<real>::floor, Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(trunc, THCNumerics<real>::trunc, Real)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  log, THCNumerics<ntype>::log,   Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(lgamma, THCNumerics<ntype>::lgamma, Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(log1p, THCNumerics<ntype>::log1p, Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  exp, THCNumerics<ntype>::exp,   Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(expm1, THCNumerics<ntype>::expm1, Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  cos, THCNumerics<ntype>::cos,   Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  sin, THCNumerics<ntype>::sin,   Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC( sqrt, THCNumerics<ntype>::sqrt,  Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(rsqrt, THCNumerics<ntype>::rsqrt, Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC( ceil, THCNumerics<ntype>::ceil,  Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(floor, THCNumerics<ntype>::floor, Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(trunc, THCNumerics<ntype>::trunc, Ntype)
 
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  acos, THCNumerics<real>::acos,  Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  cosh, THCNumerics<real>::cosh,  Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  asin, THCNumerics<real>::asin,  Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  sinh, THCNumerics<real>::sinh,  Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(   tan, THCNumerics<real>::tan,   Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  atan, THCNumerics<real>::atan,  Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  tanh, THCNumerics<real>::tanh,  Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(   erf, THCNumerics<real>::erf,   Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(erfinv, THCNumerics<real>::erfinv,Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC( round, THCNumerics<real>::round, Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  frac, THCNumerics<real>::frac,  Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  cinv, THCNumerics<real>::cinv,  Real)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  acos, THCNumerics<ntype>::acos,  Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  cosh, THCNumerics<ntype>::cosh,  Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  asin, THCNumerics<ntype>::asin,  Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  sinh, THCNumerics<ntype>::sinh,  Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(   tan, THCNumerics<ntype>::tan,   Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  atan, THCNumerics<ntype>::atan,  Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  tanh, THCNumerics<ntype>::tanh,  Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(   erf, THCNumerics<ntype>::erf,   Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(erfinv, THCNumerics<ntype>::erfinv,Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC( round, THCNumerics<ntype>::round, Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  frac, THCNumerics<ntype>::frac,  Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  cinv, THCNumerics<ntype>::cinv,  Ntype)
 
 #endif
 
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  neg, THCNumerics<real>::neg,   Real)
-IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  abs, THCNumerics<real>::abs,   Real)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  neg, THCNumerics<ntype>::neg,   Ntype)
+IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  abs, THCNumerics<ntype>::abs,   Ntype)
 
 #undef IMPLEMENT_CUDA_TENSOR_BASIC_FUNC_
 #undef IMPLEMENT_CUDA_TENSOR_BASIC_FUNC
@@ -72,13 +72,13 @@ IMPLEMENT_CUDA_TENSOR_BASIC_FUNC(  abs, THCNumerics<real>::abs,   Real)
 void THCTensor_(sign)(THCState* state, THCTensor* self_, THCTensor* src) {
   THCAssertSameGPU(THCTensor_(checkGPU)(state, 2, self_, src));
   if (self_ == src) {
-    if (!THC_pointwiseApply1(state, self_, TensorSignOp<real>())) {
+    if (!THC_pointwiseApply1(state, self_, TensorSignOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   } else {
     THCTensor_(resizeAs)(state, self_, src);
 
-    if (!THC_pointwiseApply2(state, self_, src, TensorSignOp<real>())) {
+    if (!THC_pointwiseApply2(state, self_, src, TensorSignOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   }
@@ -86,18 +86,18 @@ void THCTensor_(sign)(THCState* state, THCTensor* self_, THCTensor* src) {
   THCudaCheck(cudaGetLastError());
 }
 
-void THCTensor_(clamp)(THCState *state, THCTensor *self_, THCTensor *src, real min_value,
-  real max_value)
+void THCTensor_(clamp)(THCState *state, THCTensor *self_, THCTensor *src, ntype min_value,
+  ntype max_value)
 {
   THCAssertSameGPU(THCTensor_(checkGPU)(state, 2, self_, src));
   if (self_ == src) {
-    if (!THC_pointwiseApply1(state, self_, TensorClampOp<real>(min_value, max_value))) {
+    if (!THC_pointwiseApply1(state, self_, TensorClampOp<ntype>(min_value, max_value))) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   } else {
     THCTensor_(resizeAs)(state, self_, src);
 
-    if (!THC_pointwiseApply2(state, self_, src, TensorClampOp<real>(min_value, max_value))) {
+    if (!THC_pointwiseApply2(state, self_, src, TensorClampOp<ntype>(min_value, max_value))) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   }
@@ -132,7 +132,7 @@ THCTensor_(cross)(THCState *state, THCTensor *self, THCTensor *x, THCTensor *y, 
   THCTensor *nx = THCTensor_(newNarrow)(state, x, dimension, 0, 1);
   THCTensor *ny = THCTensor_(newNarrow)(state, y, dimension, 0, 1);
   THCTensor *nself = THCTensor_(newNarrow)(state, self, dimension, 0, 1);
-  if (!THC_pointwiseApply3(state, nself, nx, ny, TensorCrossOp<real>(sx, sy, so))) {
+  if (!THC_pointwiseApply3(state, nself, nx, ny, TensorCrossOp<ntype>(sx, sy, so))) {
     THArgCheck(false, 2, CUTORCH_DIM_WARNING);
   }
   THCTensor_(free)(state, nx);
@@ -149,7 +149,7 @@ void THCTensor_(atan2)(THCState *state, THCTensor *self_, THCTensor *tx, THCTens
              THCTensor_(nElement)(state, ty), 3, "sizes do not match");
   THCTensor_(resizeAs)(state, self_, tx);
 
-  if (!THC_pointwiseApply3(state, self_, tx, ty, TensorATan2Op<real>())) {
+  if (!THC_pointwiseApply3(state, self_, tx, ty, TensorATan2Op<ntype>())) {
     THArgCheck(false, 2, CUTORCH_DIM_WARNING);
   }
 
@@ -159,13 +159,13 @@ void THCTensor_(atan2)(THCState *state, THCTensor *self_, THCTensor *tx, THCTens
 void THCTensor_(sigmoid)(THCState* state, THCTensor* self_, THCTensor* src) {
   THCAssertSameGPU(THCTensor_(checkGPU)(state, 2, self_, src));
   if (self_ == src) {
-    if (!THC_pointwiseApply1(state, self_, TensorSigmoidOp<real>())) {
+    if (!THC_pointwiseApply1(state, self_, TensorSigmoidOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   } else {
     THCTensor_(resizeAs)(state, self_, src);
 
-    if (!THC_pointwiseApply2(state, self_, src, TensorSigmoidOp<real>())) {
+    if (!THC_pointwiseApply2(state, self_, src, TensorSigmoidOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   }
@@ -178,7 +178,7 @@ void THCTensor_(digamma)(THCState* state, THCTensor* self_, THCTensor* src) {
   if (self_ != src) {
     THCTensor_(resizeAs)(state, self_, src);
   }
-  if (!THC_pointwiseApply2(state, self_, src, TensorDigammaOp<real, accreal>())) {
+  if (!THC_pointwiseApply2(state, self_, src, TensorDigammaOp<ntype, accntype>())) {
     THArgCheck(false, 2, CUTORCH_DIM_WARNING);
   }
 
@@ -192,12 +192,12 @@ void THCTensor_(polygamma)(THCState* state, THCTensor* self_, int64_t n, THCTens
   }
   switch (n) {
     case 0:
-      if (!THC_pointwiseApply2(state, self_, src, TensorDigammaOp<real, accreal>())) {
+      if (!THC_pointwiseApply2(state, self_, src, TensorDigammaOp<ntype, accntype>())) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
       break;
     case 1:
-      if (!THC_pointwiseApply2(state, self_, src, TensorTrigammaOp<real, accreal>())) {
+      if (!THC_pointwiseApply2(state, self_, src, TensorTrigammaOp<ntype, accntype>())) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
       break;
@@ -208,61 +208,61 @@ void THCTensor_(polygamma)(THCState* state, THCTensor* self_, int64_t n, THCTens
   THCudaCheck(cudaGetLastError());
 }
 
-void THCTensor_(pow)(THCState *state, THCTensor *self_, THCTensor *src, real value) {
+void THCTensor_(pow)(THCState *state, THCTensor *self_, THCTensor *src, ntype value) {
   THCAssertSameGPU(THCTensor_(checkGPU)(state, 2, self_, src));
   if (self_ == src) {
-    if (THCNumerics<real>::eq(value, ScalarConvert<int, real>::to(1))) {
-      if (!THC_pointwiseApply1(state, self_, TensorPowOp<real, 1>(value))) {
+    if (THCNumerics<ntype>::eq(value, ScalarConvert<int, ntype>::to(1))) {
+      if (!THC_pointwiseApply1(state, self_, TensorPowOp<ntype, 1>(value))) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
-    } else if (THCNumerics<real>::eq(value, ScalarConvert<int, real>::to(2))) {
-      if (!THC_pointwiseApply1(state, self_, TensorPowOp<real, 2>(value))) {
+    } else if (THCNumerics<ntype>::eq(value, ScalarConvert<int, ntype>::to(2))) {
+      if (!THC_pointwiseApply1(state, self_, TensorPowOp<ntype, 2>(value))) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
-    } else if (THCNumerics<real>::eq(value, ScalarConvert<int, real>::to(3))) {
-      if (!THC_pointwiseApply1(state, self_, TensorPowOp<real, 3>(value))) {
+    } else if (THCNumerics<ntype>::eq(value, ScalarConvert<int, ntype>::to(3))) {
+      if (!THC_pointwiseApply1(state, self_, TensorPowOp<ntype, 3>(value))) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
-    } else if (THCNumerics<real>::eq(value, ScalarConvert<int, real>::to(-1))) {
-      if (!THC_pointwiseApply1(state, self_, TensorPowOp<real, -1>(value))) {
+    } else if (THCNumerics<ntype>::eq(value, ScalarConvert<int, ntype>::to(-1))) {
+      if (!THC_pointwiseApply1(state, self_, TensorPowOp<ntype, -1>(value))) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
-    } else if (THCNumerics<real>::eq(value, ScalarConvert<int, real>::to(-2))) {
-      if (!THC_pointwiseApply1(state, self_, TensorPowOp<real, -2>(value))) {
+    } else if (THCNumerics<ntype>::eq(value, ScalarConvert<int, ntype>::to(-2))) {
+      if (!THC_pointwiseApply1(state, self_, TensorPowOp<ntype, -2>(value))) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
     } else {
       // fallback implementation using pow
-      if (!THC_pointwiseApply1(state, self_, TensorPowOp<real, -3>(value))) {
+      if (!THC_pointwiseApply1(state, self_, TensorPowOp<ntype, -3>(value))) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
     }
   } else {
     THCTensor_(resizeAs)(state, self_, src);
 
-    if (THCNumerics<real>::eq(value, ScalarConvert<int, real>::to(1))) {
-      if (!THC_pointwiseApply2(state, self_, src, TensorPowOp<real, 1>(value))) {
+    if (THCNumerics<ntype>::eq(value, ScalarConvert<int, ntype>::to(1))) {
+      if (!THC_pointwiseApply2(state, self_, src, TensorPowOp<ntype, 1>(value))) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
-    } else if (THCNumerics<real>::eq(value, ScalarConvert<int, real>::to(2))) {
-      if (!THC_pointwiseApply2(state, self_, src, TensorPowOp<real, 2>(value))) {
+    } else if (THCNumerics<ntype>::eq(value, ScalarConvert<int, ntype>::to(2))) {
+      if (!THC_pointwiseApply2(state, self_, src, TensorPowOp<ntype, 2>(value))) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
-    } else if (THCNumerics<real>::eq(value, ScalarConvert<int, real>::to(3))) {
-      if (!THC_pointwiseApply2(state, self_, src, TensorPowOp<real, 3>(value))) {
+    } else if (THCNumerics<ntype>::eq(value, ScalarConvert<int, ntype>::to(3))) {
+      if (!THC_pointwiseApply2(state, self_, src, TensorPowOp<ntype, 3>(value))) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
-    } else if (THCNumerics<real>::eq(value, ScalarConvert<int, real>::to(-1))) {
-      if (!THC_pointwiseApply2(state, self_, src, TensorPowOp<real, -1>(value))) {
+    } else if (THCNumerics<ntype>::eq(value, ScalarConvert<int, ntype>::to(-1))) {
+      if (!THC_pointwiseApply2(state, self_, src, TensorPowOp<ntype, -1>(value))) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
-    } else if (THCNumerics<real>::eq(value, ScalarConvert<int, real>::to(-2))) {
-      if (!THC_pointwiseApply2(state, self_, src, TensorPowOp<real, -2>(value))) {
+    } else if (THCNumerics<ntype>::eq(value, ScalarConvert<int, ntype>::to(-2))) {
+      if (!THC_pointwiseApply2(state, self_, src, TensorPowOp<ntype, -2>(value))) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
     } else {
       // fallback implementation using pow
-      if (!THC_pointwiseApply2(state, self_, src, TensorPowOp<real, -3>(value))) {
+      if (!THC_pointwiseApply2(state, self_, src, TensorPowOp<ntype, -3>(value))) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
     }
@@ -271,17 +271,17 @@ void THCTensor_(pow)(THCState *state, THCTensor *self_, THCTensor *src, real val
   THCudaCheck(cudaGetLastError());
 }
 
-void THCTensor_(tpow)(THCState *state, THCTensor *self_, real value, THCTensor *src)
+void THCTensor_(tpow)(THCState *state, THCTensor *self_, ntype value, THCTensor *src)
 {
   THCAssertSameGPU(THCTensor_(checkGPU)(state, 2, self_, src));
   if (self_ == src) {
-    if (!THC_pointwiseApply1(state, self_, TensorTPowOp<real>(value))) {
+    if (!THC_pointwiseApply1(state, self_, TensorTPowOp<ntype>(value))) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   } else {
     THCTensor_(resizeAs)(state, self_, src);
 
-    if (!THC_pointwiseApply2(state, self_, src, TensorTPowOp<real>(value))) {
+    if (!THC_pointwiseApply2(state, self_, src, TensorTPowOp<ntype>(value))) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   }
@@ -290,14 +290,14 @@ void THCTensor_(tpow)(THCState *state, THCTensor *self_, real value, THCTensor *
 }
 
 THC_API void
-THCTensor_(lerp)(THCState *state, THCTensor *result, THCTensor *a, THCTensor *b, real w)
+THCTensor_(lerp)(THCState *state, THCTensor *result, THCTensor *a, THCTensor *b, ntype w)
 {
   THCAssertSameGPU(THCTensor_(checkGPU)(state, 3, result, a, b));
   THArgCheck(THCTensor_(nElement)(state, a) ==
              THCTensor_(nElement)(state, b), 3, "sizes do not match");
   THCTensor_(resizeAs)(state, result, a);
 
-  if (!THC_pointwiseApply3(state, result, a, b, TensorLerpOp<real>(w))) {
+  if (!THC_pointwiseApply3(state, result, a, b, TensorLerpOp<ntype>(w))) {
     THArgCheck(false, 2, CUTORCH_DIM_WARNING);
   }
 
@@ -307,35 +307,35 @@ THCTensor_(lerp)(THCState *state, THCTensor *result, THCTensor *a, THCTensor *b,
 #endif
 
 THC_API void
-THCTensor_(cadd)(THCState *state, THCTensor *self_, THCTensor* src1, real value, THCTensor *src2)
+THCTensor_(cadd)(THCState *state, THCTensor *self_, THCTensor* src1, ntype value, THCTensor *src2)
 {
   THCAssertSameGPU(THCTensor_(checkGPU)(state, 3, self_, src1, src2));
   THArgCheck(THCTensor_(nElement)(state, src1) ==
              THCTensor_(nElement)(state, src2), 3, "sizes do not match");
 
   if (self_ == src1) {
-    if (value == ScalarConvert<int, real>::to(1)) {
+    if (value == ScalarConvert<int, ntype>::to(1)) {
       // self += src2
-      if (!THC_pointwiseApply2(state, self_, src2, TensorAddOp<real>())) {
+      if (!THC_pointwiseApply2(state, self_, src2, TensorAddOp<ntype>())) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
     } else {
       // self += value * src2
-      if (!THC_pointwiseApply2(state, self_, src2, TensorCAddOp<real>(value))) {
+      if (!THC_pointwiseApply2(state, self_, src2, TensorCAddOp<ntype>(value))) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
     }
   } else {
     THCTensor_(resizeAs)(state, self_, src1);
 
-    if (value == ScalarConvert<int, real>::to(1)) {
+    if (value == ScalarConvert<int, ntype>::to(1)) {
       // self = src1 + src2
-      if (!THC_pointwiseApply3(state, self_, src1, src2, TensorAddOp<real>())) {
+      if (!THC_pointwiseApply3(state, self_, src1, src2, TensorAddOp<ntype>())) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
     } else {
       // self = src1 + value * src2
-      if (!THC_pointwiseApply3(state, self_, src1, src2, TensorCAddOp<real>(value))) {
+      if (!THC_pointwiseApply3(state, self_, src1, src2, TensorCAddOp<ntype>(value))) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
     }
@@ -345,39 +345,39 @@ THCTensor_(cadd)(THCState *state, THCTensor *self_, THCTensor* src1, real value,
 }
 
 THC_API void
-THCTensor_(csub)(THCState *state, THCTensor *self_, THCTensor* src1, real value, THCTensor *src2)
+THCTensor_(csub)(THCState *state, THCTensor *self_, THCTensor* src1, ntype value, THCTensor *src2)
 {
   THCAssertSameGPU(THCTensor_(checkGPU)(state, 3, self_, src1, src2));
   THArgCheck(THCTensor_(nElement)(state, src1) ==
              THCTensor_(nElement)(state, src2), 3, "sizes do not match");
 
   if (self_ == src1) {
-    if (value == ScalarConvert<int, real>::to(1)) {
+    if (value == ScalarConvert<int, ntype>::to(1)) {
       // self -= src2
-      if (!THC_pointwiseApply2(state, self_, src2, TensorSubOp<real>())) {
+      if (!THC_pointwiseApply2(state, self_, src2, TensorSubOp<ntype>())) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
     } else {
       // self += -value * src2
       if (!THC_pointwiseApply2(state, self_, src2,
-                                   TensorCAddOp<real>(
-                                     ScalarNegate<real>::to(value)))) {
+                                   TensorCAddOp<ntype>(
+                                     ScalarNegate<ntype>::to(value)))) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
     }
   } else {
     THCTensor_(resizeAs)(state, self_, src1);
 
-    if (value == ScalarConvert<int, real>::to(1)) {
+    if (value == ScalarConvert<int, ntype>::to(1)) {
       // self = src1 - src2
-      if (!THC_pointwiseApply3(state, self_, src1, src2, TensorSubOp<real>())) {
+      if (!THC_pointwiseApply3(state, self_, src1, src2, TensorSubOp<ntype>())) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
     } else {
       // self = src1 - value * src2
       if (!THC_pointwiseApply3(state, self_, src1, src2,
-                                   TensorCAddOp<real>(
-                                     ScalarNegate<real>::to(value)))) {
+                                   TensorCAddOp<ntype>(
+                                     ScalarNegate<ntype>::to(value)))) {
         THArgCheck(false, 2, CUTORCH_DIM_WARNING);
       }
     }
@@ -395,14 +395,14 @@ THCTensor_(cmul)(THCState *state, THCTensor *self_, THCTensor *src1, THCTensor *
 
   if (self_ == src1) {
     // self *= src2
-    if (!THC_pointwiseApply2(state, self_, src2, TensorMulOp<real>())) {
+    if (!THC_pointwiseApply2(state, self_, src2, TensorMulOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   } else {
     THCTensor_(resizeAs)(state, self_, src1);
 
     // self = src1 * src2
-    if (!THC_pointwiseApply3(state, self_, src1, src2, TensorMulOp<real>())) {
+    if (!THC_pointwiseApply3(state, self_, src1, src2, TensorMulOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   }
@@ -419,14 +419,14 @@ THCTensor_(cpow)(THCState *state, THCTensor *self_, THCTensor *src1, THCTensor *
 
   if (self_ == src1) {
     // self = pow(self, src2)
-    if (!THC_pointwiseApply2(state, self_, src2, TensorCPowOp<real>())) {
+    if (!THC_pointwiseApply2(state, self_, src2, TensorCPowOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   } else {
     THCTensor_(resizeAs)(state, self_, src1);
 
     // self = pow(src1, src2)
-    if (!THC_pointwiseApply3(state, self_, src1, src2, TensorCPowOp<real>())) {
+    if (!THC_pointwiseApply3(state, self_, src1, src2, TensorCPowOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   }
@@ -443,14 +443,14 @@ THCTensor_(cdiv)(THCState* state, THCTensor *self_, THCTensor *src1, THCTensor *
 
   if (self_ == src1) {
     // self /= src2
-    if (!THC_pointwiseApply2(state, self_, src2, TensorDivOp<real>())) {
+    if (!THC_pointwiseApply2(state, self_, src2, TensorDivOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   } else {
     THCTensor_(resizeAs)(state, self_, src1);
 
     // self = src1 / src2
-    if (!THC_pointwiseApply3(state, self_, src1, src2, TensorDivOp<real>())) {
+    if (!THC_pointwiseApply3(state, self_, src1, src2, TensorDivOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   }
@@ -470,14 +470,14 @@ THCTensor_(clshift)(THCState* state, THCTensor *self_, THCTensor *src1, THCTenso
 
   if (self_ == src1) {
     // self /= src2
-    if (!THC_pointwiseApply2(state, self_, src2, TensorLShiftOp<real>())) {
+    if (!THC_pointwiseApply2(state, self_, src2, TensorLShiftOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   } else {
     THCTensor_(resizeAs)(state, self_, src1);
 
     // self = src1 / src2
-    if (!THC_pointwiseApply3(state, self_, src1, src2, TensorLShiftOp<real>())) {
+    if (!THC_pointwiseApply3(state, self_, src1, src2, TensorLShiftOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   }
@@ -498,14 +498,14 @@ THCTensor_(crshift)(THCState* state, THCTensor *self_, THCTensor *src1, THCTenso
 
   if (self_ == src1) {
     // self /= src2
-    if (!THC_pointwiseApply2(state, self_, src2, TensorRShiftOp<real>())) {
+    if (!THC_pointwiseApply2(state, self_, src2, TensorRShiftOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   } else {
     THCTensor_(resizeAs)(state, self_, src1);
 
     // self = src1 / src2
-    if (!THC_pointwiseApply3(state, self_, src1, src2, TensorRShiftOp<real>())) {
+    if (!THC_pointwiseApply3(state, self_, src1, src2, TensorRShiftOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   }
@@ -522,12 +522,12 @@ THCTensor_(cmax)(THCState *state, THCTensor *self, THCTensor *src1, THCTensor *s
              THCTensor_(nElement)(state, src2), 2, "sizes do not match");
 
   if (self == src1) {
-    if (!THC_pointwiseApply2(state, self, src2, TensorMaxOp<real>())) {
+    if (!THC_pointwiseApply2(state, self, src2, TensorMaxOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   } else {
     THCTensor_(resizeAs)(state, self, src1);
-    if (!THC_pointwiseApply3(state, self, src1, src2, TensorMaxOp<real>())) {
+    if (!THC_pointwiseApply3(state, self, src1, src2, TensorMaxOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   }
@@ -541,12 +541,12 @@ THCTensor_(cmin)(THCState *state, THCTensor *self, THCTensor *src1, THCTensor *s
              THCTensor_(nElement)(state, src2), 2, "sizes do not match");
 
   if (self == src1) {
-    if (!THC_pointwiseApply2(state, self, src2, TensorMinOp<real>())) {
+    if (!THC_pointwiseApply2(state, self, src2, TensorMinOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   } else {
     THCTensor_(resizeAs)(state, self, src1);
-    if (!THC_pointwiseApply3(state, self, src1, src2, TensorMinOp<real>())) {
+    if (!THC_pointwiseApply3(state, self, src1, src2, TensorMinOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   }
@@ -560,12 +560,12 @@ THCTensor_(cremainder)(THCState *state, THCTensor *self, THCTensor *src1, THCTen
              THCTensor_(nElement)(state, src2), 2, "sizes do not match");
 
   if (self == src1) {
-    if (!THC_pointwiseApply2(state, self, src2, TensorCRemainderOp<real>())) {
+    if (!THC_pointwiseApply2(state, self, src2, TensorCRemainderOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   } else {
     THCTensor_(resizeAs)(state, self, src1);
-    if (!THC_pointwiseApply3(state, self, src1, src2, TensorCRemainderOp<real>())) {
+    if (!THC_pointwiseApply3(state, self, src1, src2, TensorCRemainderOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   }
@@ -579,53 +579,53 @@ THCTensor_(cfmod)(THCState *state, THCTensor *self, THCTensor *src1, THCTensor *
              THCTensor_(nElement)(state, src2), 2, "sizes do not match");
 
   if (self == src1) {
-    if (!THC_pointwiseApply2(state, self, src2, TensorCFmodOp<real>())) {
+    if (!THC_pointwiseApply2(state, self, src2, TensorCFmodOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   } else {
     THCTensor_(resizeAs)(state, self, src1);
-    if (!THC_pointwiseApply3(state, self, src1, src2, TensorCFmodOp<real>())) {
+    if (!THC_pointwiseApply3(state, self, src1, src2, TensorCFmodOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   }
 }
 
 THC_API void
-THCTensor_(cmaxValue)(THCState *state, THCTensor *self, THCTensor *src, real value)
+THCTensor_(cmaxValue)(THCState *state, THCTensor *self, THCTensor *src, ntype value)
 {
   THCAssertSameGPU(THCTensor_(checkGPU)(state, 2, self, src));
 
   if (self == src) {
-    if (!THC_pointwiseApply1(state, self, TensorMaxValueOp<real>(value))) {
+    if (!THC_pointwiseApply1(state, self, TensorMaxValueOp<ntype>(value))) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   } else {
     THCTensor_(resizeAs)(state, self, src);
-    if (!THC_pointwiseApply2(state, self, src, TensorMaxValueOp<real>(value))) {
+    if (!THC_pointwiseApply2(state, self, src, TensorMaxValueOp<ntype>(value))) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   }
 }
 
 THC_API void
-THCTensor_(cminValue)(THCState *state, THCTensor *self, THCTensor *src, real value)
+THCTensor_(cminValue)(THCState *state, THCTensor *self, THCTensor *src, ntype value)
 {
   THCAssertSameGPU(THCTensor_(checkGPU)(state, 2, self, src));
 
   if (self == src) {
-    if (!THC_pointwiseApply1(state, self, TensorMinValueOp<real>(value))) {
+    if (!THC_pointwiseApply1(state, self, TensorMinValueOp<ntype>(value))) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   } else {
     THCTensor_(resizeAs)(state, self, src);
-    if (!THC_pointwiseApply2(state, self, src, TensorMinValueOp<real>(value))) {
+    if (!THC_pointwiseApply2(state, self, src, TensorMinValueOp<ntype>(value))) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   }
 }
 
 THC_API void
-THCTensor_(addcmul)(THCState *state, THCTensor *self_, THCTensor *t, real value, THCTensor *src1, THCTensor *src2)
+THCTensor_(addcmul)(THCState *state, THCTensor *self_, THCTensor *t, ntype value, THCTensor *src1, THCTensor *src2)
 {
   THCAssertSameGPU(THCTensor_(checkGPU)(state, 4, self_, t, src1, src2));
   if(self_ != t)
@@ -642,7 +642,7 @@ THCTensor_(addcmul)(THCState *state, THCTensor *self_, THCTensor *t, real value,
   THArgCheck(THCTensor_(nElement)(state, src1) == THCTensor_(nElement)(state, src2),
              3, "sizes do not match");
 
-  if (!THC_pointwiseApply3(state, self_, src1, src2, TensorAddCMulOp<real>(value))) {
+  if (!THC_pointwiseApply3(state, self_, src1, src2, TensorAddCMulOp<ntype>(value))) {
     THArgCheck(false, 2, CUTORCH_DIM_WARNING);
   }
 
@@ -650,7 +650,7 @@ THCTensor_(addcmul)(THCState *state, THCTensor *self_, THCTensor *t, real value,
 }
 
 THC_API void
-THCTensor_(addcdiv)(THCState *state, THCTensor *self_, THCTensor *t, real value, THCTensor *src1, THCTensor *src2)
+THCTensor_(addcdiv)(THCState *state, THCTensor *self_, THCTensor *t, ntype value, THCTensor *src1, THCTensor *src2)
 {
   THCAssertSameGPU(THCTensor_(checkGPU)(state, 4, self_, t, src1, src2));
   if(self_ != t)
@@ -666,7 +666,7 @@ THCTensor_(addcdiv)(THCState *state, THCTensor *self_, THCTensor *t, real value,
   THArgCheck(THCTensor_(nElement)(state, src1) == THCTensor_(nElement)(state, src2),
              3, "sizes do not match");
 
-  if (!THC_pointwiseApply3(state, self_, src1, src2, TensorAddCDivOp<real>(value))) {
+  if (!THC_pointwiseApply3(state, self_, src1, src2, TensorAddCDivOp<ntype>(value))) {
     THArgCheck(false, 2, CUTORCH_DIM_WARNING);
   }
 
@@ -685,14 +685,14 @@ THCTensor_(cbitand)(THCState* state, THCTensor *self_, THCTensor *src1, THCTenso
 
   if (self_ == src1) {
     // self /= src2
-    if (!THC_pointwiseApply2(state, self_, src2, TensorBitAndOp<real>())) {
+    if (!THC_pointwiseApply2(state, self_, src2, TensorBitAndOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   } else {
     THCTensor_(resizeAs)(state, self_, src1);
 
     // self = src1 / src2
-    if (!THC_pointwiseApply3(state, self_, src1, src2, TensorBitAndOp<real>())) {
+    if (!THC_pointwiseApply3(state, self_, src1, src2, TensorBitAndOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   }
@@ -713,14 +713,14 @@ THCTensor_(cbitor)(THCState* state, THCTensor *self_, THCTensor *src1, THCTensor
 
   if (self_ == src1) {
     // self /= src2
-    if (!THC_pointwiseApply2(state, self_, src2, TensorBitOrOp<real>())) {
+    if (!THC_pointwiseApply2(state, self_, src2, TensorBitOrOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   } else {
     THCTensor_(resizeAs)(state, self_, src1);
 
     // self = src1 / src2
-    if (!THC_pointwiseApply3(state, self_, src1, src2, TensorBitOrOp<real>())) {
+    if (!THC_pointwiseApply3(state, self_, src1, src2, TensorBitOrOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   }
@@ -741,14 +741,14 @@ THCTensor_(cbitxor)(THCState* state, THCTensor *self_, THCTensor *src1, THCTenso
 
   if (self_ == src1) {
     // self /= src2
-    if (!THC_pointwiseApply2(state, self_, src2, TensorBitXorOp<real>())) {
+    if (!THC_pointwiseApply2(state, self_, src2, TensorBitXorOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   } else {
     THCTensor_(resizeAs)(state, self_, src1);
 
     // self = src1 / src2
-    if (!THC_pointwiseApply3(state, self_, src1, src2, TensorBitXorOp<real>())) {
+    if (!THC_pointwiseApply3(state, self_, src1, src2, TensorBitXorOp<ntype>())) {
       THArgCheck(false, 2, CUTORCH_DIM_WARNING);
     }
   }

@@ -18,9 +18,9 @@ void THNN_(BCECriterion_updateOutput)(
 
   if (!reduce) {
     THTensor_(resizeAs)(output, input);
-    TH_TENSOR_APPLY3(real, input, real, target, real, output,
-        real x = *input_data;
-        real y = *target_data;
+    TH_TENSOR_APPLY3(ntype, input, ntype, target, ntype, output,
+        ntype x = *input_data;
+        ntype y = *target_data;
         THAssertMsg(x >= 0. && x <= 1.,
           "input value should be between 0~1, but got %f",
 		      (double) x);
@@ -33,22 +33,22 @@ void THNN_(BCECriterion_updateOutput)(
   }
 
 	THTensor_(resize1d)(output, 1);
-  real sum = 0;
+  ntype sum = 0;
 
   if (weights) {
-    TH_TENSOR_APPLY3(real, input, real, target, real, weights,
-      real x = *input_data;
-      real y = *target_data;
-      real w = *weights_data;
+    TH_TENSOR_APPLY3(ntype, input, ntype, target, ntype, weights,
+      ntype x = *input_data;
+      ntype y = *target_data;
+      ntype w = *weights_data;
       THAssertMsg(x >= 0. && x <= 1.,
         "input value should be between 0~1, but got %f",
 		  (double) x);
       sum -= (log(x + EPS) * y + log(1. - x + EPS) * (1. - y)) * w;
     );
   } else {
-    TH_TENSOR_APPLY2(real, input, real, target,
-      real x = *input_data;
-      real y = *target_data;
+    TH_TENSOR_APPLY2(ntype, input, ntype, target,
+      ntype x = *input_data;
+      ntype y = *target_data;
       THAssertMsg(x >= 0. && x <= 1.,
         "input value should be between 0~1, but got %f",
 		  (double) x);
@@ -79,14 +79,14 @@ void THNN_(BCECriterion_updateGradInput)(
 
   if (!reduce) {
     THNN_CHECK_NELEMENT(gradOutput, input);
-    TH_TENSOR_APPLY3(real, gradInput, real, input, real, target,
-      real x = *input_data;
-      real y = *target_data;
+    TH_TENSOR_APPLY3(ntype, gradInput, ntype, input, ntype, target,
+      ntype x = *input_data;
+      ntype y = *target_data;
       *gradInput_data = -(y - x) / ((1. - x + EPS) * (x + EPS));
     );
 
     if (weights) {
-      TH_TENSOR_APPLY3(real, gradInput, real, weights, real, gradOutput,
+      TH_TENSOR_APPLY3(ntype, gradInput, ntype, weights, ntype, gradOutput,
         *gradInput_data = *gradInput_data * *weights_data * *gradOutput_data;
       );
     } else {
@@ -96,11 +96,11 @@ void THNN_(BCECriterion_updateGradInput)(
   }
 
   THNN_CHECK_DIM_SIZE(gradOutput, 1, 0, 1);
-  real norm = (sizeAverage ? 1./((real)THTensor_(nElement)(input)) : 1.);
+  ntype norm = (sizeAverage ? 1./((ntype)THTensor_(nElement)(input)) : 1.);
 
-  TH_TENSOR_APPLY3(real, gradInput, real, input, real, target,
-    real x = *input_data;
-    real y = *target_data;
+  TH_TENSOR_APPLY3(ntype, gradInput, ntype, input, ntype, target,
+    ntype x = *input_data;
+    ntype y = *target_data;
     *gradInput_data = - norm * (y - x) / ((1. - x + EPS) * (x + EPS)) * THTensor_fastGet1d(gradOutput, 0);
   );
 

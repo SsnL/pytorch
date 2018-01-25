@@ -13,39 +13,39 @@
 // [batch dim][feature dim]
 // [batch dim][feature dim][opt dim 1]
 // [batch dim][feature dim][opt dim 1][opt dim 2]
-THCDeviceTensor<real, 4>
+THCDeviceTensor<ntype, 4>
 THNN_(FeatureLPPooling_upcast)(THCState* state, THCTensor* t, bool batchMode) {
   int inputDim = THCTensor_(nDimension)(state, t);
 
   if (inputDim == 1) {
     // [feature dim]
-    return toDeviceTensor<real, 1>(state, t).
+    return toDeviceTensor<ntype, 1>(state, t).
       upcastOuter<2>().upcastInner<4>();
   } else if (inputDim == 2) {
     if (batchMode) {
       // [batch dim][feature dim]
-      return toDeviceTensor<real, 2>(state, t).
+      return toDeviceTensor<ntype, 2>(state, t).
         upcastInner<4>();
     } else {
       // [feature dim][opt dim 1]
-      return toDeviceTensor<real, 2>(state, t).
+      return toDeviceTensor<ntype, 2>(state, t).
         upcastOuter<3>().upcastInner<4>();
     }
   } else if (inputDim == 3) {
     if (batchMode) {
       // [batch dim][feature dim][opt dim 1]
-      return toDeviceTensor<real, 3>(state, t).
+      return toDeviceTensor<ntype, 3>(state, t).
         upcastInner<4>();
     } else {
       // [feature dim][opt dim 1][opt dim 2]
-      return toDeviceTensor<real, 3>(state, t).
+      return toDeviceTensor<ntype, 3>(state, t).
         upcastOuter<4>();
     }
   } else {
     // inputDim == 4
     // [batch dim][feature dim][opt dim 1][opt dim 2]
     THAssert(batchMode);
-    return toDeviceTensor<real, 4>(state, t);
+    return toDeviceTensor<ntype, 4>(state, t);
   }
 }
 
@@ -143,7 +143,7 @@ THNN_(FeatureLPPooling_resize)(THCState* state,
 void THNN_(FeatureLPPooling_updateOutput)(THCState* state,
                                           THCTensor* inputTH,
                                           THCTensor* outputTH,
-                                          accreal power,
+                                          accntype power,
                                           int width,
                                           int stride,
                                           bool batchMode) {
@@ -197,7 +197,7 @@ void THNN_(FeatureLPPooling_updateGradInput)(THCState* state,
                                              THCTensor* inputTH,
                                              THCTensor* outputTH,
                                              THCTensor* gradInputTH,
-                                             accreal power,
+                                             accntype power,
                                              int width,
                                              int stride,
                                              bool batchMode) {

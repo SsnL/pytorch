@@ -17,8 +17,8 @@ void THNN_(SpatialAdaptiveMaxPooling_updateOutput)(
   THCUNN_assertSameGPU(state, 3, input, output, indices);
 
   THCIndex_t *indices_data;
-  real *output_data;
-  real *input_data;
+  ntype *output_data;
+  ntype *input_data;
 
   THCUNN_argCheck(state, input->nDimension == 3 || input->nDimension == 4, 2, input,
                   "3D or 4D (batch mode) tensor expected for input, but got: %s");
@@ -101,8 +101,8 @@ void THNN_(SpatialAdaptiveMaxPooling_updateGradInput)(
   THCUNN_assertSameGPU(state, 4, input, indices, gradOutput, gradInput);
 
   THCIndex_t *indices_data;
-  real *gradInput_data;
-  real *gradOutput_data;
+  ntype *gradInput_data;
+  ntype *gradOutput_data;
 
   gradOutput = THCTensor_(newContiguous)(state, gradOutput);
 

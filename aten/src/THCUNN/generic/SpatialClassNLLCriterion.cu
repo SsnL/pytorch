@@ -80,12 +80,12 @@ void THNN_(SpatialClassNLLCriterion_updateOutput)(
     }
 
     int64_t count = batch_size * H * W;
-    SpatialClassNLLCriterion_updateOutput_no_reduce_kernel<real>
+    SpatialClassNLLCriterion_updateOutput_no_reduce_kernel<ntype>
       <<<GET_BLOCKS(count), CUDA_NUM_THREADS, 0, THCState_getCurrentStream(state)>>>(
         count,
-        toDeviceTensor<real, 4>(state, input),
+        toDeviceTensor<ntype, 4>(state, input),
         toDeviceTensor<THCIndex_t, 3>(state, target),
-        toDeviceTensor<real, 3>(state, output),
+        toDeviceTensor<ntype, 3>(state, output),
         weights ? THCTensor_(data)(state, weights) : NULL,
         ignore_index);
 
@@ -99,11 +99,11 @@ void THNN_(SpatialClassNLLCriterion_updateOutput)(
   weights = weights ? THCTensor_(newContiguous)(state, weights) : NULL;
   target = THCIndexTensor_(newContiguous)(state, target);
 
-  real *input_data = THCTensor_(data)(state, input);
-  real *weights_data = weights ? THCTensor_(data)(state, weights) : NULL;
+  ntype *input_data = THCTensor_(data)(state, input);
+  ntype *weights_data = weights ? THCTensor_(data)(state, weights) : NULL;
   THCIndex_t  *target_data = THCIndexTensor_(data)(state, target);
-  real *output_data = THCTensor_(data)(state, output);
-  real *total_weight_data = THCTensor_(data)(state, total_weight);
+  ntype *output_data = THCTensor_(data)(state, output);
+  ntype *total_weight_data = THCTensor_(data)(state, total_weight);
 
   THCIndex_t batch_size = THCIndexTensor_(size)(state, target, 0);
   THCIndex_t map_nelem = THCIndexTensor_(nElement)(state, target) / batch_size;
@@ -111,10 +111,10 @@ void THNN_(SpatialClassNLLCriterion_updateOutput)(
   blocks_per_sample = (blocks_per_sample == 0) ? 1 : blocks_per_sample;
   int total_blocks = blocks_per_sample * batch_size;
 
-  THCTensor_(fill)(state, output, ScalarConvert<int, real>::to(0));
-  THCTensor_(fill)(state, total_weight, ScalarConvert<int, real>::to(0));
+  THCTensor_(fill)(state, output, ScalarConvert<int, ntype>::to(0));
+  THCTensor_(fill)(state, total_weight, ScalarConvert<int, ntype>::to(0));
 
-  cunn_SpatialClassNLLCriterion_updateOutput_kernel<real, accreal>
+  cunn_SpatialClassNLLCriterion_updateOutput_kernel<ntype, accntype>
     <<<total_blocks, CUDA_NUM_THREADS, 0, THCState_getCurrentStream(state)>>>(
       output_data,
       total_weight_data,
@@ -181,12 +181,12 @@ void THNN_(SpatialClassNLLCriterion_updateGradInput)(
     }
 
     int64_t count = batch_size * H * W;
-    SpatialClassNLLCriterion_updateGradInput_no_reduce_kernel<real>
+    SpatialClassNLLCriterion_updateGradInput_no_reduce_kernel<ntype>
       <<<GET_BLOCKS(count), CUDA_NUM_THREADS, 0, THCState_getCurrentStream(state)>>>(
         count,
         toDeviceTensor<THCIndex_t, 3>(state, target),
-        toDeviceTensor<real, 3>(state, gradOutput),
-        toDeviceTensor<real, 4>(state, gradInput),
+        toDeviceTensor<ntype, 3>(state, gradOutput),
+        toDeviceTensor<ntype, 4>(state, gradInput),
         weights ? THCTensor_(data)(state, weights) : NULL,
         ignore_index);
 
@@ -200,11 +200,11 @@ void THNN_(SpatialClassNLLCriterion_updateGradInput)(
   weights = weights ? THCTensor_(newContiguous)(state, weights) : NULL;
   target = THCIndexTensor_(newContiguous)(state, target);
 
-  real *gradOutput_data = THCTensor_(data)(state, gradOutput);
-  real *weights_data = weights ? THCTensor_(data)(state, weights) : NULL;
-  real *gradInput_data = THCTensor_(data)(state, gradInput);
+  ntype *gradOutput_data = THCTensor_(data)(state, gradOutput);
+  ntype *weights_data = weights ? THCTensor_(data)(state, weights) : NULL;
+  ntype *gradInput_data = THCTensor_(data)(state, gradInput);
   THCIndex_t *target_data = THCIndexTensor_(data)(state, target);
-  real *total_weight_data = THCTensor_(data)(state, total_weight);
+  ntype *total_weight_data = THCTensor_(data)(state, total_weight);
 
   THCIndex_t batch_size = THCIndexTensor_(size)(state, target, 0);
   THCIndex_t map_nelem = THCIndexTensor_(nElement)(state, target) / batch_size;

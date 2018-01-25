@@ -20,7 +20,7 @@ void THNN_(BCECriterion_updateOutput)(
   if (!reduce) {
     THCTensor_(resizeAs)(state, output, input);
     THC_pointwiseApply3(state, input, target, output,
-        bce_updateOutput_no_reduce_functor<real, accreal>());
+        bce_updateOutput_no_reduce_functor<ntype, accntype>());
     if (weights) {
       THCTensor_(cmul)(state, output, output, weights);
     }
@@ -33,28 +33,28 @@ void THNN_(BCECriterion_updateOutput)(
   input = THCTensor_(newContiguous)(state, input);
   target = THCTensor_(newContiguous)(state, target);
 
-  thrust::device_ptr<real> input_data(THCTensor_(data)(state, input));
-  thrust::device_ptr<real> target_data(THCTensor_(data)(state, target));
+  thrust::device_ptr<ntype> input_data(THCTensor_(data)(state, input));
+  thrust::device_ptr<ntype> target_data(THCTensor_(data)(state, target));
 
-  accreal sum;
+  accntype sum;
   if (weights) {
     weights = THCTensor_(newContiguous)(state, weights);
-    thrust::device_ptr<real> weights_data(THCTensor_(data)(state, weights));
+    thrust::device_ptr<ntype> weights_data(THCTensor_(data)(state, weights));
     sum = thrust::transform_reduce(
       thrust::make_zip_iterator(thrust::make_tuple(input_data, target_data, weights_data)),
       thrust::make_zip_iterator(thrust::make_tuple(input_data+size, target_data+size, weights_data+size)),
-      bce_functor_weights<real, accreal>(),
-      (accreal) 0,
-      thrust::plus<accreal>()
+      bce_functor_weights<ntype, accntype>(),
+      (accntype) 0,
+      thrust::plus<accntype>()
     );
     THCTensor_(free)(state, weights);
   } else {
     sum = thrust::transform_reduce(
       thrust::make_zip_iterator(thrust::make_tuple(input_data, target_data)),
       thrust::make_zip_iterator(thrust::make_tuple(input_data+size, target_data+size)),
-      bce_functor<real, accreal>(),
-      (accreal) 0,
-      thrust::plus<accreal>()
+      bce_functor<ntype, accntype>(),
+      (accntype) 0,
+      thrust::plus<accntype>()
     );
   }
 
@@ -64,7 +64,7 @@ void THNN_(BCECriterion_updateOutput)(
   THCTensor_(free)(state, input);
   THCTensor_(free)(state, target);
 
-  THCTensor_(set1d)(state, output, 0, ScalarConvert<accreal, real>::to(sum));
+  THCTensor_(set1d)(state, output, 0, ScalarConvert<accntype, ntype>::to(sum));
 }
 
 void THNN_(BCECriterion_updateGradInput)(
@@ -86,7 +86,7 @@ void THNN_(BCECriterion_updateGradInput)(
   if (!reduce) {
     THCUNN_check_nElement(state, gradOutput, input);
     THC_pointwiseApply3(state, input, target, gradInput,
-        bce_updateGradInput_no_reduce_functor<real, accreal>());
+        bce_updateGradInput_no_reduce_functor<ntype, accntype>());
     THCTensor_(cmul)(state, gradInput, gradInput, gradOutput);
     if (weights) {
       THCTensor_(cmul)(state, gradInput, gradInput, weights);
@@ -97,23 +97,23 @@ void THNN_(BCECriterion_updateGradInput)(
   THCUNN_check_dim_size(state, gradOutput, 1, 0, 1);
 
   ptrdiff_t size = THCTensor_(nElement)(state, input);
-  real norm = ScalarConvert<accreal, real>::to((sizeAverage ? accreal(1)/size : accreal(1)) * THCTensor_(get1d)(state, gradOutput, 0));
+  ntype norm = ScalarConvert<accntype, ntype>::to((sizeAverage ? accntype(1)/size : accntype(1)) * THCTensor_(get1d)(state, gradOutput, 0));
 
   input = THCTensor_(newContiguous)(state, input);
   target = THCTensor_(newContiguous)(state, target);
 
-  thrust::device_ptr<real> input_data(THCTensor_(data)(state, input));
-  thrust::device_ptr<real> target_data(THCTensor_(data)(state, target));
-  thrust::device_ptr<real> gradInput_data(THCTensor_(data)(state, gradInput));
+  thrust::device_ptr<ntype> input_data(THCTensor_(data)(state, input));
+  thrust::device_ptr<ntype> target_data(THCTensor_(data)(state, target));
+  thrust::device_ptr<ntype> gradInput_data(THCTensor_(data)(state, gradInput));
 
   if (weights) {
     weights = THCTensor_(newContiguous)(state, weights);
-    thrust::device_ptr<real> weights_data(THCTensor_(data)(state, weights));
+    thrust::device_ptr<ntype> weights_data(THCTensor_(data)(state, weights));
     thrust::transform(
       thrust::make_zip_iterator(thrust::make_tuple(input_data, target_data, weights_data)),
       thrust::make_zip_iterator(thrust::make_tuple(input_data+size, target_data+size, weights_data+size)),
       gradInput_data,
-      bce_updateGradInput_functor_weights<real, accreal>(norm)
+      bce_updateGradInput_functor_weights<ntype, accntype>(norm)
     );
     THCTensor_(free)(state, weights);
   } else {
@@ -121,7 +121,7 @@ void THNN_(BCECriterion_updateGradInput)(
       thrust::make_zip_iterator(thrust::make_tuple(input_data, target_data)),
       thrust::make_zip_iterator(thrust::make_tuple(input_data+size, target_data+size)),
       gradInput_data,
-      bce_updateGradInput_functor<real, accreal>(norm)
+      bce_updateGradInput_functor<ntype, accntype>(norm)
     );
   }
 

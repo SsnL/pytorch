@@ -20,8 +20,8 @@ void THNN_(VolumetricAdaptiveAveragePooling_updateOutput)(
                   "4D or 5D (batch mode) tensor expected for input, but got: %s");
 
 
-  real *output_data;
-  real *input_data;
+  ntype *output_data;
+  ntype *input_data;
 
   int64_t sizeD, isizeT, isizeH, isizeW;
   int64_t istrideD, istrideT, istrideH, istrideW;
@@ -99,8 +99,8 @@ void THNN_(VolumetricAdaptiveAveragePooling_updateGradInput)(
   THCTensor_(resizeAs)(state, gradInput, input);
   THCTensor_(zero)(state, gradInput);
 
-  real *gradInput_data;
-  real *gradOutput_data;
+  ntype *gradInput_data;
+  ntype *gradOutput_data;
 
   int64_t sizeD, isizeT, isizeH, isizeW;
   int64_t osizeT, osizeH, osizeW;

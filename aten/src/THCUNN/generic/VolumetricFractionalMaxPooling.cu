@@ -45,11 +45,11 @@ void THNN_(VolumetricFractionalMaxPooling_updateOutput)(
              "poolSizeT (%d) too large relative to input time (%d)",
              poolSizeT, inputT);
 
-  THCDeviceTensor<real, 5> devInput;
-  THCDeviceTensor<real, 5> devOutput;
+  THCDeviceTensor<ntype, 5> devInput;
+  THCDeviceTensor<ntype, 5> devOutput;
   THCDeviceTensor<THCIndex_t, 5> devIndices;
-  THCDeviceTensor<real, 3> devSamples =
-    toDeviceTensor<real, 3>(state, randomSamples);
+  THCDeviceTensor<ntype, 3> devSamples =
+    toDeviceTensor<ntype, 3>(state, randomSamples);
 
   if (numInputDims == 4) {
     /* resize output */
@@ -57,16 +57,16 @@ void THNN_(VolumetricFractionalMaxPooling_updateOutput)(
     /* indices will contain the locations for each output point */
     THCIndexTensor_(resize4d)(state, indices, numPlanes, outputH, outputW, outputT);
 
-    devInput = toDeviceTensor<real, 4>(state, input).upcastOuter<5>();
-    devOutput = toDeviceTensor<real, 4>(state, output).upcastOuter<5>();
+    devInput = toDeviceTensor<ntype, 4>(state, input).upcastOuter<5>();
+    devOutput = toDeviceTensor<ntype, 4>(state, output).upcastOuter<5>();
     devIndices = toDeviceTensor<THCIndex_t, 4>(state, indices).upcastOuter<5>();
   } else {
     THCTensor_(resize5d)(state, output, numBatch, numPlanes, outputH, outputW, outputT);
     /* indices will contain the locations for each output point */
     THCIndexTensor_(resize5d)(state, indices, numBatch, numPlanes, outputH, outputW, outputT);
 
-    devInput = toDeviceTensor<real, 5>(state, input);
-    devOutput = toDeviceTensor<real, 5>(state, output);
+    devInput = toDeviceTensor<ntype, 5>(state, input);
+    devOutput = toDeviceTensor<ntype, 5>(state, output);
     devIndices = toDeviceTensor<THCIndex_t, 5>(state, indices);
   }
 
@@ -79,7 +79,7 @@ void THNN_(VolumetricFractionalMaxPooling_updateOutput)(
   dim3 block(outputPlaneSize > 128 ? 128 : outputPlaneSize);
 
 #define SFMP_UPDATE_OUTPUT(POOL_W)                                      \
-  VolumetricFractionalMaxPooling_updateOutput<POOL_W, real, accreal>       \
+  VolumetricFractionalMaxPooling_updateOutput<POOL_W, ntype, accntype>       \
     <<<grid, block, 0, THCState_getCurrentStream(state)>>>(             \
       devInput, devOutput, devIndices, devSamples, poolSizeT, poolSizeW, poolSizeH);
 
@@ -136,18 +136,18 @@ void THNN_(VolumetricFractionalMaxPooling_updateGradInput)(
   THCTensor_(resizeAs)(state, gradInput, input);
   THCTensor_(zero)(state, gradInput);
 
-  THCDeviceTensor<real, 5> devGradInput;
-  THCDeviceTensor<real, 5> devGradOutput;
+  THCDeviceTensor<ntype, 5> devGradInput;
+  THCDeviceTensor<ntype, 5> devGradOutput;
   THCDeviceTensor<THCIndex_t, 5> devIndices;
 
   /* backprop */
   if (numInputDims == 4) {
-    devGradInput = toDeviceTensor<real, 4>(state, gradInput).upcastOuter<5>();
-    devGradOutput = toDeviceTensor<real, 4>(state, gradOutput).upcastOuter<5>();
+    devGradInput = toDeviceTensor<ntype, 4>(state, gradInput).upcastOuter<5>();
+    devGradOutput = toDeviceTensor<ntype, 4>(state, gradOutput).upcastOuter<5>();
     devIndices = toDeviceTensor<THCIndex_t, 4>(state, indices).upcastOuter<5>();
   } else {
-    devGradInput = toDeviceTensor<real, 5>(state, gradInput);
-    devGradOutput = toDeviceTensor<real, 5>(state, gradOutput);
+    devGradInput = toDeviceTensor<ntype, 5>(state, gradInput);
+    devGradOutput = toDeviceTensor<ntype, 5>(state, gradOutput);
     devIndices = toDeviceTensor<THCIndex_t, 5>(state, indices);
   }
 

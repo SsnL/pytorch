@@ -316,7 +316,7 @@ THTensor *THSTensor_(toDense)(THSTensor *self) {
   THLongStorage_free(size);
   THTensor_(zero)(dst);
 
-  // real one = ScalarConvert<int, real>::to(1);
+  // ntype one = ScalarConvert<int, ntype>::to(1);
   THSTensor_(spcadd)(dst, dst, 1, self);
   return dst;
 }
@@ -504,7 +504,7 @@ void THTensor_(sparseMask)(THSTensor *r_, THTensor *t, THSTensor *mask) {
       for (int64_t d = 0; d < nDimI; d++) {
         idx += THTensor_fastGet2d(mask_indices_, d, i) * t->stride[d];
       }
-      real val = (t->storage->data + t->storageOffset)[idx];
+      ntype val = (t->storage->data + t->storageOffset)[idx];
       THTensor_fastSet1d(r_values_, i, val);
     }
   }

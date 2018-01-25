@@ -11,9 +11,9 @@ void THNN_(MultiMarginCriterion_updateOutput)(
            bool sizeAverage,
            int p,
            THCTensor *weights,
-           accreal margin_)
+           accntype margin_)
 {
-  real margin = ScalarConvert<accreal, real>::to(margin_);
+  ntype margin = ScalarConvert<accntype, ntype>::to(margin_);
   THCUNN_assertSameGPU(state, 2, input, target);
   THCTensor_(resize1d)(state, output, 1);
   input = THCTensor_(newContiguous)(state, input);
@@ -25,7 +25,7 @@ void THNN_(MultiMarginCriterion_updateOutput)(
     dim3 threads(MULTIMARGIN_THREADS);
     if (p == 1)
     {
-      cunn_MultiMarginCriterion_updateOutput_kernel<1, real, accreal> <<<blocks,threads, 0, THCState_getCurrentStream(state)>>>(
+      cunn_MultiMarginCriterion_updateOutput_kernel<1, ntype, accntype> <<<blocks,threads, 0, THCState_getCurrentStream(state)>>>(
         THCTensor_(data)(state, output),
         THCTensor_(data)(state, input),
         THCIndexTensor_(data)(state, target),
@@ -37,7 +37,7 @@ void THNN_(MultiMarginCriterion_updateOutput)(
     }
     else if (p == 2)
     {
-      cunn_MultiMarginCriterion_updateOutput_kernel<2, real, accreal> <<<blocks,threads, 0, THCState_getCurrentStream(state)>>>(
+      cunn_MultiMarginCriterion_updateOutput_kernel<2, ntype, accntype> <<<blocks,threads, 0, THCState_getCurrentStream(state)>>>(
         THCTensor_(data)(state, output),
         THCTensor_(data)(state, input),
         THCIndexTensor_(data)(state, target),
@@ -59,7 +59,7 @@ void THNN_(MultiMarginCriterion_updateOutput)(
     dim3 threads(MULTIMARGIN_THREADS);
     if (p == 1)
     {
-      cunn_MultiMarginCriterion_updateOutput_kernel<1, real, accreal> <<<blocks,threads, 0, THCState_getCurrentStream(state)>>>(
+      cunn_MultiMarginCriterion_updateOutput_kernel<1, ntype, accntype> <<<blocks,threads, 0, THCState_getCurrentStream(state)>>>(
         THCTensor_(data)(state, output_),
         THCTensor_(data)(state, input),
         THCIndexTensor_(data)(state, target),
@@ -71,7 +71,7 @@ void THNN_(MultiMarginCriterion_updateOutput)(
     }
     else if (p == 2)
     {
-      cunn_MultiMarginCriterion_updateOutput_kernel<2, real, accreal> <<<blocks,threads, 0, THCState_getCurrentStream(state)>>>(
+      cunn_MultiMarginCriterion_updateOutput_kernel<2, ntype, accntype> <<<blocks,threads, 0, THCState_getCurrentStream(state)>>>(
         THCTensor_(data)(state, output_),
         THCTensor_(data)(state, input),
         THCIndexTensor_(data)(state, target),
@@ -83,7 +83,7 @@ void THNN_(MultiMarginCriterion_updateOutput)(
     }
     THCudaCheck(cudaGetLastError());
     float sum = THCTensor_(sumall)(state, output_);
-    THCTensor_(set1d)(state, output, 0, ScalarConvert<accreal, real>::to(sum));
+    THCTensor_(set1d)(state, output, 0, ScalarConvert<accntype, ntype>::to(sum));
     THCTensor_(free)(state, output_);
   }
   else
@@ -104,9 +104,9 @@ void THNN_(MultiMarginCriterion_updateGradInput)(
            bool sizeAverage,
            int p,
            THCTensor *weights,
-           accreal margin_)
+           accntype margin_)
 {
-  real margin = ScalarConvert<accreal, real>::to(margin_);
+  ntype margin = ScalarConvert<accntype, ntype>::to(margin_);
   THCUNN_assertSameGPU(state, 3, input, gradInput, target);
   input = THCTensor_(newContiguous)(state, input);
   THCTensor_(resizeAs)(state, gradInput, input);
@@ -120,7 +120,7 @@ void THNN_(MultiMarginCriterion_updateGradInput)(
 
     if (p == 1)
     {
-      cunn_MultiMarginCriterion_updateGradInput_kernel<1, real, accreal> <<<blocks,threads, 0, THCState_getCurrentStream(state)>>>(
+      cunn_MultiMarginCriterion_updateGradInput_kernel<1, ntype, accntype> <<<blocks,threads, 0, THCState_getCurrentStream(state)>>>(
         THCTensor_(data)(state, gradInput),
         THCTensor_(data)(state, input),
         THCIndexTensor_(data)(state, target),
@@ -132,7 +132,7 @@ void THNN_(MultiMarginCriterion_updateGradInput)(
     }
     else if (p == 2)
     {
-      cunn_MultiMarginCriterion_updateGradInput_kernel<2, real, accreal> <<<blocks,threads, 0, THCState_getCurrentStream(state)>>>(
+      cunn_MultiMarginCriterion_updateGradInput_kernel<2, ntype, accntype> <<<blocks,threads, 0, THCState_getCurrentStream(state)>>>(
         THCTensor_(data)(state, gradInput),
         THCTensor_(data)(state, input),
         THCIndexTensor_(data)(state, target),
@@ -154,7 +154,7 @@ void THNN_(MultiMarginCriterion_updateGradInput)(
 
     if (p == 1)
     {
-      cunn_MultiMarginCriterion_updateGradInput_kernel<1, real, accreal> <<<blocks,threads, 0, THCState_getCurrentStream(state)>>>(
+      cunn_MultiMarginCriterion_updateGradInput_kernel<1, ntype, accntype> <<<blocks,threads, 0, THCState_getCurrentStream(state)>>>(
         THCTensor_(data)(state, gradInput),
         THCTensor_(data)(state, input),
         THCIndexTensor_(data)(state, target),
@@ -166,7 +166,7 @@ void THNN_(MultiMarginCriterion_updateGradInput)(
     }
     else if (p == 2)
     {
-      cunn_MultiMarginCriterion_updateGradInput_kernel<2, real, accreal> <<<blocks,threads, 0, THCState_getCurrentStream(state)>>>(
+      cunn_MultiMarginCriterion_updateGradInput_kernel<2, ntype, accntype> <<<blocks,threads, 0, THCState_getCurrentStream(state)>>>(
         THCTensor_(data)(state, gradInput),
         THCTensor_(data)(state, input),
         THCIndexTensor_(data)(state, target),

@@ -25,7 +25,7 @@ void THNN_(GatedLinear_updateOutput)(
   THCTensor *secondHalf = THCTensor_(newNarrow)(state, input, dim, inputSize, inputSize);
 
   // x = x1:cmul( sigmoid(x2) )
-  THC_pointwiseApply3(state, output, secondHalf, firstHalf, gatedLinearCSigMul_functor<real, accreal>());
+  THC_pointwiseApply3(state, output, secondHalf, firstHalf, gatedLinearCSigMul_functor<ntype, accntype>());
 
   THLongStorage_free(newSizes);
   THCTensor_(free)(state, firstHalf);
@@ -52,10 +52,10 @@ void THNN_(GatedLinear_updateGradInput)(
   THCTensor *gradInputfirstHalf = THCTensor_(newNarrow)(state, gradInput, dim, 0, inputSize);
   THCTensor *gradInputsecondHalf = THCTensor_(newNarrow)(state, gradInput, dim, inputSize, inputSize);
   // first half of derivative
-  THC_pointwiseApply3(state, gradInputfirstHalf, secondHalf, gradOutput, gatedLinearCSigMul_functor<real, accreal>());
+  THC_pointwiseApply3(state, gradInputfirstHalf, secondHalf, gradOutput, gatedLinearCSigMul_functor<ntype, accntype>());
   // second half of derivative
   THCTensor_(copy)(state, gradInputsecondHalf, firstHalf);
-  THC_pointwiseApply3(state, gradInputsecondHalf, secondHalf, gradOutput, gatedLinearDerivativeSecondHalf_functor<real, accreal>());
+  THC_pointwiseApply3(state, gradInputsecondHalf, secondHalf, gradOutput, gatedLinearDerivativeSecondHalf_functor<ntype, accntype>());
 
   THCTensor_(free)(state, firstHalf);
   THCTensor_(free)(state, secondHalf);
