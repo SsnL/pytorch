@@ -16,7 +16,11 @@ from .pooling import AvgPool1d, AvgPool2d, AvgPool3d, MaxPool1d, MaxPool2d, MaxP
 from .batchnorm import BatchNorm1d, BatchNorm2d, BatchNorm3d
 from .instancenorm import InstanceNorm1d, InstanceNorm2d, InstanceNorm3d
 from .normalization import LocalResponseNorm, CrossMapLRN2d, LayerNorm, GroupNorm
+<<<<<<< HEAD
 from .dropout import Dropout, Dropout2d, Dropout3d, AlphaDropout, FeatureAlphaDropout
+=======
+from .dropout import Dropout, Dropout2d, Dropout3d, AlphaDropout, FeatureDropout
+>>>>>>> move droout to ATen
 from .padding import ReflectionPad1d, ReflectionPad2d, ReplicationPad1d, ReplicationPad2d, \
     ReplicationPad3d, ZeroPad2d, ConstantPad1d, ConstantPad2d, ConstantPad3d
 from .sparse import Embedding, EmbeddingBag
@@ -41,7 +45,7 @@ __all__ = [
     'MaxPool3d', 'MaxUnpool1d', 'MaxUnpool2d', 'MaxUnpool3d', 'FractionalMaxPool2d',
     'LPPool1d', 'LPPool2d', 'LocalResponseNorm', 'BatchNorm1d', 'BatchNorm2d', 'BatchNorm3d', 'InstanceNorm1d',
     'InstanceNorm2d', 'InstanceNorm3d', 'LayerNorm', 'GroupNorm',
-    'Dropout', 'Dropout2d', 'Dropout3d', 'AlphaDropout', 'FeatureAlphaDropout',
+    'Dropout', 'Dropout2d', 'Dropout3d', 'FeatureDropout', 'AlphaDropout', 'FeatureAlphaDropout',
     'ReflectionPad1d', 'ReflectionPad2d', 'ReplicationPad2d', 'ReplicationPad1d', 'ReplicationPad3d',
     'CrossMapLRN2d', 'Embedding', 'EmbeddingBag', 'RNNBase', 'RNN', 'LSTM', 'GRU', 'RNNCell', 'LSTMCell', 'GRUCell',
     'PixelShuffle', 'Upsample', 'UpsamplingNearest2d', 'UpsamplingBilinear2d', 'PairwiseDistance',
