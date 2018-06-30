@@ -147,9 +147,6 @@
   batch1: grad.bmm(batch2.transpose(1, 2)) * alpha
   batch2: batch1.transpose(1, 2).bmm(grad) * alpha
 
-- name: bernoulli(Tensor self, double p, Generator generator)
-  self: zeros_like(grad)
-
 - name: bmm(Tensor self, Tensor mat2)
   self: grad.bmm(mat2.transpose(1, 2))
   mat2: self.transpose(1, 2).bmm(grad)

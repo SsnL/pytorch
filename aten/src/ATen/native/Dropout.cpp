@@ -24,10 +24,10 @@ Tensor dropout(const Tensor& self, double p, bool featurewise, bool train, Gener
         for (int64_t i = 2; i < dim; i++) {
           noise_shape[i] = 1;
         }
-        auto noise = at::empty(noise_shape, self.type()).bernoulli_(keep_p, gen).div_(keep_p);
+        auto noise = at::bernoulli(noise_shape, keep_p, gen, self.options()).div_(keep_p);
         return self * noise;
       } else {
-        auto noise = at::empty_like(self).bernoulli_(keep_p, gen).div_(keep_p);
+        auto noise = at::bernoulli_like(self, keep_p, gen).div_(keep_p);
         return self * noise;
       }
     }
@@ -52,10 +52,10 @@ Tensor& dropout_(Tensor& self, double p, bool featurewise, bool train, Generator
         for (int64_t i = 2; i < dim; i++) {
           noise_shape[i] = 1;
         }
-        auto noise = at::empty(noise_shape, self.type()).bernoulli_(keep_p, gen).div_(keep_p);
+        auto noise = at::bernoulli(noise_shape, keep_p, gen, self.options()).div_(keep_p);
         return self.mul_(noise);
       } else {
-        auto noise = at::empty_like(self).bernoulli_(keep_p, gen).div_(keep_p);
+        auto noise = at::bernoulli_like(self, keep_p, gen).div_(keep_p);
         return self.mul_(noise);
       }
     }

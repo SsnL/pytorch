@@ -109,22 +109,13 @@ int64_t sample_poisson(double lambda, THGenerator* generator) {
 namespace at {
 namespace native {
 
-Tensor bernoulli(const Tensor& self, const Tensor& p, Generator* gen) {
-  Tensor result = self.type().tensor();
-  result.resize_(self.sizes());
-  return native::bernoulli_(result, p, gen);
-}
+// Tensor creating variants of bernoulli (and bernoulli_like) are located in
+// TensorFactories.cpp
 
-Tensor bernoulli(const Tensor& self, double p, Generator* gen) {
-  Tensor result = self.type().tensor();
-  result.resize_(self.sizes());
-  return native::bernoulli_(result, p, gen);
-}
-
+// Switch to bernoulli_like(self, self) after #9067 is resolved.
 Tensor bernoulli(const Tensor& self) {
-  Tensor result = self.type().tensor();
-  result.resize_(self.sizes());
-  return native::bernoulli(result, self, nullptr);
+  auto res = at::empty_like(self);
+  return native::bernoulli_(res, self);
 }
 
 Tensor& bernoulli_(Tensor& self, const Tensor& p_, Generator* gen) {

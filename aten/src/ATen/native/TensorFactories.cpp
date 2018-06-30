@@ -604,8 +604,62 @@ Tensor hann_window(
       window_length, periodic, /*alpha=*/0.5, /*beta=*/0.5, options);
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ tensor ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bernoulli ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Tensor bernoulli(IntList size, double p, Generator* gen, const TensorOptions& options) {
+  auto result = at::empty(size, options);
+  return native::bernoulli_(result, p, gen);
+}
+
+Tensor bernoulli(IntList size, double p, const TensorOptions& options) {
+  return native::bernoulli(size, p, nullptr, options);
+}
+
+// TODO: enable the following four entries after #9067 is resolved.
+// Tensor bernoulli(IntList size, const Tensor& p, Generator* gen, const TensorOptions& options) {
+//   auto result = native::empty(size, options);
+//   return native::bernoulli_(result, p, gen);
+// }
+
+// Tensor bernoulli(IntList size, const Tensor& p, const TensorOptions& options) {
+//   return native::bernoulli(size, p, nullptr, options);
+// }
+
+// Tensor bernoulli_like(const Tensor& self, const Tensor& p, Generator* gen, const TensorOptions& options) {
+//   auto result = native::empty_like(self, options);
+//   return native::bernoulli_(result, p, gen);
+// }
+
+// Tensor bernoulli_like(const Tensor& self, const Tensor& p, const TensorOptions& options) {
+//   return native::bernoulli_like(self, p, nullptr, options);
+// }
+
+// Tensor bernoulli_like(const Tensor& self, const Tensor& p, Generator* gen) {
+//   return native::bernoulli_like(self, p, gen, self.options());
+// }
+
+// Tensor bernoulli_like(const Tensor& self, const Tensor& p) {
+//   return native::bernoulli_like(self, p, nullptr, self.options());
+// }
+
+Tensor bernoulli_like(const Tensor& self, double p, Generator* gen, const TensorOptions& options) {
+  auto result = at::empty_like(self, options);
+  return native::bernoulli_(result, p, gen);
+}
+
+Tensor bernoulli_like(const Tensor& self, double p, const TensorOptions& options) {
+  return native::bernoulli_like(self, p, nullptr, options);
+}
+
+Tensor bernoulli_like(const Tensor& self, double p, Generator* gen) {
+  return native::bernoulli_like(self, p, gen, self.options());
+}
+
+Tensor bernoulli_like(const Tensor& self, double p) {
+  return native::bernoulli_like(self, p, nullptr, self.options());
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ tensor ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 template <typename T>
 Tensor tensor_cpu(ArrayRef<T> values, const TensorOptions& options) {
   auto result = at::empty(values.size(), options);
@@ -615,6 +669,7 @@ Tensor tensor_cpu(ArrayRef<T> values, const TensorOptions& options) {
   });
   return result;
 }
+
 
 template <typename T>
 Tensor tensor_cuda(ArrayRef<T> values, const TensorOptions& options) {

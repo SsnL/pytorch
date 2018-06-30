@@ -206,9 +206,42 @@
 - func: batch_norm(Tensor input, Tensor? weight, Tensor? bias, Tensor? running_mean, Tensor? running_var, bool training, double momentum, double eps, bool cudnn_enabled) -> Tensor
   variants: function
 
-- func: bernoulli(Tensor self, Tensor p, Generator* generator=nullptr) -> Tensor
+- func: bernoulli(IntList size, double p, *, Generator* generator, TensorOptions options={}) -> Tensor
+  variants: function
 
-- func: bernoulli(Tensor self, double p, Generator* generator=nullptr) -> Tensor
+- func: bernoulli(IntList size, double p, *, TensorOptions options={}) -> Tensor
+  variants: function
+
+- func: bernoulli_like(Tensor self, double p, *, Generator* generator, TensorOptions options) -> Tensor
+  variants: function
+
+- func: bernoulli_like(Tensor self, double p, *, TensorOptions options) -> Tensor
+  variants: function
+
+- func: bernoulli_like(Tensor self, double p, *, Generator* generator) -> Tensor
+  variants: function
+
+- func: bernoulli_like(Tensor self, double p) -> Tensor
+  variants: function
+
+# TODO: enable the following six entries after #9067 is resolved
+# - func: bernoulli(IntList size, Tensor p, *, Generator* generator, TensorOptions options={}) -> Tensor
+#   variants: function
+
+# - func: bernoulli(IntList size, Tensor p, *, TensorOptions options={}) -> Tensor
+#   variants: function
+
+# - func: bernoulli_like(Tensor self, Tensor p, *, Generator* generator, TensorOptions options={}) -> Tensor
+#   variants: function
+
+# - func: bernoulli_like(Tensor self, Tensor p, *, TensorOptions options={}) -> Tensor
+#   variants: function
+
+# - func: bernoulli_like(Tensor self, Tensor p, *, Generator* generator) -> Tensor
+#   variants: function
+
+# - func: bernoulli_like(Tensor self, Tensor p, *) -> Tensor
+#   variants: function
 
 - func: bernoulli(Tensor self) -> Tensor
 
