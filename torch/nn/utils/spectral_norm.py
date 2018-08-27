@@ -53,7 +53,8 @@ class SpectralNorm(object):
             setattr(module, self.name + '_u', u)
         else:
             r_g = getattr(module, self.name + '_orig').requires_grad
-            getattr(module, self.name).detach_().requires_grad_(r_g)
+            normalized_weight = getattr(module, self.name).detach().requires_grad_(r_g)
+            setattr(module, self.name, normalized_weight)
 
     @staticmethod
     def apply(module, name, n_power_iterations, dim, eps):
