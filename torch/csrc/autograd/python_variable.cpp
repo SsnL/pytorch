@@ -128,7 +128,7 @@ static PyObject *THPVariable_pynew(PyTypeObject *type, PyObject *args, PyObject 
   HANDLE_TH_ERRORS
   jit::tracer::warn("torch.Tensor", jit::tracer::WARN_CONSTRUCTOR);
   auto& default_type = torch::tensors::get_default_tensor_type();
-  auto tensor = torch::utils::legacy_tensor_ctor(default_type, args, kwargs);
+  auto tensor = torch::utils::legacy_tensor_new(default_type, args, kwargs);
   return THPVariable_NewWithVar(type, std::move(tensor));
   END_HANDLE_TH_ERRORS
 }
@@ -239,7 +239,7 @@ int THPVariable_set_grad(THPVariable *self, PyObject *py_grad)
   auto& grad = ((THPVariable*)py_grad)->cdata;
   bool gradIsSparse = false;
   auto backend = var.is_cuda() ? Backend::SparseCUDA : Backend::SparseCPU;
-  auto typeOpt = at::globalContext().getNonVariableTypeOpt(backend, var.type().scalarType());  
+  auto typeOpt = at::globalContext().getNonVariableTypeOpt(backend, var.type().scalarType());
   if (typeOpt) {
        auto& sparseType = at::globalContext().getNonVariableType(backend, var.type().scalarType());
        gradIsSparse = grad.type() == sparseType;

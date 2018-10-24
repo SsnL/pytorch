@@ -2,6 +2,7 @@
 
 #include <ATen/Tensor.h>
 #include <c10/Device.h>
+#include <ATen/core/TensorOptions.h>
 #include <ATen/core/ScalarType.h>
 #include <ATen/detail/CUDAHooksInterface.h>
 #include <c10/util/Exception.h>
@@ -28,6 +29,10 @@ struct DeviceGuard {
       set_index(device.index());
     }
   }
+
+  /// Uses the given TensorOption's `index()` if it has a CUDA device, else does
+  /// nothing.
+  explicit DeviceGuard(const TensorOptions &options) : DeviceGuard(options.device()) {}
 
   explicit DeviceGuard(c10::optional<Device> device_opt) {
     if (device_opt.has_value() && device_opt.value().is_cuda()) {

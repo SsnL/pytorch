@@ -116,10 +116,13 @@ struct CAFFE2_API TensorOptions {
   }
 
   /// Return a copy of `TensorOptions` with `device` set to the given one, or
-  /// cleared if `device` is `nullopt`.
-  C10_NODISCARD TensorOptions device(optional<Device> device) const noexcept {
+  /// cleared if `device` is `nullopt` and `unset_if_nullopt` is set (default).
+  C10_NODISCARD TensorOptions
+  device(optional<Device> device, bool unset_if_nullopt=true) const noexcept {
     TensorOptions r = *this;
-    r.set_device(device);
+    if (unset_if_nullopt || device.has_value()) {
+      r.set_device(device);
+    }
     return r;
   }
 
@@ -141,9 +144,12 @@ struct CAFFE2_API TensorOptions {
   }
 
   /// Return a copy of `TensorOptions` with `dtype` set to the given one.
-  C10_NODISCARD TensorOptions dtype(optional<ScalarType> dtype) const noexcept {
+  C10_NODISCARD TensorOptions
+  dtype(optional<ScalarType> dtype, bool unset_if_nullopt=true) const noexcept {
     TensorOptions r = *this;
-    r.set_dtype(dtype);
+    if (unset_if_nullopt || dtype.has_value()) {
+      r.set_dtype(dtype);
+    }
     return r;
   }
 
@@ -157,23 +163,32 @@ struct CAFFE2_API TensorOptions {
   }
 
   /// Sets the layout of the `TensorOptions`.
-  C10_NODISCARD TensorOptions layout(optional<Layout> layout) const noexcept {
+  C10_NODISCARD TensorOptions
+  layout(optional<Layout> layout, bool unset_if_nullopt=true) const noexcept {
     TensorOptions r = *this;
-    r.set_layout(layout);
+    if (unset_if_nullopt || layout.has_value()) {
+      r.set_layout(layout);
+    }
     return r;
   }
 
   /// Sets the `requires_grad` property of the `TensorOptions`.
-  C10_NODISCARD TensorOptions requires_grad(optional<bool> requires_grad) const noexcept {
+  C10_NODISCARD TensorOptions
+  requires_grad(optional<bool> requires_grad, bool unset_if_nullopt=true) const noexcept {
     TensorOptions r = *this;
-    r.set_requires_grad(requires_grad);
+    if (unset_if_nullopt || requires_grad.has_value()) {
+      r.set_requires_grad(requires_grad);
+    }
     return r;
   }
 
   /// Sets the `is_variable` property on the `TensorOptions`.
-  C10_NODISCARD TensorOptions is_variable(optional<bool> is_variable) const noexcept {
+  C10_NODISCARD TensorOptions
+  is_variable(optional<bool> is_variable, bool unset_if_nullopt=true) const noexcept {
     TensorOptions r = *this;
-    r.set_is_variable(is_variable);
+    if (unset_if_nullopt || is_variable.has_value()) {
+      r.set_is_variable(is_variable);
+    }
     return r;
   }
 

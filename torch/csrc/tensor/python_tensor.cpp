@@ -72,7 +72,7 @@ static PyObject* Tensor_new(PyTypeObject *type, PyObject *args, PyObject *kwargs
   if (!aten_type) {
     throw unavailable_type(tensor_type);
   }
-  return THPVariable_Wrap(torch::utils::legacy_tensor_ctor(*aten_type, args, kwargs));
+  return THPVariable_Wrap(torch::utils::legacy_tensor_new(*aten_type, args, kwargs));
   END_HANDLE_TH_ERRORS
 }
 
