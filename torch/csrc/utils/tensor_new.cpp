@@ -38,6 +38,115 @@ using at::TensorOptions;
 using at::Type;
 using c10::optional;
 
+// Tensor ctors:
+//
+// Legacy
+// ~~~~~~
+//
+// `torch.Tensor.new(...)` and `torchTensor(...)` and
+// `torch.FloatTensor.new(...)` and `torch.FloatTensor(...)`, etc.
+//
+//   Signatures:
+//     new(*, Device? device=None)",
+//     new(Storage storage)",
+//     new(*, int64_t cdata)|hidden",
+//     new(Tensor other)",  // this doesn't have a dtype/device because it creates an alias.
+//     new(IntList size, *, Device? device=None)",
+//     new(PyObject* data, *, Device? device=None)",
+//
+//   Behavior:
+//     No type inference. For the variances with `Device` argument, checks that
+//     the device type is consistent.
+//
+//   Implementation:
+//     Implemented at `torch::utils::legacy_tensor_new` of this file.
+//
+//     The first argument `PyObject *type` is the default tensor type is called
+//     via `torch.Tensor`, and the specific used tensor type otherwise (e.g.,
+//     called via `torch.FloatTensor`).
+//
+//
+// Modern
+// ~~~~~~
+//
+// `torch.empty(...)`, `torch.ones(...)`, etc.
+//
+//   Signature:
+//     empty(IntList size, *, Tensor out=None, ScalarType dtype=None,
+//           Layout layout=torch.strided, Device device=None,
+//           bool requires_grad=False)
+//
+//   Behavior:
+//     Creates a tensor with size specified by `size`, tensor options specified
+//     by the arguments if they set and by the default tensor type otherwise.
+//
+//   Implementation:
+//     Generated in `python_torch_functions.cpp`.
+//
+//     Creates a `TensorOptions` specified by the arguments. If `device` is
+//     unset, a `Device` object created from the `DeviceType` of the default
+//     tensor type is used. Similarly for `dtype`. All fields of the
+//     `TensorOptions` are filled.
+//
+//     Dispatches to `at::empty`, etc., and then sets the `requires_grad` flag.
+//
+//
+// `torch.empty_like(...)`, `torch.ones_like(...)`, etc.
+//
+//   Signatures:
+//     empty_like(Tensor input, *, ScalarType dtype=None, Layout layout=None,
+//                Device device=None, bool requires_grad=False)
+//     empty_like(Tensor input, *, bool requires_grad=False)
+//
+//   Behavior:
+//     Creates a tensor with size taken from `input`, tensor options specified
+//     by the arguments if they set and by those of `input` otherwise.
+//
+//   Implementation:
+//     Generated in `python_torch_functions.cpp`.
+//
+//     Creates a `TensorOptions` specified by the arguments. If `device` is
+//     unset, `input.device` is used. Similarly for `dtype` and `layout`. All
+//     fields of the `TensorOptions` are filled.
+//
+//     Dispatches to `at::empty_like`, etc., and then sets the
+//     `requires_grad` flag.
+//
+//
+// `tensor.new_empty(...)`, `tensor.new_ones(...)`, etc.
+//
+//   Signature:
+//     new_empty(IntList size, *, ScalarType dtype=None, Device? device=None,
+//               bool requires_grad=False)
+//
+//   Behavior:
+//     Creates a tensor with size specified by `size`, tensor options specified
+//     by the arguments if they set and by those of `tensor` otherwise.
+//
+//   Implementation:
+//     Implemented in, e.g., `torch::utils::new_empty` of this file.
+//
+//     Creates a `TensorOptions` specified by the arguments. If `device` is
+//     unset, `tensor.device` is used. Similarly for `dtype` and `layout`.
+//     All fields of the `TensorOptions` are filled.
+//
+//     `new_empty` dispatches to `torch::empty_like`. The others dispatch to
+//     `at::full` and then sets the `requires_grad` flag.
+//
+// `torch.tensor`
+//
+//   Signature:
+//     tensor(PyObject* data, *, ScalarType dtype=None, Device? device=None,
+//            bool requires_grad=False)
+//
+// `tensor.new_tensor`
+//
+//
+// `torch.as_tensor`
+//
+//
+// `torch.sparse_coo_tensor`
+
 // Many functions in this file takes in `PyObject *type` as its first argument,
 // if called as `torch.*`, this will be the default tensor type;
 // if called as `tensor_type.*`, this will be `tensor_type`.
