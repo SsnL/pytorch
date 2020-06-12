@@ -8,9 +8,8 @@ namespace torch { namespace utils {
 using namespace at;
 
 std::vector<TensorGroup> take_tensors(
-    TensorList tensors,
-    size_t size_limit,
-    bool fine_grained) {
+    const c10::ArrayRef<at::Tensor>& tensors,
+    size_t size_limit) {
   std::vector<TensorGroup> results;
   // an overapproximation, but at least we won't have to copy stuff around
   results.reserve(tensors.size());
@@ -30,25 +29,10 @@ std::vector<TensorGroup> take_tensors(
 
     auto& type_group = groups[tensor.type().id()];
     type_group.tensors.push_back(tensor);
-
-    if (fine_grained) {
-      cur_group_size += tensor_size;
-      // Regardless the type, the current total size exceeds the limit
-      if (cur_group_size >= size_limit) {
-        // Spill all types to separate groups in results
-        for (auto& entry : groups) {
-          auto& group = entry.second;
-          results.emplace_back(std::move(group));
-        }
-        cur_group_size = 0;
-        groups.clear();
-      }
-    } else {
-      type_group.size += tensor_size;
-      if (type_group.size >= size_limit) {
-        results.emplace_back();
-        std::swap(results.back(), type_group);
-      }
+    type_group.size += tensor_size;
+    if (type_group.size >= size_limit) {
+      results.emplace_back();
+      std::swap(results.back(), type_group);
     }
   }
   // End case. Look for any remaining groups and return them.

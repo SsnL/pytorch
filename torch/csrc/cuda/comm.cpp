@@ -8,6 +8,7 @@
 #endif
 
 #include <ATen/ATen.h>
+#include <ATen/core/functional.h>
 #include <ATen/cuda/CUDAContext.h>
 #include <ATen/WrapDimUtils.h>
 #include <c10/cuda/CUDAFunctions.h>
@@ -15,6 +16,7 @@
 #include <c10/util/Optional.h>
 #include <torch/csrc/autograd/variable.h>
 
+#include <algorithm>
 #include <cstddef>
 #include <vector>
 
@@ -164,7 +166,7 @@ tensor_list2d broadcast_coalesced(const TensorList& tensors, const std::vector<a
     auto & type = chunk.type();
     type_checker.show(type);
     std::vector<at::Tensor> results;
-    if (chunk.type().is_sparse()) {
+    if (type.is_sparse()) {
       auto flat_tuple = utils::flatten_sparse_tensors(chunk.tensors);
       auto broadcast_indices = broadcast(flat_tuple.first, devices);
       auto broadcast_values = broadcast(flat_tuple.second, devices);
@@ -631,5 +633,112 @@ at::Tensor& reduce_out(
   }
   return out_tensor;
 }
+
+
+std::vector<at::Tensor> reduce_coalesced(
+    const tensor_list2d& tensor_lists,
+    torch::utils::comm::ReduceOp op,
+    const c10::optional<at::Device>& destination,
+    size_t buffer_size) {
+  TORCH_CHECK(!tensor_lists.empty(), "Expected at least one tensor to reduce from");
+  size_t num_tensors_per_list = tensor_lists[0].size();
+  if (!std::all_of(tensor_lists.begin() + 1, tensor_lists.end(), [&](const std::vector<at::Tensor>& l) { return l.size() == num_tensors_per_list; })) {
+    std::vector<int64_t> list_sizes;
+    list_sizes.reserve(tensor_lists.size());
+    std::transform(tensor_lists.begin(), tensor_lists.end(), std::back_inserter(dst), [](const std::vector<at::Tensor>& l) { return l.size() });
+    TORCH_CHECK(false, "Expected all sequences of tensors to have the same number of tensors, but got lengths ", list_sizes);
+  }
+  at::Device out_device(DeviceType::CUDA);
+  if (destination) {
+    out_device = *destination;
+  }
+  if (out_device.is_cuda() && !out_device.has_index()) {
+    out_device.set_index(c10::cuda::current_device());
+  }
+  if (tensor_lists.size() == 1) {
+    auto convert = [&](const at::Tensor& t) { return t.to(out_device, /*non_blocking=*/out_device.is_cuda()) };
+    return fmap(tensor_lists[0], convert);
+  }
+
+  std::vector<tensor_lists::const_iterator> list_iters;
+  list_iters.reserve(tensor_lists.size());
+  for (const auto& tensors : tensor_lists) {
+    list_iters.push_back(tensors.front());
+  }
+
+  std::vector<at::Tensor> output;
+  output.reserve(num_tensors_per_list);
+
+  tensor_list2d dense_tensor_lists;
+  dense_tensor_lists.reserve(tensor_lists.size());
+  for (size_t li = 0; li < tensor_lists.size(); li++) {
+    dense_tensor_lists.emplace_back();
+    dense_tensor_lists.end().reserve(num_tensors_per_list);  // overestimation
+  }
+
+  // process sparse ones individually since they may have different sizes on different gpus
+  for (size_t ti = 0; ti < num_tensors_per_list; ti++) {
+    if (std::all_of(list_iters.begin(), list_iters.end(), [](const tensor_lists::const_iterator& it) { return it->is_sparse(); })) {
+      output.push_back(reduce(tensors, op, destination));
+    } else {
+      for (size_t li = 0; li < tensor_lists.size(); li++) {
+        dense_tensor_lists[li].push_back(*(list_iters[li]));
+      }
+    }
+  }
+  for (auto& it : list_iters) {
+    it++;
+  }
+}
+
+
+auto chunks_lists = fmap(dense_tensor_lists, [&](const std::vector<at::Tensor>& tensors) { return utils::take_tensors(tensors, buffer_size); });
+
+
+
+
+// def reduce_add_coalesced(inputs, destination=None, buffer_size=10485760):
+//     """Sums tensors from multiple GPUs.
+
+//     Small tensors are first coalesced into a buffer to reduce the number
+//     of synchronizations.
+
+//     Arguments:
+//         inputs (Iterable[Iterable[Tensor]]): iterable of iterables that
+//             contain tensors from a single device.
+//         destination (int, optional): a device on which the output will be
+//             placed (default: current device).
+//         buffer_size (int): maximum size of the buffer used for coalescing
+
+//     Returns:
+//         A tuple of tensors containing an elementwise sum of each group of
+//         inputs, placed on the ``destination`` device.
+//     """
+//     # TODO: When `len(inputs) == 1` and all inputs are on `destination`, just
+//     #       return `inputs`.
+//     dense_tensors = [[] for _ in inputs]  # shape (num_gpus, num_tensors)
+//     output = []
+//     ref_order = []
+//     # process sparse ones first since they may have different sizes on different gpus
+//     for tensor_at_gpus in zip(*inputs):
+//         if all(t.is_sparse for t in tensor_at_gpus):
+//             result = reduce_add(tensor_at_gpus, destination)  # this will be sparse too
+//             output.append(result)
+//             ref_order.append(tensor_at_gpus[0])
+//         else:
+//             for coll, t in zip(dense_tensors, tensor_at_gpus):
+//                 coll.append(t.to_dense() if t.is_sparse else t)
+//             ref_order.append(dense_tensors[0][-1])
+//     itrs = [_take_tensors(tensors, buffer_size) for tensors in dense_tensors]
+//     # now the dense ones, which have consistent sizes
+//     for chunks in zip(*itrs):
+//         flat_tensors = [_flatten_dense_tensors(chunk) for chunk in chunks]  # (num_gpus,)
+//         flat_result = reduce_add(flat_tensors, destination)
+//         for t in _unflatten_dense_tensors(flat_result, chunks[0]):
+//             # The unflattened tensors do not share storage, and we don't expose
+//             # base flat tensor anyways, so give them different version counters.
+//             # See NOTE [ Version Counter in comm.*_coalesced ]
+//             output.append(t.data)
+//     return tuple(_reorder_tensors_as(output, ref_order))
 
 }} // namespace torch::cuda
